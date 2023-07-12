@@ -1,5 +1,0 @@
-<template>
-HOMEPAGE
-</template>
-
-
