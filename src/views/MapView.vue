@@ -1,11 +1,11 @@
 <script setup>
-import MainPage from '../components/Main.vue'
+import Map from '../components/Map.vue'
 import Layout from '../components/Layout.vue'
 </script>
 
 <template>
   <main>
-    <Layout></Layout>
-    <MainPage/>
+    <Layout />
+    <Map></Map>
   </main>
 </template>

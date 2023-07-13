@@ -11,14 +11,14 @@ const router = createRouter({
       component: () => import('../views/HomeView.vue')
     },
     {
-      path: '/product',
-      name: 'product',
+      path: '/products',
+      name: 'products',
       component: () => import('../views/ProductsView.vue')
     },
     {
-      path: '/main',
-      name: 'main',
-      component: () => import('../views/MainView.vue')
+      path: '/map',
+      name: 'map',
+      component: () => import('../views/MapView.vue')
     }
   ]
 })
