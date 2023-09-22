@@ -1,3 +1,4 @@
+
 <template>
      <div class="navbar top-1.5 flex items-center absolute left-0 right-1.5 justify-between">
             <div class="navbar-left flex items-center">

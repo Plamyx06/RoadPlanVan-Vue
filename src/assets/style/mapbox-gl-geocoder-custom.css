@@ -1,0 +1,84 @@
+.mapboxgl-ctrl-geocoder--input:focus,
+.mapboxgl-ctrl-geocoder--input::placeholder {
+    color: #8A4852;
+}
+
+.mapboxgl-ctrl-geocoder--input {
+    font: inherit;
+    width: 100%;
+    background-color: white;
+    height: 30px;
+    color: #8A4852;
+    padding: 3px 45px;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+    overflow: hidden;
+    border-radius: 9999px;
+}
+
+.mapboxgl-ctrl-geocoder {
+    font-size: 16px;
+    height: 30px;
+    line-height: 24px;
+    font-family: "Open Sans", -apple-system, BlinkMacSystemFont, "Helvetica Neue", Arial, Helvetica, sans-serif;
+    position: relative;
+    width: 100%;
+    min-width: 200px;
+    transition: width .25s, min-width .25s;
+    border-radius: 9999px;
+}
+
+.mapboxgl-ctrl-geocoder--icon-search {
+    position: absolute;
+    top: 4px;
+    left: 12px;
+    width: 23px;
+    height: 23px;
+    ;
+}
+
+.mapboxgl-ctrl-geocoder--button {
+    border-radius: 9999px;
+    width: 23px;
+    height: 23px;
+    bottom: 3px;
+    top: 0px;
+    background: transparent
+}
+
+
+
+.mapboxgl-ctrl-geocoder .mapboxgl-ctrl-geocoder--pin-right>* {
+
+    position: absolute;
+    right: 8px;
+    top: -3px;
+    display: none;
+}
+
+.mapboxgl-ctrl-geocoder--icon {
+    fill: #8A4852
+}
+
+.mapboxgl-ctrl-geocoder .suggestions,
+.mapboxgl-ctrl-geocoder .active {
+    background-color: white;
+    color: #8A4852;
+    left: 0;
+    list-style: none;
+    margin: 0;
+    padding: 0;
+    position: absolute;
+    width: 100%;
+    top: calc(100% + 6px + 0px);
+    overflow: hidden;
+    font-size: 15px;
+    border-radius: 15px;
+
+}
+
+.mapboxgl-ctrl-geocoder--suggestion-title,
+.mapboxgl-ctrl-geocoder--suggestion-address {
+    color: #8A4852;
+
+}
