@@ -34,7 +34,7 @@
     left: 12px;
     width: 23px;
     height: 23px;
-    ;
+    display: none
 }
 
 .mapboxgl-ctrl-geocoder--button {
@@ -46,10 +46,7 @@
     background: transparent
 }
 
-
-
 .mapboxgl-ctrl-geocoder .mapboxgl-ctrl-geocoder--pin-right>* {
-
     position: absolute;
     right: 8px;
     top: -3px;

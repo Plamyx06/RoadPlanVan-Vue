@@ -1,0 +1,610 @@
+/* Mapboxgl Geocoder */
+/* Basics */
+.mapboxgl-ctrl-geocoder,
+.mapboxgl-ctrl-geocoder *,
+.mapboxgl-ctrl-geocoder *:after,
+.mapboxgl-ctrl-geocoder *:before {
+    -webkit-box-sizing: border-box;
+    -moz-box-sizing: border-box;
+    box-sizing: border-box;
+}
+
+.mapboxgl-ctrl-geocoder {
+    font: 15px/20px 'Helvetica Neue', Arial, Helvetica, sans-serif;
+    position: relative;
+    background-color: white;
+    width: 100%;
+    ;
+    min-width: 150%;
+    ;
+    margin-left: 0;
+
+    border-radius: 9999px;
+}
+
+.mapbox-directions-origin .mapboxgl-ctrl-geocoder {
+    border-radius: 9999px;
+}
+
+.mapbox-directions-component-keyline {
+    display: flex;
+    justify-content: space-between;
+
+}
+
+.mapboxgl-ctrl-geocoder input[type='text'] {
+    font-size: 14px;
+    width: 100%;
+    border: 0;
+    background-color: transparent;
+    height: 30px;
+    margin: 0;
+    color: #8A4852;
+    padding: 10px 50px 10px 10px;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+    overflow: hidden;
+}
+
+.mapbox-directions-origin input[type='text'] {
+
+    position: relative;
+    z-index: 1;
+}
+
+.mapboxgl-ctrl-geocoder input:focus {
+    color: #8A4852;
+    outline: 0;
+    outline: thin dotted\8;
+}
+
+.mapboxgl-ctrl-geocoder .geocoder-icon-search {
+    position: absolute;
+    top: 10px;
+    left: 10px;
+}
+
+.mapboxgl-ctrl-geocoder button {
+    padding: 0;
+    margin: 0;
+    background-color: #fff;
+    border: none;
+    cursor: pointer;
+}
+
+.mapboxgl-ctrl-geocoder .geocoder-pin-right * {
+    background-color: #fff;
+    z-index: 2;
+    position: absolute;
+    right: 10px;
+    top: 5px;
+    display: none;
+}
+
+.mapboxgl-ctrl-geocoder .geocoder-pin-right *.active {
+    display: block;
+}
+
+.mapboxgl-ctrl-geocoder,
+.mapboxgl-ctrl-geocoder ul {
+    box-shadow: none;
+}
+
+/* Suggestions */
+.mapboxgl-ctrl-geocoder ul {
+    background-color: #fff;
+    border-radius: 0 0 3px 3px;
+    left: 0;
+    list-style: none;
+    margin: 0;
+    padding: 0;
+    position: absolute;
+    width: 100%;
+    top: 100%;
+    z-index: 1000;
+    overflow: hidden;
+    font-size: 12px;
+    color: #8A4852;
+}
+
+.mapboxgl-ctrl-bottom-left .mapboxgl-ctrl-geocoder ul,
+.mapboxgl-ctrl-bottom-right .mapboxgl-ctrl-geocoder ul {
+    top: auto;
+    bottom: 100%;
+    color: #8A4852;
+}
+
+.mapboxgl-ctrl-geocoder ul>li>a {
+    clear: both;
+    cursor: default;
+    display: block;
+    padding: 5px 10px;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+    border-bottom: 1px solid rgba(0, 0, 0, 0.1);
+    color: #8A4852;
+}
+
+.mapboxgl-ctrl-geocoder ul>li:last-child>a {
+    border-bottom: none;
+}
+
+.mapboxgl-ctrl-geocoder ul>li.active>a,
+.mapboxgl-ctrl-geocoder ul>li>a:hover {
+    background-color: #eee;
+    text-decoration: none;
+    cursor: pointer;
+    color: #8A4852;
+}
+
+@-webkit-keyframes rotate {
+    from {
+        -webkit-transform: rotate(0deg);
+    }
+
+    to {
+        -webkit-transform: rotate(360deg);
+    }
+}
+
+@-moz-keyframes rotate {
+    from {
+        -moz-transform: rotate(0deg);
+    }
+
+    to {
+        -moz-transform: rotate(360deg);
+    }
+}
+
+@-ms-keyframes rotate {
+    from {
+        -ms-transform: rotate(0deg);
+    }
+
+    to {
+        -ms-transform: rotate(360deg);
+    }
+}
+
+@keyframes rotate {
+    from {
+        transform: rotate(0deg);
+    }
+
+    to {
+        transform: rotate(360deg);
+    }
+}
+
+/* icons */
+.geocoder-icon {
+    display: inline-block;
+    width: 20px;
+    height: 20px;
+    vertical-align: middle;
+    speak: none;
+    background-repeat: no-repeat;
+}
+
+.geocoder-icon-search {
+    display: none;
+}
+
+.geocoder-icon-close {
+    background-image: url(data:image/svg+xml;base64,PHN2ZyB4bWxuczpzdmc9Imh0dHA6Ly93d3cudzMub3JnLzIwMDAvc3ZnIiB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHZpZXdCb3g9IjAgMCAyMCAyMCIgdmVyc2lvbj0iMS4xIiBoZWlnaHQ9IjIwIiB3aWR0aD0iMjAiPg0KICA8cGF0aCBkPSJtNSA1IDAgMS41IDMuNSAzLjUtMy41IDMuNSAwIDEuNSAxLjUgMCAzLjUtMy41IDMuNSAzLjUgMS41IDAgMC0xLjUtMy41LTMuNSAzLjUtMy41IDAtMS41LTEuNSAwLTMuNSAzLjUtMy41LTMuNS0xLjUgMHoiIGZpbGw9IiMwMDAiLz4NCjwvc3ZnPg==);
+}
+
+.geocoder-icon-loading {
+    background-image: url(data:image/svg+xml;base64,PHN2ZyB4bWxuczpzdmc9Imh0dHA6Ly93d3cudzMub3JnLzIwMDAvc3ZnIiB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHZlcnNpb249IjEuMSIgd2lkdGg9IjIwIiBoZWlnaHQ9IjIwIiB2aWV3Qm94PSIwIDAgMjAgMjAiPjxwYXRoIGQ9Im0xMCAyIDAgMy4zYzIuNiAwIDQuNyAyLjEgNC43IDQuN2wzLjMgMGMwLTQuNC0zLjYtOC04LTh6IiBmaWxsPSIjMDAwIi8+PHBhdGggZD0iTTEwIDJDNi44IDIgMy43IDQuMSAyLjYgNy4xIDEuNCAxMCAyLjEgMTMuNiA0LjUgMTUuOGMyLjQgMi40IDYuNCAyLjkgOS40IDEuMiAyLjUtMS40IDQuMi00LjIgNC4yLTctMS4xIDAtMi4yIDAtMy4zIDAgMC4xIDIuMi0xLjcgNC4zLTMuOCA0LjZDOC43IDE1IDYuNCAxMy44IDUuNyAxMS43IDQuOCA5LjcgNS42IDcuMSA3LjYgNiA4LjMgNS42IDkuMSA1LjMgMTAgNS4zYzAtMS4xIDAtMi4yIDAtMy4zeiIgc3R5bGU9ImZpbGw6IzAwMDtvcGFjaXR5OjAuMiIvPjwvc3ZnPg==);
+    -webkit-animation: rotate 400ms linear infinite;
+    -moz-animation: rotate 400ms linear infinite;
+    -ms-animation: rotate 400ms linear infinite;
+    animation: rotate 400ms linear infinite;
+}
+
+/* Basics */
+.mapboxgl-ctrl-directions {
+    width: 100%;
+    min-width: 300px;
+    max-width: 300px;
+}
+
+.mapbox-directions-component {
+    position: relative;
+}
+
+.mapbox-directions-component,
+.mapbox-directions-component *,
+.mapbox-directions-component *:after,
+.mapbox-directions-component *:before {
+    -webkit-box-sizing: border-box;
+    -moz-box-sizing: border-box;
+    box-sizing: border-box;
+}
+
+
+
+.directions-control {
+    font: 15px/20px 'Helvetica Neue', Arial, Helvetica, sans-serif;
+}
+
+/* Layout containers */
+.directions-control {
+    width: 100%;
+    z-index: 1;
+}
+
+.directions-control.directions-control-directions {
+    background: rgba(0, 0, 0, 0.75);
+    margin: 7px 0 0;
+    color: #8A4852;
+    top: 0;
+    right: 0;
+    bottom: 0;
+    overflow: auto;
+    overflow-x: hidden;
+}
+
+.directions-control.directions-control-inputs {
+    top: 10px;
+    left: 10px;
+}
+
+/* Inputs */
+.mapbox-directions-origin,
+.mapbox-directions-destination {
+    position: relative;
+}
+
+.mapbox-directions-destination {
+    margin-left: 80px
+}
+
+.mapbox-form-label {
+    position: absolute;
+    top: 0;
+    left: 0;
+    background: #8a8acb;
+    color: #8A4852;
+    padding: 0;
+    width: 40px;
+    height: 40px;
+    text-align: center;
+    line-height: 38px;
+    border-radius: 0 0 0 3px;
+    display: none
+}
+
+.mapbox-form-label .directions-icon {
+    background-position: center;
+    width: 40px;
+    height: 40px;
+}
+
+
+
+
+.directions-reverse {
+    position: absolute;
+    z-index: 10;
+    background: white;
+    left: 40px;
+    top: 30px;
+    cursor: pointer;
+}
+
+.mapbox-directions-inputs button {
+    padding: 0;
+    margin: 0;
+    background-color: #fff;
+    border: none;
+    cursor: pointer;
+}
+
+.mapbox-directions-inputs .directions-pin-right * {
+    background-color: #fff;
+    z-index: 2;
+    position: absolute;
+    right: 10px;
+    top: 10px;
+    display: none;
+}
+
+.mapbox-directions-inputs .directions-pin-right *.active {
+    display: block;
+}
+
+.mapbox-directions-profile {
+    background: #fff;
+    margin: 7px 0 0;
+    padding: 2px;
+    border-radius: 15px;
+    vertical-align: middle;
+    display: none
+}
+
+.mapbox-directions-profile label {
+    cursor: pointer;
+    vertical-align: top;
+    display: block;
+    border-radius: 16px;
+    padding: 3px 5px;
+    font-size: 12px;
+    color: rgba(0, 0, 0, .5);
+    line-height: 20px;
+    text-align: center;
+    width: 25%;
+    float: left;
+    display: none
+}
+
+.mapbox-directions-profile label:hover {
+    color: #8A4852;
+}
+
+.mapbox-directions-profile input[type=radio] {
+    display: none;
+}
+
+.mapbox-directions-profile input[type=radio]:checked+label:hover,
+.mapbox-directions-profile input[type=radio]:checked+label {
+    background: #eee;
+    color: #8A4852;
+}
+
+/* Routes */
+.mapbox-directions-routes ul {
+    list-style: none;
+    margin: 0;
+    padding: 10px 10px 0 10px;
+    border-bottom: 1px solid rgba(255, 255, 255, .25);
+}
+
+.mapbox-directions-routes li {
+    font-size: 12px;
+    padding: 10px 10px 10px 80px;
+    display: block;
+    position: relative;
+    cursor: pointer;
+    color: #8A4852;
+    min-height: 60px;
+}
+
+.mapbox-directions-routes li:hover,
+.mapbox-directions-routes .mapbox-directions-route-active {
+    color: #8A4852;
+}
+
+.mapbox-directions-route-heading {
+    position: absolute;
+    left: 10px;
+    top: 10px;
+}
+
+/* Route Summary */
+.mapbox-directions-route-summary {
+    position: relative;
+    z-index: 1;
+    width: 100%;
+    background-color: rgba(0, 0, 0, 0.75);
+    color: #8A4852;
+    padding: 5px 10px;
+    font-size: 15px;
+    line-height: 28px;
+}
+
+.mapbox-directions-route-summary+.mapbox-directions-instructions {}
+
+.mapbox-directions-route-summary h1 {
+    font-weight: 500;
+    margin: 0;
+    display: inline;
+    font-size: inherit;
+    line-height: inherit;
+}
+
+.mapbox-directions-route-summary span {
+    color: rgba(255, 255, 255, 0.5);
+    margin: 0 5px;
+}
+
+/* Alt route selection */
+.mapbox-directions-instructions {
+    overflow: scroll;
+}
+
+.mapbox-directions-instructions-wrapper {
+    max-height: 50vh;
+}
+
+.mapbox-directions-routes {
+    margin-left: 5px;
+    font-size: 12px;
+    float: right;
+}
+
+.mapbox-directions-routes input[type=radio] {
+    display: none;
+}
+
+.mapbox-directions-routes input[type=radio]:not(:checked)+.button:before {
+    width: 0;
+}
+
+.mapbox-directions-routes input[type=radio]+label {
+    background-color: rgba(255, 255, 255, 0.10);
+    float: left;
+    padding: 0 10px;
+    cursor: pointer;
+}
+
+.mapbox-directions-routes input[type=radio]+label:hover,
+.mapbox-directions-routes input[type=radio]:checked+label {
+    background-color: rgba(255, 255, 255, 0.25);
+}
+
+/* Instructions */
+.mapbox-directions-instructions .directions-icon {
+    position: absolute;
+    left: 12px;
+    top: 20px;
+    margin: auto;
+    display: none
+}
+
+.mapbox-directions-instructions .directions-icon:before {
+    vertical-align: top;
+}
+
+.mapbox-directions-error {
+    padding: 20px;
+    font-size: 20px;
+    line-height: 25px;
+}
+
+.mapbox-directions-step-distance {
+    color: rgba(255, 255, 255, .5);
+    position: absolute;
+    padding: 5px 10px;
+    font-size: 12px;
+    left: 30px;
+    bottom: -10px;
+}
+
+.mapbox-directions-steps {
+    position: relative;
+    list-style: none;
+    margin: 0;
+    padding: 0;
+}
+
+.mapbox-directions-step {
+    position: relative;
+    color: rgba(255, 255, 255, .75);
+    cursor: pointer;
+    padding: 20px 20px 20px 40px;
+    font-size: 14px;
+    line-height: 18px;
+    font-weight: 300;
+    letter-spacing: 0.1em;
+}
+
+.mapbox-directions-step * {
+    pointer-events: none;
+}
+
+.mapbox-directions-step:hover {
+    color: white;
+}
+
+.mapbox-directions-step:after {
+    content: '';
+    position: absolute;
+    top: 45px;
+    bottom: -10px;
+    border-left: 2px dotted rgba(255, 255, 255, .2);
+    left: 20px;
+}
+
+.mapbox-directions-step:last-child:after,
+.mapbox-directions-step:last-child .mapbox-directions-step-distance {
+    display: none;
+}
+
+.mapbox-directions-clearfix:after {
+    content: '';
+    display: block;
+    height: 0;
+    clear: both;
+    visibility: hidden;
+}
+
+/* Mobile */
+@media only screen and (max-width:640px) {
+
+    /* Containers */
+    .directions-control.directions-control {
+        width: 100%;
+        max-width: 100%;
+    }
+
+    /* Input container */
+    .directions-control.directions-control-inputs {
+        top: 0;
+        left: 0;
+    }
+
+    .mapbox-directions-profile {
+        margin: 10px;
+    }
+
+    /* Instructions container */
+    .mapbox-directions-routes {
+        float: right;
+        margin-right: 10px;
+    }
+
+    .directions-control.directions-control-directions {
+        top: auto;
+        max-height: 40%;
+    }
+
+    .mapbox-directions-multiple {
+        min-height: 50px;
+    }
+
+}
+
+@-webkit-keyframes rotate {
+    from {
+        -webkit-transform: rotate(0deg);
+    }
+
+    to {
+        -webkit-transform: rotate(360deg);
+    }
+}
+
+@-moz-keyframes rotate {
+    from {
+        -moz-transform: rotate(0deg);
+    }
+
+    to {
+        -moz-transform: rotate(360deg);
+    }
+}
+
+@-ms-keyframes rotate {
+    from {
+        -ms-transform: rotate(0deg);
+    }
+
+    to {
+        -ms-transform: rotate(360deg);
+    }
+}
+
+@keyframes rotate {
+    from {
+        transform: rotate(0deg);
+    }
+
+    to {
+        transform: rotate(360deg);
+    }
+}
+
+/* icons */
+.directions-icon {
+    display: inline-block;
+    width: 20px;
+    height: 20px;
+    vertical-align: middle;
+    speak: none;
+    background-repeat: no-repeat;
+    display: none
+}

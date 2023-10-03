@@ -1,27 +1,42 @@
 <template>
-    <VueDatePicker class="" v-model="date" :enable-time-picker="false"  locale="fr-FR" cancelText="annuler" selectText="valider" :format="format" min-date="new Date()" placeholder="Dâte de départ" :year-range="[2023, 2040]" teleport-center />
+  <VueDatePicker 
+      class="" 
+      v-model="date" 
+      @update:model-value="handleDate"
+      :enable-time-picker="false"  
+      locale="fr-FR" 
+      cancelText="annuler" 
+      selectText="valider" 
+      :format="format" 
+      min-date="new Date()" 
+      placeholder="Dâte de départ" 
+      :year-range="[2023, 2040]" 
+      teleport-center
+  />
 </template>
 
 <script setup>
-import { ref } from 'vue';
+import { ref,defineEmits } from 'vue';
 import VueDatePicker from '@vuepic/vue-datepicker';
 import '@vuepic/vue-datepicker/dist/main.css'
 import '/home/plamyx/Code/RoadPlanVan/src/assets/style/data-picker-custom.css'
 
-const date = ref(new Date());
+const date = ref(new Date().toISOString());
 
-const addZero = (num) => (num < 10 ? '0' : '') + num;
 
 const format = (date) => {
-  const day = addZero(date.getDate());
-  const month = addZero(date.getMonth() + 1);
-  const year = date.getFullYear();
+return date.toLocaleDateString('fr-FR') }
 
-  return `${day}/${month}/${year}`;
+const emit = defineEmits(["date-changed"]);
+
+const handleDate = (modelData) => {
+  date.value = modelData;
+  emit('date-changed', modelData);
+
 }
 
 </script>
 
-<style scoped>
 
+<style scoped>
 </style>
