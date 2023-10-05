@@ -14,7 +14,7 @@ import LocationCard from '../components/LocationCard.vue'
 
 <template>  
 <div class="container fixed mt-[264px] px-5 h-[400px]" >
-<div class="w-1/2 flex justify-center">
+<div class="w-8/12">
 <div id="geocoder" class="geocoder"></div>
 </div>
 <LocationCard />
