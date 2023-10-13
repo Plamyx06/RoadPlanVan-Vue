@@ -2,9 +2,14 @@
 import { ref, defineProps } from 'vue';
 
 const props = defineProps({
-  placeName: String,
+city: String,
   placeLocation: String,
+  lon: Number,
+  lat: Number,
+  
 });
+
+
 </script>
 
 
@@ -15,8 +20,8 @@ const props = defineProps({
     <div class="absolute top-0 left-0 w-10 h-10 m-1 bg-black opacity-10 rounded-full"></div> 
   </div>
   <div class="w-3/4">
-    <p class="text-[#F8EDE0] text-sm mx-3 truncate capitalize">{{placeName}}</p>
-    <p class="text-[#F8EDE0] font-semibold text-sm mx-3 truncate">{{placeLocation}}</p>
+    <p v-if="city" class="text-[#F8EDE0] text-sm mx-3 truncate capitalize">{{city}}</p>
+<p v-if="placeLocation" class="text-[#F8EDE0] font-semibold text-sm mx-3 truncate">{{placeLocation}}</p>
   </div>
 </div>
 </template>

@@ -123,13 +123,13 @@ const hideMe = () => {
       <transition name="slide-fade">
     <div :class="{ 'show': confirmed }" class="slide-fade">
         <h2 class="flex-grow underline my-3">Créer ton itinéraire </h2>
-        <div class="">
-            <div id="direction" class="direction mt-3"></div>
+        <div class="w-7/12">
+            <div id="geocoder-origin-container" class=""></div>
         </div>
-    
         <div class="text-center mb-20 mt-6">
             <MainButton text="Commencer"  @click="hideMe"/>
         </div>
+        <div class="mb-96 h-full"></div>
     </div>
   </transition>
 
