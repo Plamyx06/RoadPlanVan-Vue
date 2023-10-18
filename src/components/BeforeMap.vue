@@ -72,7 +72,7 @@ const hideMe = () => {
 
 
 <template>
-  <div class="container fixed mt-[264px] px-2 overflow-y-auto min-h-screen h-auto"  >
+  <div class="container fixed mt-[40vh] px-2  min-h-screen h-auto w-max-screen "  >
       <h1 class="text-2xl underline flex justify-center my-2">Avant de commencer</h1>
      
       <div v-if="showContent">

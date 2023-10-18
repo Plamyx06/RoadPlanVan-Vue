@@ -1,5 +1,5 @@
 <template>
-<div class="nav_container fixed bottom-0 w-full h-18">
+<div class="nav_container fixed bottom-0 w-full h-[9vh]">
     <div class="flex justify-between w-full h-full">
       <button class="flex-1 h-18 w-1/4 flex items-center justify-center" type="button">
         <img class="w-14 h-14" src="../assets/logo.svg" alt="Logo"/>
