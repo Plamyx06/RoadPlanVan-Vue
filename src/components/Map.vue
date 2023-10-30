@@ -1,46 +1,42 @@
 <template>
   <div id="map-container" class=""></div>
 </template>
-  
+
 <script setup>
-import { ref, onMounted, defineEmits } from 'vue';
-import mapboxgl from 'mapbox-gl';
-import MapboxLanguage from '@mapbox/mapbox-gl-language';
-import '/home/plamyx/Code/RoadPlanVan/node_modules/mapbox-gl/dist/mapbox-gl.css';
+import { ref, onMounted, defineEmits } from 'vue'
+import mapboxgl from 'mapbox-gl'
+import MapboxLanguage from '@mapbox/mapbox-gl-language'
+import '/home/plamyx/Code/RoadPlanVan/node_modules/mapbox-gl/dist/mapbox-gl.css'
 import '/home/plamyx/Code/RoadPlanVan/node_modules/@mapbox/mapbox-gl-geocoder/dist/mapbox-gl-geocoder.min.js'
-import '/home/plamyx/Code/RoadPlanVan/node_modules/@mapbox/mapbox-gl-geocoder/dist/mapbox-gl-geocoder.css';
-import '/home/plamyx/Code/RoadPlanVan/src/assets/style/mapbox-gl-geocoder-custom.css';
+import '/home/plamyx/Code/RoadPlanVan/node_modules/@mapbox/mapbox-gl-geocoder/dist/mapbox-gl-geocoder.css'
+import '/home/plamyx/Code/RoadPlanVan/src/assets/style/mapbox-gl-geocoder-custom.css'
 import '/home/plamyx/Code/RoadPlanVan/src/mapbox-gl-direction/mapbox-gl-directions.css'
-import MapboxGeocoder from "@mapbox/mapbox-gl-geocoder";
-import * as turf from '@turf/turf';
-import emitter from '/home/plamyx/Code/RoadPlanVan/src/components/utility/eventBus.js';
-import { v4 as uuidv4 } from 'uuid';
+import MapboxGeocoder from '@mapbox/mapbox-gl-geocoder'
+import * as turf from '@turf/turf'
+import emitter from '/home/plamyx/Code/RoadPlanVan/src/components/utility/eventBus.js'
+import { v4 as uuidv4 } from 'uuid'
 
-
-
-const emit = defineEmits(["update-waypoints"]);
+const emit = defineEmits(['update-waypoints'])
 
 const lastSearchedCoords = ref(null)
-const waypoints = ref([]);
-
-
-
-
+const waypoints = ref([])
 
 
 
 onMounted(() => {
-  mapboxgl.accessToken = import.meta.env.VITE_APP_API_KEY;
+  mapboxgl.accessToken = import.meta.env.VITE_APP_API_KEY
   const map = new mapboxgl.Map({
     container: 'map-container',
     style: 'mapbox://styles/mapbox/streets-v12',
     center: [2.3522, 48.8566],
     zoom: 3
-  });
+  })
 
-  map.addControl(new MapboxLanguage({
-    defaultLanguage: 'fr'
-  }));
+  map.addControl(
+    new MapboxLanguage({
+      defaultLanguage: 'fr'
+    })
+  )
 
   // GEOCODER ORIGN
   const geojsonMarkerOrigin = {
@@ -57,7 +53,7 @@ onMounted(() => {
         }
       }
     ]
-  };
+  }
 
   const markerCircleStyleOrigin = {
     id: 'point-start',
@@ -70,7 +66,7 @@ onMounted(() => {
       'circle-radius': 12,
       'circle-color': '#8A4852'
     }
-  };
+  }
 
   const markerTextStyleOrigin = {
     id: 'point-label-start',
@@ -87,33 +83,32 @@ onMounted(() => {
     paint: {
       'text-color': '#ffffff'
     }
-  };
+  }
 
   const geocoderOrigin = new MapboxGeocoder({
     accessToken: mapboxgl.accessToken,
     mapboxgl: mapboxgl,
-    placeholder: "Choisis un point de départ",
+    placeholder: 'Choisis un point de départ',
     language: 'fr-FR',
     types: 'place',
     bbox: [-31.266001, 27.636311, 69.033946, 81.008797],
-    marker: false,
-  });
-  document.getElementById('geocoder-origin-container').appendChild(geocoderOrigin.onAdd(map));
+    marker: false
+  })
+  document.getElementById('geocoder-origin-container').appendChild(geocoderOrigin.onAdd(map))
 
   geocoderOrigin.on('result', (event) => {
-    const { center } = event.result;
-    const city = event.result.text;
+    const { center } = event.result
+    const city = event.result.text
 
-    const regionObj = event.result.context.find(item => item.id.startsWith('region'));
-    const countryObj = event.result.context.find(item => item.id.startsWith('country'));
+    const regionObj = event.result.context.find((item) => item.id.startsWith('region'))
+    const countryObj = event.result.context.find((item) => item.id.startsWith('country'))
 
-    const region = regionObj ? regionObj.text : null;
-    const country = countryObj ? countryObj.text : null;
+    const region = regionObj ? regionObj.text : null
+    const country = countryObj ? countryObj.text : null
 
-    // Si la région n'est pas définie, affichez seulement le pays. Sinon, affichez région et pays.
-    const placeLocation = region ? `${region}, ${country}` : country;
+    const placeLocation = region ? `${region}, ${country}` : country
 
-    console.log(`ville : ${city} placeLocation :${placeLocation}`);
+    console.log(`ville : ${city} placeLocation :${placeLocation}`)
 
     const startPoint = {
       id: uuidv4(),
@@ -121,48 +116,91 @@ onMounted(() => {
       lat: center[1],
       city: city,
       placeLocation: placeLocation
-    };
-    waypoints.value.push(startPoint);
-    emit('update-waypoints', waypoints.value);
+    }
+    waypoints.value.push(startPoint)
+    emit('update-waypoints', waypoints.value)
 
-    geojsonMarkerOrigin.features[0].geometry.coordinates = center;
+    geojsonMarkerOrigin.features[0].geometry.coordinates = center
 
     if (map.getSource('point-start')) {
-      map.getSource('point-start').setData(geojsonMarkerOrigin);
-      map.getSource('point-label-start').setData(geojsonMarkerOrigin);
+      map.getSource('point-start').setData(geojsonMarkerOrigin)
+      map.getSource('point-label-start').setData(geojsonMarkerOrigin)
     } else {
-      map.addLayer(markerCircleStyleOrigin);
-      map.addLayer(markerTextStyleOrigin);
+      map.addLayer(markerCircleStyleOrigin)
+      map.addLayer(markerTextStyleOrigin)
     }
-  });
+  })
 
-
-  emitter.on('get-road-draggable', handleGetRoadDraggable);
+  emitter.on('get-road-draggable', handleGetRoadDraggable)
   function handleGetRoadDraggable(newWaypoints) {
-    getRoadNoOrder(newWaypoints);
+    getRoadNoOrder(newWaypoints)
   }
 
-  emitter.on('get-road-delete', handleGetRoadDelete);
+  emitter.on('get-road-delete', handleGetRoadDelete)
   function handleGetRoadDelete(newWaypoints) {
     waypoints.value = newWaypoints
-    getRoadNoOrder(newWaypoints)
+    const ArrPointId = getPointsIdsFromMap(map)
+    map.removeLayer('route')
+    map.removeSource('route')
+    if (waypoints.value.length > 1) {
+      for (let index = 1; index < ArrPointId.length; index++) {
+        const pointEndId = `point-${index}`;
+        const pointLabelEndId = `point-label-${index}`;
+        if (map.getLayer(pointEndId)) {
+          map.removeLayer(pointEndId);
+          map.removeSource(pointEndId);
+          map.removeLayer(pointLabelEndId);
+          map.removeSource(pointLabelEndId);
+        }
+      }
+      getRoadNoOrder(waypoints.value);
+    }
 
+    else {
+      map.removeLayer("point-1")
+      map.removeSource("point-1")
+      map.removeLayer(`point-label-1`)
+      map.removeSource(`point-label-1`)
+
+      console.log(getPointsIdsFromMap(map))
+    }
   }
+  function getPointsIdsFromMap(map) {
+    const layers = map.getStyle().layers;
+    const pointDetails = [];
 
+    for (let i = 0; i < layers.length; i++) {
+      const layer = layers[i];
+      // Vérifiez si la couche est liée à un point
+      if (layer.id.startsWith('point-label')) {
+        // Récupérez les informations nécessaires ici
+        const layerDetails = {
+          id: layer,
+          type: layer.type,
+          source: layer.source,
+          layout: layer.layout,
+          paint: layer.paint,
 
+        };
+        pointDetails.push(layerDetails);
+      }
+    }
+
+    return pointDetails;
+  }
 
 
   async function getRoadNoOrder(waypoints) {
-    const coordinates = waypoints.map(point => `${point.lon},${point.lat}`).join(";");
+    const coordinates = waypoints.map((point) => `${point.lon},${point.lat}`).join(';')
 
     const query = await fetch(
       `https://api.mapbox.com/directions/v5/mapbox/driving/${coordinates}?steps=true&geometries=geojson&access_token=${mapboxgl.accessToken}`,
       { method: 'GET' }
-    );
+    )
 
-    const json = await query.json();
-    const data = json.routes[0];
-    const route = data.geometry.coordinates;
+    const json = await query.json()
+    const data = json.routes[0]
+    const route = data.geometry.coordinates
     const geojson = {
       type: 'Feature',
       properties: {},
@@ -170,10 +208,10 @@ onMounted(() => {
         type: 'LineString',
         coordinates: route
       }
-    };
+    }
 
     if (map.getSource('route')) {
-      map.getSource('route').setData(geojson);
+      map.getSource('route').setData(geojson)
     } else {
       map.addLayer({
         id: 'route',
@@ -191,16 +229,14 @@ onMounted(() => {
           'line-width': 5,
           'line-opacity': 0.75
         }
-      });
+      })
     }
 
     for (let index = 0; index < waypoints.length; index++) {
-      const point = waypoints[index];
-      console.log("je suis poin", point);
-
+      const point = waypoints[index]
       if (map.getLayer(`point-${index}`)) {
-        map.removeLayer(`point-${index}`);
-        map.removeSource(`point-${index}`);
+        map.removeLayer(`point-${index}`)
+        map.removeSource(`point-${index}`)
       }
 
       map.addLayer({
@@ -226,20 +262,20 @@ onMounted(() => {
           'circle-radius': index === 0 || index === waypoints.length - 1 ? 12 : 8,
           'circle-color': index === 0 || index === waypoints.length - 1 ? '#8A4852' : '#A86C7A'
         }
-      });
+      })
 
-      let labelText;
+      let labelText
       if (index === 0) {
-        labelText = "Start";
+        labelText = 'Start'
       } else if (index === waypoints.length - 1) {
-        labelText = "End";
+        labelText = 'End'
       } else {
-        labelText = (index + 1).toString();
+        labelText = (index + 1).toString()
       }
 
       if (map.getLayer(`point-label-${index}`)) {
-        map.removeLayer(`point-label-${index}`);
-        map.removeSource(`point-label-${index}`);
+        map.removeLayer(`point-label-${index}`)
+        map.removeSource(`point-label-${index}`)
       }
 
       map.addLayer({
@@ -271,13 +307,37 @@ onMounted(() => {
         paint: {
           'text-color': '#ffffff'
         }
-      });
+      })
     }
+
+    const legDataArray = [];
+
+    for (const leg of data.legs) {
+      const duration = leg.duration;
+      const distance = (leg.distance / 1000).toFixed(0);
+
+      const legObj = {
+        duration: duration,
+        distance: distance
+      };
+
+      legDataArray.push(legObj);
+    }
+    for (let i = 0; i < waypoints.length; i++) {
+      if (i < legDataArray.length) {
+
+        waypoints[i].duration = legDataArray[i].duration;
+        waypoints[i].distance = legDataArray[i].distance;
+      } else {
+        waypoints[i].duration = '';
+        waypoints[i].distance = '';
+      }
+    }
+
   }
 
-
-
   // GEOCODER CLASSIC
+
   const geocoder = new MapboxGeocoder({
     accessToken: mapboxgl.accessToken,
 
@@ -285,45 +345,46 @@ onMounted(() => {
     language: 'fr-FR',
     types: 'place',
     bbox: [-31.266001, 27.636311, 69.033946, 81.008797],
-    placeholder: "Ajoute une destination",
+    placeholder: 'Ajoute une destination',
     flyTo: {
       speed: 1,
       curve: 1,
       zoom: 3,
-      essential: true,
+      essential: true
     },
     marker: {
-      color: '#8A4852',
+      color: '#8A4852'
     }
-
-  });
-  emitter.on('add-point', addWaypointFromSearch);
+  })
+  emitter.on('add-point', addWaypointFromSearch)
   function addWaypointFromSearch() {
-    geocoder.clear();
+    geocoder.clear()
     if (waypoints.value.length === 1 && lastSearchedCoords.value) {
-      waypoints.value.push(lastSearchedCoords.value);
-      getRoute();
-
-    } else {
+      waypoints.value.push(lastSearchedCoords.value)
+      getRoadNoOrder(waypoints.value)
+      lastSearchedCoords.value = null
+    } else if (lastSearchedCoords.value === null) {
+      emitter.emit('noWaypoint')
+    }
+    else {
       addWaypoint(lastSearchedCoords.value)
-      getRoute()
-
+      getRoadNoOrder(waypoints.value)
+      lastSearchedCoords.value = null
     }
   }
 
-
   geocoder.on('result', (event) => {
-    const { center } = event.result;
-    const city = event.result.text;
+    const { center } = event.result
+    const city = event.result.text
 
-    const regionObj = event.result.context.find(item => item.id.startsWith('region'));
-    const countryObj = event.result.context.find(item => item.id.startsWith('country'));
+    const regionObj = event.result.context.find((item) => item.id.startsWith('region'))
+    const countryObj = event.result.context.find((item) => item.id.startsWith('country'))
 
-    const region = regionObj ? regionObj.text : null;
-    const country = countryObj ? countryObj.text : null;
-    const placeLocation = region ? `${region}, ${country}` : country;
+    const region = regionObj ? regionObj.text : null
+    const country = countryObj ? countryObj.text : null
+    const placeLocation = region ? `${region}, ${country}` : country
 
-    console.log(`ville : ${city} placeLocation :${placeLocation}`);
+    console.log(`ville : ${city} placeLocation :${placeLocation}`)
 
     const newPoint = {
       id: uuidv4(),
@@ -331,211 +392,91 @@ onMounted(() => {
       lat: center[1],
       city: city,
       placeLocation: placeLocation
-    };
+    }
     lastSearchedCoords.value = newPoint
-  });
+  })
 
-  document.getElementById('geocoder').appendChild(geocoder.onAdd(map));
+  document.getElementById('geocoder').appendChild(geocoder.onAdd(map))
 
-
-  // API DIRECTION 
+  // API DIRECTION
 
   function getCoordinates(point) {
-    return [point.lon, point.lat];
+    return [point.lon, point.lat]
   }
-
-  async function getRoute() {
-    const coordinates = waypoints.value.map(point => `${point.lon},${point.lat}`).join(";");
-
-    const query = await fetch(
-      `https://api.mapbox.com/directions/v5/mapbox/driving/${coordinates}?steps=true&geometries=geojson&access_token=${mapboxgl.accessToken}`,
-      { method: 'GET' }
-    );
-    const json = await query.json();
-    const data = json.routes[0];
-    const route = data.geometry.coordinates;
-    const geojson = {
-      type: 'Feature',
-      properties: {},
-      geometry: {
-        type: 'LineString',
-        coordinates: route
-      }
-    };
-
-    if (map.getSource('route')) {
-      map.getSource('route').setData(geojson);
-    } else {
-      map.addLayer({
-        id: 'route',
-        type: 'line',
-        source: {
-          type: 'geojson',
-          data: geojson
-        },
-        layout: {
-          'line-join': 'round',
-          'line-cap': 'round'
-        },
-        paint: {
-          'line-color': '#3887be',
-          'line-width': 5,
-          'line-opacity': 0.75
-        }
-      });
-    }
-
-    for (let index = 0; index < waypoints.value.length; index++) {
-      const point = waypoints.value[index];
-      console.log("je suis poin", point)
-      // Remove the old waypoints layer if it exists
-      if (map.getLayer(`point-${index}`)) {
-        map.removeLayer(`point-${index}`);
-        map.removeSource(`point-${index}`);
-      }
-
-      map.addLayer({
-        id: `point-${index}`,
-        type: 'circle',
-        source: {
-          type: 'geojson',
-          data: {
-            type: 'FeatureCollection',
-            features: [
-              {
-                type: 'Feature',
-                properties: {},
-                geometry: {
-                  type: 'Point',
-                  coordinates: getCoordinates(point)
-                }
-              }
-            ]
-          }
-        },
-        paint: {
-          'circle-radius': index === 0 || index === waypoints.value.length - 1 ? 12 : 8,
-          'circle-color': index === 0 || index === waypoints.value.length - 1 ? '#8A4852' : '#A86C7A'
-        }
-      });
-
-      let labelText;
-      if (index === 0) {
-        labelText = "Start";
-      } else if (index === waypoints.value.length - 1) {
-        labelText = "End";
-      } else {
-        labelText = (index + 1).toString();
-      }
-
-      // Check if layer with text exists and remove it if it does
-      if (map.getLayer(`point-label-${index}`)) {
-        map.removeLayer(`point-label-${index}`);
-        map.removeSource(`point-label-${index}`);
-      }
-
-      // Add layer for the text label
-      map.addLayer({
-        id: `point-label-${index}`,
-        type: 'symbol',
-        source: {
-          type: 'geojson',
-          data: {
-            type: 'FeatureCollection',
-            features: [{
-              type: 'Feature',
-              properties: {
-                number: labelText  // Using the computed labelText
-              },
-              geometry: {
-                type: 'Point',
-                coordinates: getCoordinates(point)
-              }
-
-            }]
-          }
-        },
-        layout: {
-          'text-field': '{number}',  // Referencing the number property
-          'text-size': 8,
-          'text-font': ['Open Sans Bold']
-        },
-        paint: {
-          'text-color': '#ffffff'  // Text color as white
-        }
-      });
-    }
-  }
-
   async function addWaypoint(arrLngLat) {
     if (!arrLngLat || typeof arrLngLat !== 'object' || !arrLngLat.lon || !arrLngLat.lat) {
-      console.error('arrLngLat is invalid:', arrLngLat);
-      return;
+      console.error('arrLngLat is invalid:', arrLngLat)
+      return
     }
 
-    console.log("arrLngLat:", arrLngLat);
+    console.log('arrLngLat:', arrLngLat)
 
-
-    insertToMinimizeDistance(arrLngLat);
-    sortWaypointsByNearestNeighbor();
+    insertToMinimizeDistance(arrLngLat)
+    sortWaypointsByNearestNeighbor()
   }
-
-
   function insertToMinimizeDistance(newWaypoint) {
-    let minimalAddedDistance = Infinity;
-    let optimalInsertPosition = 1;
+    let minimalAddedDistance = Infinity
+    let optimalInsertPosition = 1
 
     for (let i = 0; i < waypoints.value.length - 1; i++) {
-      const distanceBeforeInsert = turf.distance(turf.point([waypoints.value[i].lon, waypoints.value[i].lat]), turf.point([waypoints.value[i + 1].lon, waypoints.value[i + 1].lat]));
-      const distanceAfterInsert = turf.distance(turf.point([waypoints.value[i].lon, waypoints.value[i].lat]), turf.point([newWaypoint.lon, newWaypoint.lat])) +
-        turf.distance(turf.point([newWaypoint.lon, newWaypoint.lat]), turf.point([waypoints.value[i + 1].lon, waypoints.value[i + 1].lat]));
+      const distanceBeforeInsert = turf.distance(
+        turf.point([waypoints.value[i].lon, waypoints.value[i].lat]),
+        turf.point([waypoints.value[i + 1].lon, waypoints.value[i + 1].lat])
+      )
+      const distanceAfterInsert =
+        turf.distance(
+          turf.point([waypoints.value[i].lon, waypoints.value[i].lat]),
+          turf.point([newWaypoint.lon, newWaypoint.lat])
+        ) +
+        turf.distance(
+          turf.point([newWaypoint.lon, newWaypoint.lat]),
+          turf.point([waypoints.value[i + 1].lon, waypoints.value[i + 1].lat])
+        )
 
-      const addedDistance = distanceAfterInsert - distanceBeforeInsert;
+      const addedDistance = distanceAfterInsert - distanceBeforeInsert
 
       if (addedDistance < minimalAddedDistance) {
-        minimalAddedDistance = addedDistance;
-        optimalInsertPosition = i + 1;
+        minimalAddedDistance = addedDistance
+        optimalInsertPosition = i + 1
       }
     }
 
-    waypoints.value.splice(optimalInsertPosition, 0, newWaypoint);
+    waypoints.value.splice(optimalInsertPosition, 0, newWaypoint)
   }
-
-
   function sortWaypointsByNearestNeighbor() {
-    const orderedWaypoints = [waypoints.value[0]];
-    const remainingWaypoints = waypoints.value.slice(1);
+    const orderedWaypoints = [waypoints.value[0]]
+    const remainingWaypoints = waypoints.value.slice(1)
 
     while (remainingWaypoints.length > 0) {
-      const lastPoint = orderedWaypoints[orderedWaypoints.length - 1];
-      let nearestPointIndex = 0;
-      let shortestDistance = turf.distance(turf.point([lastPoint.lon, lastPoint.lat]), turf.point([remainingWaypoints[0].lon, remainingWaypoints[0].lat]));
+      const lastPoint = orderedWaypoints[orderedWaypoints.length - 1]
+      let nearestPointIndex = 0
+      let shortestDistance = turf.distance(
+        turf.point([lastPoint.lon, lastPoint.lat]),
+        turf.point([remainingWaypoints[0].lon, remainingWaypoints[0].lat])
+      )
 
       for (let i = 1; i < remainingWaypoints.length; i++) {
-        const currentDistance = turf.distance(turf.point([lastPoint.lon, lastPoint.lat]), turf.point([remainingWaypoints[i].lon, remainingWaypoints[i].lat]));
+        const currentDistance = turf.distance(
+          turf.point([lastPoint.lon, lastPoint.lat]),
+          turf.point([remainingWaypoints[i].lon, remainingWaypoints[i].lat])
+        )
         if (currentDistance < shortestDistance) {
-          nearestPointIndex = i;
-          shortestDistance = currentDistance;
+          nearestPointIndex = i
+          shortestDistance = currentDistance
         }
       }
 
-      orderedWaypoints.push(remainingWaypoints.splice(nearestPointIndex, 1)[0]);
+      orderedWaypoints.push(remainingWaypoints.splice(nearestPointIndex, 1)[0])
     }
 
-    waypoints.value.length = 0;
-    waypoints.value.push(...orderedWaypoints);
+    waypoints.value.length = 0
+    waypoints.value.push(...orderedWaypoints)
     console.log('waypoint : ', waypoints.value)
   }
 
-
-
-
-
-
-
 })
 </script>
-  
+
 <style scoped>
 #map-container {
   width: 100%;

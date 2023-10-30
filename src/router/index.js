@@ -9,11 +9,6 @@ const router = createRouter({
       component: () => import('../views/HomeView.vue')
     },
     {
-      path: '/beforeMap',
-      name: 'beforeMap',
-      component: () => import('../views/BeforeMapView.vue')
-    },
-    {
       path: '/map',
       name: 'map',
       component: () => import('../views/MapView.vue')

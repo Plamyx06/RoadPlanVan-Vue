@@ -3,18 +3,18 @@ import { ref } from 'vue';
 import BeforeMap from '../components/BeforeMap.vue';
 import Map from '../components/Map.vue';
 import LayoutApp from '../components/LayoutApp.vue';
-import ItineraryMap from '../components/ItinaryMap.vue'; 
+import ItineraryMap from '../components/ItinaryMap.vue';
 import { defineEmits } from 'vue';
 
 const showBeforeMap = ref(true);
-const showItineraryMap = ref(false); 
+const showItineraryMap = ref(false);
 
 
 const waypoints = ref([]);
 
 const transitionToItinerary = () => {
   showBeforeMap.value = false;
-  showItineraryMap.value = true;  
+  showItineraryMap.value = true;
 };
 
 
@@ -27,15 +27,11 @@ const updateWaypoints = (updatedWaypoints) => {
 
 <template>
   <main>
-
-    <Map class="map-container"  @update-waypoints="updateWaypoints"/>
-    <BeforeMap v-show="showBeforeMap" @hide="transitionToItinerary" /> 
-    
-
-    <ItineraryMap v-show="showItineraryMap" :waypoints="waypoints"/>
-      
-    <LayoutApp/>
-  </main> 
+    <Map class="map-container" @update-waypoints="updateWaypoints" />
+    <BeforeMap v-show="showBeforeMap" @hide="transitionToItinerary" />
+    <ItineraryMap v-show="showItineraryMap" :waypoints="waypoints" />
+    <LayoutApp />
+  </main>
 </template>
 
 <style scoped>
@@ -44,6 +40,7 @@ const updateWaypoints = (updatedWaypoints) => {
   height: 40vh;
   position: absolute;
 }
+
 .container {
   font-family: 'Nunito Sans', sans-serif;
   background-color: #F8EDE0;
