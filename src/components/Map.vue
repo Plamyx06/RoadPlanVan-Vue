@@ -20,6 +20,8 @@ const emit = defineEmits(['update-waypoints'])
 
 const lastSearchedCoords = ref(null)
 const waypoints = ref([])
+const createLoop = ref(false);
+
 
 
 
@@ -133,7 +135,8 @@ onMounted(() => {
 
   emitter.on('get-road-draggable', handleGetRoadDraggable)
   function handleGetRoadDraggable(newWaypoints) {
-    getRoadNoOrder(newWaypoints)
+    waypoints.value = newWaypoints
+    getRoad(newWaypoints)
   }
 
   emitter.on('get-road-delete', handleGetRoadDelete)
@@ -143,9 +146,9 @@ onMounted(() => {
     map.removeLayer('route')
     map.removeSource('route')
     if (waypoints.value.length > 1) {
-      for (let index = 1; index < ArrPointId.length; index++) {
-        const pointEndId = `point-${index}`;
-        const pointLabelEndId = `point-label-${index}`;
+      for (let i = 1; i < ArrPointId.length; i++) {
+        const pointEndId = `point-${i}`;
+        const pointLabelEndId = `point-label-${i}`;
         if (map.getLayer(pointEndId)) {
           map.removeLayer(pointEndId);
           map.removeSource(pointEndId);
@@ -153,9 +156,8 @@ onMounted(() => {
           map.removeSource(pointLabelEndId);
         }
       }
-      getRoadNoOrder(waypoints.value);
+      getRoad(waypoints.value);
     }
-
     else {
       map.removeLayer("point-1")
       map.removeSource("point-1")
@@ -171,16 +173,9 @@ onMounted(() => {
 
     for (let i = 0; i < layers.length; i++) {
       const layer = layers[i];
-      // Vérifiez si la couche est liée à un point
       if (layer.id.startsWith('point-label')) {
-        // Récupérez les informations nécessaires ici
         const layerDetails = {
           id: layer,
-          type: layer.type,
-          source: layer.source,
-          layout: layer.layout,
-          paint: layer.paint,
-
         };
         pointDetails.push(layerDetails);
       }
@@ -190,7 +185,81 @@ onMounted(() => {
   }
 
 
-  async function getRoadNoOrder(waypoints) {
+
+
+  // GEOCODER CLASSIC
+  const geocoder = new MapboxGeocoder({
+    accessToken: mapboxgl.accessToken,
+
+    mapboxgl: mapboxgl,
+    language: 'fr-FR',
+    types: 'place',
+    bbox: [-31.266001, 27.636311, 69.033946, 81.008797],
+    placeholder: 'Ajoute une destination',
+    flyTo: {
+      speed: 1,
+      curve: 1,
+      zoom: 3,
+      essential: true
+    },
+    marker: {
+      color: '#8A4852'
+    }
+  })
+
+  emitter.on('add-point', addWaypointFromSearch)
+  function addWaypointFromSearch() {
+    geocoder.clear();
+    if (lastSearchedCoords.value) {
+      const waypointExists = waypoints.value.some(waypoint =>
+        waypoint.lat === lastSearchedCoords.value.lat &&
+        waypoint.lng === lastSearchedCoords.value.lng
+      );
+
+      if (!waypointExists) {
+        if (waypoints.value.length === 1) {
+          waypoints.value.push(lastSearchedCoords.value);
+          getRoad(waypoints.value);
+        } else {
+          addWaypoint(lastSearchedCoords.value);
+          getRoad(waypoints.value);
+        }
+        lastSearchedCoords.value = null;
+      } else {
+        emitter.emit('waypointExist');
+        lastSearchedCoords.value = null;
+      }
+    } else {
+      emitter.emit('noWaypoint');
+    }
+  }
+
+  geocoder.on('result', (event) => {
+    const { center } = event.result
+    const city = event.result.text
+
+    const regionObj = event.result.context.find((item) => item.id.startsWith('region'))
+    const countryObj = event.result.context.find((item) => item.id.startsWith('country'))
+
+    const region = regionObj ? regionObj.text : null
+    const country = countryObj ? countryObj.text : null
+    const placeLocation = region ? `${region}, ${country}` : country
+
+    console.log(`ville : ${city} placeLocation :${placeLocation}`)
+
+    const newPoint = {
+      id: uuidv4(),
+      lon: center[0],
+      lat: center[1],
+      city: city,
+      placeLocation: placeLocation
+    }
+    lastSearchedCoords.value = newPoint
+  })
+  document.getElementById('geocoder').appendChild(geocoder.onAdd(map))
+
+  // API DIRECTION  
+  async function getRoad(waypoints) {
     const coordinates = waypoints.map((point) => `${point.lon},${point.lat}`).join(';')
 
     const query = await fetch(
@@ -335,74 +404,6 @@ onMounted(() => {
     }
 
   }
-
-  // GEOCODER CLASSIC
-
-  const geocoder = new MapboxGeocoder({
-    accessToken: mapboxgl.accessToken,
-
-    mapboxgl: mapboxgl,
-    language: 'fr-FR',
-    types: 'place',
-    bbox: [-31.266001, 27.636311, 69.033946, 81.008797],
-    placeholder: 'Ajoute une destination',
-    flyTo: {
-      speed: 1,
-      curve: 1,
-      zoom: 3,
-      essential: true
-    },
-    marker: {
-      color: '#8A4852'
-    }
-  })
-  emitter.on('add-point', addWaypointFromSearch)
-  function addWaypointFromSearch() {
-    geocoder.clear()
-    if (waypoints.value.length === 1 && lastSearchedCoords.value) {
-      waypoints.value.push(lastSearchedCoords.value)
-      getRoadNoOrder(waypoints.value)
-      lastSearchedCoords.value = null
-    } else if (lastSearchedCoords.value === null) {
-      emitter.emit('noWaypoint')
-    }
-    else {
-      addWaypoint(lastSearchedCoords.value)
-      getRoadNoOrder(waypoints.value)
-      lastSearchedCoords.value = null
-    }
-  }
-
-  geocoder.on('result', (event) => {
-    const { center } = event.result
-    const city = event.result.text
-
-    const regionObj = event.result.context.find((item) => item.id.startsWith('region'))
-    const countryObj = event.result.context.find((item) => item.id.startsWith('country'))
-
-    const region = regionObj ? regionObj.text : null
-    const country = countryObj ? countryObj.text : null
-    const placeLocation = region ? `${region}, ${country}` : country
-
-    console.log(`ville : ${city} placeLocation :${placeLocation}`)
-
-    const newPoint = {
-      id: uuidv4(),
-      lon: center[0],
-      lat: center[1],
-      city: city,
-      placeLocation: placeLocation
-    }
-    lastSearchedCoords.value = newPoint
-  })
-
-  document.getElementById('geocoder').appendChild(geocoder.onAdd(map))
-
-  // API DIRECTION
-
-  function getCoordinates(point) {
-    return [point.lon, point.lat]
-  }
   async function addWaypoint(arrLngLat) {
     if (!arrLngLat || typeof arrLngLat !== 'object' || !arrLngLat.lon || !arrLngLat.lat) {
       console.error('arrLngLat is invalid:', arrLngLat)
@@ -444,34 +445,40 @@ onMounted(() => {
     waypoints.value.splice(optimalInsertPosition, 0, newWaypoint)
   }
   function sortWaypointsByNearestNeighbor() {
-    const orderedWaypoints = [waypoints.value[0]]
-    const remainingWaypoints = waypoints.value.slice(1)
+    const orderedWaypoints = [waypoints.value[0]];
+    const remainingWaypoints = waypoints.value.slice(1);
 
-    while (remainingWaypoints.length > 0) {
-      const lastPoint = orderedWaypoints[orderedWaypoints.length - 1]
-      let nearestPointIndex = 0
+    const sortRecursively = (lastPoint, remaining) => {
+      if (remaining.length === 0) {
+        return;
+      }
+
+      let nearestPointIndex = 0;
       let shortestDistance = turf.distance(
         turf.point([lastPoint.lon, lastPoint.lat]),
-        turf.point([remainingWaypoints[0].lon, remainingWaypoints[0].lat])
-      )
+        turf.point([remaining[0].lon, remaining[0].lat])
+      );
 
-      for (let i = 1; i < remainingWaypoints.length; i++) {
+      for (let i = 1; i < remaining.length; i++) {
         const currentDistance = turf.distance(
           turf.point([lastPoint.lon, lastPoint.lat]),
-          turf.point([remainingWaypoints[i].lon, remainingWaypoints[i].lat])
-        )
+          turf.point([remaining[i].lon, remaining[i].lat])
+        );
         if (currentDistance < shortestDistance) {
-          nearestPointIndex = i
-          shortestDistance = currentDistance
+          nearestPointIndex = i;
+          shortestDistance = currentDistance;
         }
       }
 
-      orderedWaypoints.push(remainingWaypoints.splice(nearestPointIndex, 1)[0])
-    }
+      orderedWaypoints.push(remaining.splice(nearestPointIndex, 1)[0]);
+      sortRecursively(orderedWaypoints[orderedWaypoints.length - 1], remaining);
+    };
 
-    waypoints.value.length = 0
-    waypoints.value.push(...orderedWaypoints)
-    console.log('waypoint : ', waypoints.value)
+    sortRecursively(orderedWaypoints[0], remainingWaypoints);
+
+    waypoints.value.length = 0;
+    waypoints.value.push(...orderedWaypoints);
+    console.log('waypoint : ', waypoints.value);
   }
 
 })

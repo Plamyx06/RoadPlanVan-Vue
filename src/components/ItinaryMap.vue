@@ -24,6 +24,13 @@ emitter.on('noWaypoint', () => {
     noWaypoint.value = false;
   }, 3000);
 });
+const waypointExist = ref(false)
+emitter.on('waypointExist', () => {
+  waypointExist.value = true;
+  setTimeout(() => {
+    waypointExist.value = false;
+  }, 3000);
+});
 
 
 
@@ -98,6 +105,15 @@ watchEffect(() => {
           <p class="text-red-500 text-sm">
             Aucune destination</p>
         </div>
+        <div v-if="waypointExist" class="flex items-center">
+          <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor"
+            class="w-4 h-4 text-red-500">
+            <path stroke-linecap="round" stroke-linejoin="round"
+              d="M9.75 9.75l4.5 4.5m0-4.5l-4.5 4.5M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
+          </svg>
+          <p class="text-red-500 text-sm">
+            déjà ajouté</p>
+        </div>
       </div>
 
       <div>
@@ -128,7 +144,8 @@ watchEffect(() => {
                 <LocationCard :lon="element.lon" :lat="element.lat" :city="element.city"
                   :placeLocation="element.placeLocation" />
 
-                <button @click="openDeleteModal(element)" style="background-color: #8A4852; color: #F8F4E8;"
+                <button v-if="index > 0" @click="openDeleteModal(element)"
+                  style="background-color: #8A4852; color: #F8F4E8;"
                   class="rounded-full bg-indigo-600 p-1 text-white shadow-sm hover:bg-indigo-500 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-indigo-600 ml-3">
                   <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5"
                     stroke="currentColor" class="w-4 h-4">
