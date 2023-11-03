@@ -27,7 +27,7 @@ const updateWaypoints = (updatedWaypoints) => {
 
 <template>
   <main>
-    <Map class="map-container" @update-waypoints="updateWaypoints" />
+    <Map @update-waypoints="updateWaypoints" />
     <BeforeMap v-show="showBeforeMap" @hide="transitionToItinerary" />
     <ItineraryMap v-show="showItineraryMap" :waypoints="waypoints" />
     <LayoutApp />
@@ -35,12 +35,6 @@ const updateWaypoints = (updatedWaypoints) => {
 </template>
 
 <style scoped>
-#map-container {
-  width: 100%;
-  height: 40vh;
-  position: absolute;
-}
-
 .container {
   font-family: 'Nunito Sans', sans-serif;
   background-color: #F8EDE0;

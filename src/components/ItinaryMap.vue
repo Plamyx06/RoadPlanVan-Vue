@@ -6,7 +6,7 @@ import VueDraggable from 'vuedraggable';
 import emitter from '/home/plamyx/Code/RoadPlanVan/src/components/utility/eventBus.js';
 import DeleteModal from '/home/plamyx/Code/RoadPlanVan/src/components/DeleteModal.vue';
 import Road from '/home/plamyx/Code/RoadPlanVan/src/components/RoadInformation.vue';
-import Spinner from '/home/plamyx/Code/RoadPlanVan/src/components/Spinner.vue'
+import ErrorAlert from '/home/plamyx/Code/RoadPlanVan/src/components/ErrorAlert.vue'
 
 
 const props = defineProps(['waypoints']);
@@ -57,6 +57,15 @@ function handleDelete() {
   showDeleteModal.value = false
 }
 
+const PRICE_GASOLINE = 1.9
+const consumption = ref()
+
+
+emitter.on('consumption-value', handleConsumption)
+function handleConsumption(consumptionUser) {
+  consumption.value = consumptionUser
+
+}
 
 const totalDuration = computed(() => {
   return mutableWaypoints.value.reduce((total, waypoint) => {
@@ -69,9 +78,9 @@ const totalDistance = computed(() => {
     return total + parseInt(waypoint.distance || 0);
   }, 0);
 });
-
 const totalPrice = computed(() => {
-  return Math.ceil((totalDistance.value / 100) * 8 * 1.8);
+  console.log('calcul')
+  return Math.ceil((totalDistance.value / 100) * consumption.value * PRICE_GASOLINE);
 });
 
 function formatDuration(durationInSeconds) {
@@ -96,26 +105,7 @@ watchEffect(() => {
     <div class="flex justify-between mt-3 px-5">
       <div class="w-7/12 mb-3">
         <div id="geocoder" class="geocoder"></div>
-        <div v-if="noWaypoint" class="flex items-center">
-          <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor"
-            class="w-4 h-4 text-red-500">
-            <path stroke-linecap="round" stroke-linejoin="round"
-              d="M9.75 9.75l4.5 4.5m0-4.5l-4.5 4.5M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
-          </svg>
-          <p class="text-red-500 text-sm">
-            Aucune destination</p>
-        </div>
-        <div v-if="waypointExist" class="flex items-center">
-          <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor"
-            class="w-4 h-4 text-red-500">
-            <path stroke-linecap="round" stroke-linejoin="round"
-              d="M9.75 9.75l4.5 4.5m0-4.5l-4.5 4.5M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
-          </svg>
-          <p class="text-red-500 text-sm">
-            déjà ajouté</p>
-        </div>
       </div>
-
       <div>
         <button type="button" @click="addNewWaypoint" style="background-color: #8A4852; color: #F8F4E8;"
           class="rounded-full bg-indigo-600 p-1 text-white shadow-sm hover:bg-indigo-500 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-indigo-600">
@@ -124,11 +114,12 @@ watchEffect(() => {
       </div>
 
     </div>
-    <div class="mb-[-3px]">
-
+    <div class="px-5">
+      <ErrorAlert v-if="noWaypoint" text="selectionne un point" />
+      <ErrorAlert v-if="waypointExist" text="Cet destination a déjà été ajouté" />
     </div>
 
-    <div class="flex items-center">
+    <div class="flex items-center mt-3">
       <div class="w-5/6">
         <VueDraggable class="" v-model="mutableWaypoints" item-key="index" @change="handleDraggableChange">
 
@@ -141,10 +132,10 @@ watchEffect(() => {
                     d="M12 6.75a.75.75 0 110-1.5.75.75 0 0100 1.5zM12 12.75a.75.75 0 110-1.5.75.75 0 0100 1.5zM12 18.75a.75.75 0 110-1.5.75.75 0 0100 1.5z" />
                 </svg>
 
-                <LocationCard :lon="element.lon" :lat="element.lat" :city="element.city"
-                  :placeLocation="element.placeLocation" />
+                <LocationCard :lon="element.lon" :lat="element.lat" :city="element.city" :country="element.country"
+                  :countryCode="element.countryCode" />
 
-                <button v-if="index > 0" @click="openDeleteModal(element)"
+                <button v-if="index > 0 && index < mutableWaypoints.length - 1" @click="openDeleteModal(element)"
                   style="background-color: #8A4852; color: #F8F4E8;"
                   class="rounded-full bg-indigo-600 p-1 text-white shadow-sm hover:bg-indigo-500 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-indigo-600 ml-3">
                   <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5"
