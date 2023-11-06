@@ -104,7 +104,7 @@ function handleEnable(newValue) {
 
 
 <template>
-  <div class="container fixed mt-[40vh] px-2  min-h-screen h-auto w-max-screen ">
+  <div class="container fixed mt-[40vh] h-[53vh] overflow-y-auto ">
     <h1 class="text-2xl underline flex justify-center my-2">Avant de commencer</h1>
 
     <div v-if="showContent">
