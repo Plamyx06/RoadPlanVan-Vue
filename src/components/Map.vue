@@ -107,9 +107,16 @@ onMounted(() => {
     bbox: [-31.266001, 27.636311, 69.033946, 81.008797],
     marker: {
       color: '#8A4852'
-    }
+    },
+
   })
   document.getElementById('geocoder-origin-container').appendChild(geocoderOrigin.onAdd(map))
+  const geocoderInput = document.querySelector('.mapboxgl-ctrl-geocoder--input');
+
+  if (geocoderInput) {
+
+    geocoderInput.setAttribute('autocomplete', 'off');
+  }
 
   geocoderOrigin.on('result', (event) => {
     const { center } = event.result
