@@ -5,9 +5,9 @@ import VanSvg from '../components/Icon/VanIcon.vue';
 import CampingCarSvg from '../components/Icon/CampingCarIcon.vue';
 import DatePicker from '../components/DatePicker.vue';
 import MainButton from '../components/Button.vue'
-import ToggleSelect from '/home/plamyx/Code/RoadPlanVan/src/components/ToggleLoop.vue'
+import ToggleSelect from '../components/ToggleLoop.vue'
 import emitter from "./utility/eventBus";
-import ErrorAlert from '/home/plamyx/Code/RoadPlanVan/src/components/ErrorAlert.vue'
+import ErrorAlert from '../components/ErrorAlert.vue'
 
 const items = ref([
   {
