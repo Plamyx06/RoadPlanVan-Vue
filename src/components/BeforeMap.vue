@@ -52,8 +52,6 @@ const validateSelection = () => {
 
 const modifyChoice = () => {
   confirmed.value = false;
-  selectedItem.value = null;
-  selectedDate.value = new Date().toLocaleDateString('fr-FR');
 };
 
 
@@ -104,73 +102,67 @@ function handleEnable(newValue) {
 
 
 <template>
-  <div class="container fixed mt-[40vh] overflow-y-auto overflow-x-hidden px-2">
-    <h1 class="text-xl underline flex justify-center py-1.5">Avant de commencer</h1>
+  <div class="container fixed mt-[40vh] h-[60vh] overflow-y-auto px-2">
+
+    <h1 class="text-xl underline flex justify-center ">Avant de commencer</h1>
 
     <div v-if="showContent">
-      <transition name="fade">
-        <div v-if="!confirmed">
-          <p class="py-2 underline">Sélectionne ton véhicule : </p>
-          <div class="flex justify-between">
-            <div v-for="(item, index) in items" :key="index" class="relative px-6">
-              <div @click="toggleSelect(index)">
-                <component :is="item.svg" :class="item.class" />
-                <div v-if="item.selected" class="absolute top-0 bottom-0 flex items-center justify-center ">
-                  <svg xmlns="http://www.w3.org/2000/svg" class="h-16 w-16 text-green-500" fill="none" viewBox="0 0 24 24"
-                    stroke="currentColor">
-                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="4" d="M5 13l4 4L19 7" />
-                  </svg>
-                </div>
+      <div v-if="!confirmed">
+        <p class="py-2 underline">Sélectionne ton véhicule : </p>
+        <!-- Grid centré -->
+        <div class="grid gap-2 grid-cols-2 w-full">
+          <div v-for="(item, index) in items" :key="index" class="w-full">
+            <!-- Conteneur avec position relative pour le positionnement absolu des enfants -->
+            <div @click="toggleSelect(index)" class="relative flex justify-center">
+              <component :is="item.svg" :class="[item.class, 'block mx-auto']" />
+              <!-- Positionnement absolu centré si l'élément est sélectionné -->
+              <div v-if="item.selected" class="absolute top-0 bottom-0 left-0 right-0 flex items-center justify-center">
+                <svg xmlns="http://www.w3.org/2000/svg" class="h-16 w-16 text-green-500" fill="none" viewBox="0 0 24 24"
+                  stroke="currentColor">
+                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="4" d="M5 13l4 4L19 7" />
+                </svg>
               </div>
-              {{ item.consumption }}L/100km
             </div>
+            <div class="text-center">{{ item.consumption }}L/100km</div> <!-- Texte centré sous l'icône -->
           </div>
-          <div class="my-6">
-            <h2 class="underline">Date de départ: </h2>
-            <div class="flex justify-end">
-              <DatePicker @date-changed="handleDateChange" />
-
-
-            </div>
-
-          </div>
-          <div>
-            <ToggleSelect @update-enabled="handleEnable" />
-          </div>
-          <div class="flex justify-center my-5 mt-10">
-            <MainButton text="Suivant" @click="validateSelection" />
-          </div>
-
-
         </div>
-
-
-        <div v-else-if="confirmed" class=" flex justify-between items-center">
-          <div>
-            <p>départ le {{ selectedDate }}</p>
-            <p v-if="enabled">Retour point départ</p>
-
+        <div class="my-6">
+          <h2 class="underline">Date de départ: </h2>
+          <div class="flex justify-end">
+            <DatePicker @date-changed="handleDateChange" />
           </div>
-          <MainButton @click="modifyChoice" text="Modifier" />
         </div>
-      </transition>
+        <div>
+          <ToggleSelect @update-enabled="handleEnable" />
+        </div>
+        <div class="flex justify-center my-5 ">
+          <MainButton text="Suivant" @click="validateSelection" />
+        </div>
+      </div>
+
+
+      <div v-else-if="confirmed" class="flex justify-between items-center">
+
+        <MainButton @click="modifyChoice" text="<" />
+      </div>
+
     </div>
 
 
-    <transition name="slide-fade" class="h-screen">
-      <div :class="{ 'show': confirmed }" class="slide-fade">
-        <h2 class="flex-grow underline my-3">Créer ton itinéraire </h2>
-        <div class="w-7/12 mb-3">
-          <div id="geocoder-origin-container" class=""></div>
-        </div>
-        <ErrorAlert v-if="noWaypoint" text="Aucun point de départ !" />
-        <div class="text-center mb-20 mt-6">
-          <MainButton text="Commencer" @click="hideMe" />
-        </div>
 
+
+    <div :class="{ 'hidden': !confirmed }" class="...">
+      <h2 class="flex-grow underline my-3">Créer ton itinéraire </h2>
+      <div class="w-7/12 mb-3">
+        <div id="geocoder-origin-container" class=""></div>
+      </div>
+      <ErrorAlert v-if="noWaypoint" text="Aucun point de départ !" />
+      <div class="text-center mt-6">
+        <MainButton text="Commencer" @click="hideMe" />
       </div>
 
-    </transition>
+    </div>
+
 
   </div>
 </template>
@@ -180,56 +172,5 @@ function handleEnable(newValue) {
   font-family: 'Kalam', cursive;
   background-color: #F8EDE0;
   color: #8A4852;
-}
-
-;
-
-body {
-  margin: 0;
-  padding: 0;
-}
-
-
-.fade-enter-active,
-.fade-leave-active {
-  transition: opacity 0.5s, transform 0.5s;
-  transform: translateY(20px);
-}
-
-.fade-enter {
-  transition: opacity 1.5s, transform 1.5s;
-  opacity: 0;
-  transform: translateY(20px);
-}
-
-.fade-leave-to
-
-/* .fade-leave-active in <2.1.8 */
-  {
-  opacity: 0;
-  transform: translateY(20px);
-}
-
-.slide-fade-enter-active,
-.slide-fade-leave-active {
-  transition: opacity 1.5s, transform 1.5s;
-}
-
-.slide-fade-enter,
-.slide-fade-leave-to {
-  transition: opacity 1.5s, transform 1.5s;
-  opacity: 0;
-  transform: translateY(20px);
-}
-
-.container .slide-fade {
-  transition: opacity 1.5s, transform 1.5s;
-  opacity: 0;
-  transform: translateY(20px);
-}
-
-.container .slide-fade.show {
-  opacity: 1;
-  transform: translateY(0);
 }
 </style>
