@@ -108,6 +108,8 @@ onMounted(() => {
     marker: {
       color: '#8A4852'
     },
+    clearAndBlurOnEsc: true,
+    clearOnBlur: true
 
   })
   document.getElementById('geocoder-origin-container').appendChild(geocoderOrigin.onAdd(map))
@@ -142,7 +144,8 @@ onMounted(() => {
       lastSearchedCoords.value.push(EndPoint)
     }
     const geocoderInput = document.querySelector('.mapboxgl-ctrl-geocoder--input');
-    console.log(geocoderInput)
+    geocoderInput.blur()
+    console.log("je suis input", geocoderInput)
   })
 
 
@@ -155,7 +158,7 @@ onMounted(() => {
     else {
       waypoints.value = lastSearchedCoords.value
       geocoderOrigin.clear();
-      geocoderOrigin.blur();
+      console.log("je suis origine", geocoderOrigin)
 
       emit('update-waypoints', waypoints.value)
 
