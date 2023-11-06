@@ -110,13 +110,12 @@ function handleEnable(newValue) {
       <h1 class="text-xl underline flex justify-center ">Avant de commencer</h1>
       <div v-if="!confirmed">
         <p class="py-2 underline">Sélectionne ton véhicule : </p>
-        <!-- Grid centré -->
         <div class="grid gap-2 grid-cols-2 w-full">
           <div v-for="(item, index) in items" :key="index" class="w-full">
-            <!-- Conteneur avec position relative pour le positionnement absolu des enfants -->
+
             <div @click="toggleSelect(index)" class="relative flex justify-center">
               <component :is="item.svg" :class="[item.class, 'block mx-auto']" />
-              <!-- Positionnement absolu centré si l'élément est sélectionné -->
+
               <div v-if="item.selected" class="absolute top-0 bottom-0 left-0 right-0 flex items-center justify-center">
                 <svg xmlns="http://www.w3.org/2000/svg" class="h-16 w-16 text-green-500" fill="none" viewBox="0 0 24 24"
                   stroke="currentColor">
@@ -136,7 +135,7 @@ function handleEnable(newValue) {
         <div>
           <ToggleSelect @update-enabled="handleEnable" />
         </div>
-        <div class="flex justify-center my-5 ">
+        <div class="flex justify-center my-5 mb-10">
           <MainButton text="Suivant" @click="validateSelection" />
         </div>
       </div>

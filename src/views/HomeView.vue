@@ -39,9 +39,11 @@ import { RouterLink } from 'vue-router'
   </main>
 </template>
 
-<style scoped>body {
+<style scoped>
+body {
   font-family: 'Nunito Sans', sans-serif;
   background-color: #F8EDE0;
 }
 
-;</style>
+;
+</style>
