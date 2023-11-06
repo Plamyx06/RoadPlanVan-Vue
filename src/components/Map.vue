@@ -108,8 +108,7 @@ onMounted(() => {
     marker: {
       color: '#8A4852'
     },
-    clearAndBlurOnEsc: true,
-    clearOnBlur: true
+
 
   })
   document.getElementById('geocoder-origin-container').appendChild(geocoderOrigin.onAdd(map))
@@ -256,10 +255,36 @@ onMounted(() => {
     clearAndBlurOnEsc: true,
     clearOnBlur: true
   })
+  geocoder.on('result', (event) => {
+    const { center } = event.result
+    const city = event.result.text
 
+
+    const countryObject = event.result.context.find((item) => item.id.startsWith('country'))
+    const country = countryObject.text
+    const countryCode = countryObject.short_code
+
+
+
+    const newPoint = {
+      id: uuidv4(),
+      lon: center[0],
+      lat: center[1],
+      city: city,
+      countryCode: countryCode,
+      country: country
+    }
+    lastSearchedCoords.value = newPoint
+    console.log('je suis le second', geocoderInputs[1])
+    geocoderInputs[1].blur()
+  })
+
+  document.getElementById('geocoder').appendChild(geocoder.onAdd(map))
+  const geocoderInputs = document.querySelectorAll('.mapboxgl-ctrl-geocoder--input');
   emitter.on('add-point', addWaypointFromSearch)
   function addWaypointFromSearch() {
     geocoder.clear();
+    geocoderInputs[1].blur()
     if (lastSearchedCoords.value) {
       const waypointExists = waypoints.value.some(waypoint =>
         waypoint.lat === lastSearchedCoords.value.lat &&
@@ -284,31 +309,7 @@ onMounted(() => {
     }
   }
 
-  geocoder.on('result', (event) => {
-    const { center } = event.result
-    const city = event.result.text
 
-
-    const countryObject = event.result.context.find((item) => item.id.startsWith('country'))
-    const country = countryObject.text
-    const countryCode = countryObject.short_code
-
-
-
-    const newPoint = {
-      id: uuidv4(),
-      lon: center[0],
-      lat: center[1],
-      city: city,
-      countryCode: countryCode,
-      country: country
-    }
-    lastSearchedCoords.value = newPoint
-    const geocoderInputs = document.querySelectorAll('.mapboxgl-ctrl-geocoder--input');
-    console.log('je suis le second', geocoderInputs[1])
-    geocoderInputs[1].blur()
-  })
-  document.getElementById('geocoder').appendChild(geocoder.onAdd(map))
 
   // API DIRECTION  
   async function getRoad(waypoints) {
