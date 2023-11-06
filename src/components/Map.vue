@@ -140,7 +140,6 @@ onMounted(() => {
       lastSearchedCoords.value.push(EndPoint)
     }
 
-
   })
 
 
@@ -151,8 +150,12 @@ onMounted(() => {
       console.log('Aucun point de départ défini');
     }
     else {
-      geocoderOrigin.clear();
+      const inputElement = document.querySelector('.mapboxgl-ctrl-geocoder--input');
+
+
       waypoints.value = lastSearchedCoords.value
+      geocoderOrigin.clear();
+      inputElement.blur();
       emit('update-waypoints', waypoints.value)
 
       const lastCoordLat = waypoints.value[0].lat

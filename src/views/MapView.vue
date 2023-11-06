@@ -27,16 +27,12 @@ const updateWaypoints = (updatedWaypoints) => {
 
 <template>
   <main>
-    <Map @update-waypoints="updateWaypoints" />
-    <BeforeMap v-show="showBeforeMap" @hide="transitionToItinerary" />
+    <div class="container">
+      <Map @update-waypoints="updateWaypoints" />
+      <BeforeMap v-show="showBeforeMap" @hide="transitionToItinerary" />
+    </div>
     <ItineraryMap v-show="showItineraryMap" :waypoints="waypoints" />
   </main>
 </template>
 
-<style scoped>
-.container {
-  font-family: 'Nunito Sans', sans-serif;
-  background-color: #F8EDE0;
-  color: #8A4852;
-}
-</style>
+<style scoped></style>

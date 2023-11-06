@@ -107,9 +107,8 @@ function handleEnable(newValue) {
 
 
     <div v-if="showContent">
-
+      <h1 class="text-xl underline flex justify-center ">Avant de commencer</h1>
       <div v-if="!confirmed">
-        <h1 class="text-xl underline flex justify-center ">Avant de commencer</h1>
         <p class="py-2 underline">Sélectionne ton véhicule : </p>
         <!-- Grid centré -->
         <div class="grid gap-2 grid-cols-2 w-full">
@@ -137,7 +136,7 @@ function handleEnable(newValue) {
         <div>
           <ToggleSelect @update-enabled="handleEnable" />
         </div>
-        <div class="flex justify-center mt-5 mb-20">
+        <div class="flex justify-center my-5 ">
           <MainButton text="Suivant" @click="validateSelection" />
         </div>
       </div>
