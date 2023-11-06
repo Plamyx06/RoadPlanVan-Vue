@@ -113,11 +113,6 @@ onMounted(() => {
   document.getElementById('geocoder-origin-container').appendChild(geocoderOrigin.onAdd(map))
   const geocoderInput = document.querySelector('.mapboxgl-ctrl-geocoder--input');
 
-  if (geocoderInput) {
-
-    geocoderInput.setAttribute('autocomplete', 'off');
-  }
-
   geocoderOrigin.on('result', (event) => {
     const { center } = event.result
     const city = event.result.text
@@ -146,7 +141,8 @@ onMounted(() => {
       }
       lastSearchedCoords.value.push(EndPoint)
     }
-
+    const geocoderInput = document.querySelector('.mapboxgl-ctrl-geocoder--input');
+    console.log(geocoderInput)
   })
 
 
@@ -159,6 +155,7 @@ onMounted(() => {
     else {
       waypoints.value = lastSearchedCoords.value
       geocoderOrigin.clear();
+      geocoderOrigin.blur();
 
       emit('update-waypoints', waypoints.value)
 
