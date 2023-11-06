@@ -143,9 +143,8 @@ onMounted(() => {
       }
       lastSearchedCoords.value.push(EndPoint)
     }
-    const geocoderInput = document.querySelector('.mapboxgl-ctrl-geocoder--input');
-    geocoderInput.blur()
-    console.log("je suis input", geocoderInput)
+
+
   })
 
 
@@ -303,6 +302,8 @@ onMounted(() => {
       country: country
     }
     lastSearchedCoords.value = newPoint
+    const geocoderInput2 = document.querySelector('.mapboxgl-ctrl-geocoder--input');
+    geocoderInput2.blur()
   })
   document.getElementById('geocoder').appendChild(geocoder.onAdd(map))
 
