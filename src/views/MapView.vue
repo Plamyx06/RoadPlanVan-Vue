@@ -4,7 +4,7 @@ import BeforeMap from '../components/BeforeMap.vue';
 import Map from '../components/Map.vue';
 import LayoutApp from '../components/LayoutApp.vue';
 import ItineraryMap from '../components/ItinaryMap.vue';
-import { defineEmits } from 'vue';
+
 
 const showBeforeMap = ref(true);
 const showItineraryMap = ref(false);
