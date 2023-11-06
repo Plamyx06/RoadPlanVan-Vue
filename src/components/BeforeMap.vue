@@ -104,8 +104,8 @@ function handleEnable(newValue) {
 
 
 <template>
-  <div class="container fixed mt-[40vh] h-[53vh] overflow-y-auto ">
-    <h1 class="text-2xl underline flex justify-center my-2">Avant de commencer</h1>
+  <div class="container fixed mt-[40vh] overflow-y-auto overflow-x-hidden px-2">
+    <h1 class="text-xl underline flex justify-center py-1.5">Avant de commencer</h1>
 
     <div v-if="showContent">
       <transition name="fade">
@@ -138,7 +138,7 @@ function handleEnable(newValue) {
             <ToggleSelect @update-enabled="handleEnable" />
           </div>
           <div class="flex justify-center my-5 mt-10">
-            <MainButton text="Valider" @click="validateSelection" />
+            <MainButton text="Suivant" @click="validateSelection" />
           </div>
 
 
@@ -147,7 +147,6 @@ function handleEnable(newValue) {
 
         <div v-else-if="confirmed" class=" flex justify-between items-center">
           <div>
-            <p>Consommation {{ selectedItem }}L/100km</p>
             <p>départ le {{ selectedDate }}</p>
             <p v-if="enabled">Retour point départ</p>
 
@@ -158,7 +157,7 @@ function handleEnable(newValue) {
     </div>
 
 
-    <transition name="slide-fade">
+    <transition name="slide-fade" class="h-screen">
       <div :class="{ 'show': confirmed }" class="slide-fade">
         <h2 class="flex-grow underline my-3">Créer ton itinéraire </h2>
         <div class="w-7/12 mb-3">
