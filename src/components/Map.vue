@@ -560,7 +560,7 @@ onMounted(() => {
 <style scoped>
 #map-container {
   width: 100%;
-  height: 40vh;
+  height: 60vh;
   position: absolute;
 }
 </style>

@@ -102,7 +102,7 @@ function handleEnable(newValue) {
 
 
 <template>
-  <div class="container fixed mt-[40vh] h-[60vh] overflow-y-auto px-2">
+  <div class="container fixed mt-[60vh] h-[40vh] overflow-y-auto px-2">
 
     <h1 class="text-xl underline flex justify-center ">Avant de commencer</h1>
 
