@@ -102,12 +102,14 @@ function handleEnable(newValue) {
 
 
 <template>
-  <div class="container fixed mt-[60vh] h-[40vh] overflow-y-auto px-2">
+  <div class="container fixed mt-[50vh] h-[50vh] overflow-y-auto px-2">
 
-    <h1 class="text-xl underline flex justify-center ">Avant de commencer</h1>
+
 
     <div v-if="showContent">
+
       <div v-if="!confirmed">
+        <h1 class="text-xl underline flex justify-center ">Avant de commencer</h1>
         <p class="py-2 underline">Sélectionne ton véhicule : </p>
         <!-- Grid centré -->
         <div class="grid gap-2 grid-cols-2 w-full">
@@ -142,8 +144,8 @@ function handleEnable(newValue) {
 
 
       <div v-else-if="confirmed" class="flex justify-between items-center">
-
-        <MainButton @click="modifyChoice" text="<" />
+        <!--
+        <MainButton @click="modifyChoice" text="<" />-->
       </div>
 
     </div>
