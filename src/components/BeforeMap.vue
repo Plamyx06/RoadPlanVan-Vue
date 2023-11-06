@@ -137,7 +137,7 @@ function handleEnable(newValue) {
         <div>
           <ToggleSelect @update-enabled="handleEnable" />
         </div>
-        <div class="flex justify-center my-5 ">
+        <div class="flex justify-center mt-5 mb-20">
           <MainButton text="Suivant" @click="validateSelection" />
         </div>
       </div>
