@@ -11,16 +11,16 @@
 import { ref, onMounted, defineEmits } from 'vue'
 import mapboxgl from 'mapbox-gl'
 import MapboxLanguage from '@mapbox/mapbox-gl-language'
-import '/home/plamyx/Code/RoadPlanVan/node_modules/mapbox-gl/dist/mapbox-gl.css'
-import '/home/plamyx/Code/RoadPlanVan/node_modules/@mapbox/mapbox-gl-geocoder/dist/mapbox-gl-geocoder.min.js'
-import '/home/plamyx/Code/RoadPlanVan/node_modules/@mapbox/mapbox-gl-geocoder/dist/mapbox-gl-geocoder.css'
-import '/home/plamyx/Code/RoadPlanVan/src/assets/style/mapbox-gl-geocoder-custom.css'
-import '/home/plamyx/Code/RoadPlanVan/src/mapbox-gl-direction/mapbox-gl-directions.css'
+import 'mapbox-gl/dist/mapbox-gl.css'
+import '@mapbox/mapbox-gl-geocoder/dist/mapbox-gl-geocoder.min.js'
+import '@mapbox/mapbox-gl-geocoder/dist/mapbox-gl-geocoder.css'
+import '../assets/style/mapbox-gl-geocoder-custom.css'
+import '../mapbox-gl-direction/mapbox-gl-directions.css'
 import MapboxGeocoder from '@mapbox/mapbox-gl-geocoder'
 import * as turf from '@turf/turf'
-import emitter from '/home/plamyx/Code/RoadPlanVan/src/components/utility/eventBus.js'
+import emitter from '../components/utility/eventBus.js'
 import { v4 as uuidv4 } from 'uuid'
-import Spinner from '/home/plamyx/Code/RoadPlanVan/src/components/Spinner.vue'
+import Spinner from '../components/Spinner.vue'
 
 const emit = defineEmits(['update-waypoints'])
 
@@ -28,8 +28,6 @@ const lastSearchedCoords = ref([])
 const waypoints = ref([])
 const enabledLoop = ref(true);
 const isLoading = ref(false)
-
-
 
 
 emitter.on('enabled-loop', (enabledValue) => {

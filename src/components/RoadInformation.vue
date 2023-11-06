@@ -33,9 +33,9 @@
 </template> 
 
 <script setup>
-import emitter from '/home/plamyx/Code/RoadPlanVan/src/components/utility/eventBus.js';
+import emitter from '../components/utility/eventBus.js';
 import { defineProps, ref } from 'vue';
-import Spinner from '/home/plamyx/Code/RoadPlanVan/src/components/Spinner.vue'
+import Spinner from '../components/Spinner.vue'
 
 const { price, duration, distance } = defineProps(['duration', 'distance', 'price']);
 

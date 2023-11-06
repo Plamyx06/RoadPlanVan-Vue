@@ -3,10 +3,10 @@ import LocationCard from '../components/LocationCard.vue';
 import { PlusIcon } from '@heroicons/vue/20/solid';
 import { defineProps, ref, watchEffect, computed } from 'vue';
 import VueDraggable from 'vuedraggable';
-import emitter from '/home/plamyx/Code/RoadPlanVan/src/components/utility/eventBus.js';
-import DeleteModal from '/home/plamyx/Code/RoadPlanVan/src/components/DeleteModal.vue';
-import Road from '/home/plamyx/Code/RoadPlanVan/src/components/RoadInformation.vue';
-import ErrorAlert from '/home/plamyx/Code/RoadPlanVan/src/components/ErrorAlert.vue'
+import emitter from '../components/utility/eventBus.js';
+import DeleteModal from '../components/DeleteModal.vue';
+import Road from '../components/RoadInformation.vue';
+import ErrorAlert from '../components/ErrorAlert.vue'
 
 
 const props = defineProps(['waypoints']);
