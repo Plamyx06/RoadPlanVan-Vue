@@ -81,11 +81,10 @@ emitter.on("no-waypoint-origin", () => {
   hide.value = true
   setTimeout(() => {
     noWaypoint.value = false;
-
   }, 3000);
   setTimeout(() => {
     hide.value = false
-  }, 1000);
+  }, 10);
 });
 
 
@@ -102,7 +101,7 @@ function handleEnable(newValue) {
 
 
 <template>
-  <div class="container fixed mt-[50vh] h-[50vh] overflow-y-auto px-2">
+  <div class="container fixed mt-[40vh] h-[52vh] overflow-y-auto px-2">
 
 
 
@@ -135,7 +134,7 @@ function handleEnable(newValue) {
         <div>
           <ToggleSelect @update-enabled="handleEnable" />
         </div>
-        <div class="flex justify-center my-5 mb-10">
+        <div class="flex justify-center my-5 mb-16">
           <MainButton text="Suivant" @click="validateSelection" />
         </div>
       </div>

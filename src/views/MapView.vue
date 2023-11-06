@@ -30,6 +30,7 @@ const updateWaypoints = (updatedWaypoints) => {
     <Map @update-waypoints="updateWaypoints" />
     <BeforeMap v-show="showBeforeMap" @hide="transitionToItinerary" />
     <ItineraryMap v-show="showItineraryMap" :waypoints="waypoints" />
+    <LayoutApp />
   </main>
 </template>
 
