@@ -121,7 +121,8 @@ watchEffect(() => {
 
     <div class="flex items-center mt-3">
       <div class="w-5/6">
-        <VueDraggable class="" v-model="mutableWaypoints" item-key="index" @change="handleDraggableChange">
+        <VueDraggable class="" v-model="mutableWaypoints" handle=".drag-handle" item-key="index"
+          @change="handleDraggableChange">
 
           <template v-slot:item="{ element, index }">
             <div>
@@ -132,14 +133,14 @@ watchEffect(() => {
                     d="M12 6.75a.75.75 0 110-1.5.75.75 0 0100 1.5zM12 12.75a.75.75 0 110-1.5.75.75 0 0100 1.5zM12 18.75a.75.75 0 110-1.5.75.75 0 0100 1.5z" />
                 </svg>
 
-                <LocationCard :lon="element.lon" :lat="element.lat" :city="element.city" :country="element.country"
-                  :countryCode="element.countryCode" />
+                <LocationCard class="drag-handle" :lon="element.lon" :lat="element.lat" :city="element.city"
+                  :country="element.country" :countryCode="element.countryCode" />
 
                 <button v-if="index > 0 && index < mutableWaypoints.length - 1" @click="openDeleteModal(element)"
                   style="background-color: #8A4852; color: #F8F4E8;"
                   class="rounded-full bg-indigo-600 p-1 text-white shadow-sm hover:bg-indigo-500 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-indigo-600 ml-3">
                   <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5"
-                    stroke="currentColor" class="w-6 h-6">
+                    stroke="currentColor" class="w-4 h-4">
                     <path stroke-linecap="round" stroke-linejoin="round" d="M6 18L18 6M6 6l12 12" />
                   </svg>
                 </button>

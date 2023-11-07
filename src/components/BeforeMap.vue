@@ -8,6 +8,7 @@ import MainButton from '../components/Button.vue'
 import ToggleSelect from '../components/ToggleLoop.vue'
 import emitter from "./utility/eventBus";
 import ErrorAlert from '../components/ErrorAlert.vue'
+import { ChevronLeftIcon } from '@heroicons/vue/20/solid';
 
 const items = ref([
   {
@@ -106,7 +107,14 @@ function handleEnable(newValue) {
 
 
     <div v-if="showContent">
-      <h1 class="text-xl underline flex justify-center ">Avant de commencer</h1>
+      <div class="flex justify-between items-center w-full p-2">
+        <button v-if="confirmed" type="button" @click="modifyChoice"
+          class="rounded-full bg-[#8A4852] p-1 text-[#F8F4E8] shadow-sm hover:bg-indigo-500 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-[#8A4852]">
+          <ChevronLeftIcon class="h-5 w-5" aria-hidden="true" />
+        </button>
+        <h1 class="text-xl underline flex-1 text-center">Avant de commencer</h1>
+      </div>
+
       <div v-if="!confirmed">
         <p class="py-2 underline">Sélectionne ton véhicule : </p>
         <div class="grid gap-2 grid-cols-2 w-full">
