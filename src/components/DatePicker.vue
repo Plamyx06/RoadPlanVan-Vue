@@ -5,13 +5,17 @@
 </template>
 
 <script setup>
-import { ref, defineEmits } from 'vue';
+import { ref, defineEmits, defineProps } from 'vue';
 import VueDatePicker from '@vuepic/vue-datepicker';
 import '@vuepic/vue-datepicker/dist/main.css'
 import '../assets/style/data-picker-custom.css'
 
 const date = ref(new Date().toISOString());
 
+const props = defineProps({
+  selectedDate: String // Utilisez cette prop pour initialiser `date`
+});
+console.log(props.selectedDate)
 
 const format = (date) => {
   return date.toLocaleDateString('fr-FR')
@@ -20,7 +24,8 @@ const format = (date) => {
 const emit = defineEmits(["date-changed"]);
 
 const handleDate = (modelData) => {
-  date.value = modelData;
+
+  console.log("je suis date", modelData)
   emit('date-changed', modelData);
 
 }

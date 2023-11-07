@@ -1,7 +1,7 @@
 <template>
   <div id="map-container">
   </div>
-  <div v-if="isLoading" class="absolute top-0 w-full h-2/5 bg-gray-500 bg-opacity-40 flex justify-center items-center">
+  <div v-if="isLoading" class="absolute top-0 w-full h-[40vh] bg-gray-500 bg-opacity-40 flex justify-center items-center">
     <Spinner class="w-20 h-20" />
   </div>
 </template>

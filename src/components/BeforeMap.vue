@@ -136,7 +136,7 @@ function handleEnable(newValue) {
         <div class="my-6">
           <h2 class="underline">Date de départ: </h2>
           <div class="flex justify-end">
-            <DatePicker @date-changed="handleDateChange" />
+            <DatePicker :selectedDate="selectedDate" @date-changed="handleDateChange" />
           </div>
         </div>
         <div>
@@ -146,13 +146,6 @@ function handleEnable(newValue) {
           <MainButton text="Suivant" @click="validateSelection" />
         </div>
       </div>
-
-
-      <div v-else-if="confirmed" class="flex justify-between items-center">
-        <!--
-        <MainButton @click="modifyChoice" text="<" />-->
-      </div>
-
     </div>
 
 

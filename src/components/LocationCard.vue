@@ -41,10 +41,15 @@ watch(() => props.countryCode, (newCode) => {
       <img :src="countryFlag" alt="Drapeau rond" class="m-1 w-10 h-10 rounded-full">
       <div class="absolute top-0 left-0 w-10 h-10 m-1 bg-black opacity-10 rounded-full"></div>
     </div>
-    <div class="w-3/4">
-      <p v-if="city" class="text-[#F8EDE0] text-sm mx-3 truncate capitalize">{{ city }}</p>
-      <p v-if="country" class="text-[#F8EDE0] font-semibold text-sm mx-3 truncate">{{ country }}</p>
+    <div class="flex space-between w-3/4">
+      <div>
+        <p v-if="city" class="text-[#F8EDE0] text-sm mx-3 truncate capitalize">{{ city }}</p>
+        <p v-if="country" class="text-[#F8EDE0] font-semibold text-sm mx-3 truncate">{{ country }}</p>
+      </div>
+      <div>
+      </div>
     </div>
+
   </div>
 </template>
 
