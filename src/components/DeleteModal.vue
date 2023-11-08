@@ -24,16 +24,33 @@
                   <DialogTitle as="h3" class="text-base font-semibold leading-6 text-gray-900">
                   </DialogTitle>
                   <div class="mt-2">
-                    <p class="text-sm text-gray-500" style="color:  #8A4852;">Veux-tu supprimer <span class="font-bold">{{
-                      city }}, {{
-    placeLocation }}</span> de ton RoadTrip ?</p>
+                    <p class="text-sm text-gray-500" style="color:  #8A4852;">
+                      <template v-if="city">
+                        Veux-tu supprimer <span class="font-bold">{{ city }}, {{ placeLocation }}</span> de ton RoadTrip ?
+                      </template>
+                      <template v-else>
+                        <span class="font-bold">Ton RoadTrip sera effacé en revenant à l'accueil. Veux-tu le sauvegarder
+                          ?</span>
+                      </template>
+                    </p>
                   </div>
                 </div>
               </div>
-              <div class="mt-5 sm:mt-4 sm:flex sm:flex-row-reverse">
+              <div v-if="city" class="mt-5 sm:mt-4 sm:flex sm:flex-row-reverse">
                 <button type="button"
                   class="inline-flex w-full justify-center rounded-md bg-red-600 px-3 py-2 text-sm font-semibold text-white shadow-sm hover:bg-red-500 sm:ml-3 sm:w-auto"
                   style="background-color:  #8A4852;" @click="deleted">Supprimer</button>
+                <button type="button" style="color:  #8A4852;"
+                  class="mt-3 inline-flex w-full justify-center rounded-md bg-white px-3 py-2 text-sm font-semibold text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 hover:bg-gray-50 sm:mt-0 sm:w-auto"
+                  @click="cancel" ref="cancelButtonRef">Annuler</button>
+              </div>
+              <div v-else class="mt-5 sm:mt-4 sm:flex sm:flex-row-reverse">
+                <button type="button"
+                  class="inline-flex w-full justify-center rounded-md bg-red-600 px-3 py-2 text-sm font-semibold text-white shadow-sm hover:bg-red-500 sm:ml-3 sm:w-auto"
+                  style="background-color:  #8A4852;" @click="save">Sauvegarder</button>
+                <button type="button" style="color:  #8A4852;"
+                  class="mt-3 inline-flex w-full justify-center rounded-md bg-white px-3 py-2 text-sm font-semibold text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 hover:bg-gray-50 sm:mt-0 sm:ml-3 sm:w-auto"
+                  @click="returnHome" ref="cancelButtonRef">Retour acceuil</button>
                 <button type="button" style="color:  #8A4852;"
                   class="mt-3 inline-flex w-full justify-center rounded-md bg-white px-3 py-2 text-sm font-semibold text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 hover:bg-gray-50 sm:mt-0 sm:w-auto"
                   @click="cancel" ref="cancelButtonRef">Annuler</button>
@@ -53,7 +70,7 @@ import { ExclamationTriangleIcon } from '@heroicons/vue/24/outline'
 
 const open = ref(true)
 
-const { deleted, cancel, city, placeLocation } = defineProps(['cancel', 'deleted', 'city', 'placeLocation']);
+const { deleted, cancel, city, placeLocation } = defineProps(['cancel', 'deleted', 'city', 'placeLocation', 'save', 'returnHome']);
 
 
 </script>

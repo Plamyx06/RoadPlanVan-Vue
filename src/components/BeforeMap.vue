@@ -46,7 +46,6 @@ const validateSelection = () => {
   confirmed.value = true;
   selectedItem.value = items.value.find(item => item.selected);
   selectedItem.value = selectedItem.value.consumption
-  console.log(selectedItem.value)
   emitter.emit('enabled-loop', enabled.value);
   emitter.emit('consumption-value', selectedItem.value);
 };
@@ -58,7 +57,7 @@ const modifyChoice = () => {
 
 
 const handleDateChange = (newDate) => {
-  selectedDate.value = new Date(newDate).toLocaleDateString('fr-FR');
+  selectedDate.value = new Date(newDate);
   console.log(`Selected date in BeforeMap: ${selectedDate.value}`);
 }
 
@@ -102,7 +101,7 @@ function handleEnable(newValue) {
 
 
 <template>
-  <div class="container fixed mt-[40vh] h-[52vh] overflow-y-auto px-2">
+  <div class="container fixed mt-[40vh] h-[52vh] w-screen overflow-y-auto px-5">
 
 
 

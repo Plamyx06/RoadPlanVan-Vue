@@ -1,10 +1,56 @@
+<script setup>
+import { ref, defineEmits } from 'vue'
+import Modal from '../components/DeleteModal.vue';
+import RegisterModal from '../components/UserRegister.vue';
+import { useRouter } from 'vue-router';
+
+const emit = defineEmits(['select-button'])
+const selectedButton = ref('itinerary')
+const router = useRouter();
+
+const handleButton = (button) => {
+  selectedButton.value = button;
+  emit('select-button', button);
+};
+
+
+
+const handleCardButton = () => handleButton('card');
+const handleItineraryButton = () => handleButton('itinerary');
+const handleUserButton = () => handleButton('user');
+
+const showModal = ref(false)
+const showUserRegister = ref(false)
+function handleHomeButton() {
+  showModal.value = true
+  showUserRegister.value = false
+}
+function handleReturnHome() {
+  showModal.value = false
+  router.push('/')
+}
+function handleCancel() {
+  showModal.value = false
+}
+function handleSave() {
+  showModal.value = false
+  showUserRegister.value = true
+}
+
+
+
+</script>
+
+
 <template>
-  <div class="nav_container absolute bottom-0 w-full h-[8vh]">
+  <div class="nav_container absolute bottom-0 w-screen h-[8vh] overflow-y-hidden">
     <div class="flex justify-between w-full h-full">
-      <button class="flex-1 h-18 w-1/4 flex items-center justify-center" type="button">
+      <button :class="{ 'button_color_reverse': selectedButton === 'home' }"
+        class="flex-1 h-18 w-1/4 flex items-center justify-center" @click="handleHomeButton" type="button">
         <img class="w-14 h-14" src="../assets/logo.svg" alt="Logo" />
       </button>
-      <button class="flex-1 h-18 w-1/4 flex items-center justify-center" type="button">
+      <button :class="{ 'button_color_reverse': selectedButton === 'card' }"
+        class="flex-1 h-18 w-1/4 flex items-center justify-center" @click="handleCardButton" type="button">
         <div class="flex flex-col items-center">
 
           <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor"
@@ -15,7 +61,8 @@
           <span>Carte</span>
         </div>
       </button>
-      <button class="button_color_reverse flex-1 h-18 w-1/4 flex items-center justify-center" type="button">
+      <button :class="{ 'button_color_reverse': selectedButton === 'itinerary' }"
+        class="flex-1 h-18 w-1/4 flex items-center justify-center" @click="handleItineraryButton" type="button">
         <div class="flex flex-col items-center">
           <div>
             <div class="flex">
@@ -43,7 +90,8 @@
           </div>
         </div>
       </button>
-      <button class="flex-1 h-18 w-1/4 flex items-center justify-center" type="button">
+      <button :class="{ 'button_color_reverse': selectedButton === 'user' }"
+        class="flex-1 h-18 w-1/4 flex items-center justify-center" @click="handleUserButton" type="button">
         <div class="flex flex-col items-center">
 
           <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor"
@@ -55,6 +103,10 @@
         </div>
       </button>
     </div>
+  </div>
+  <Modal :show="showModal" :save="handleSave" :returnHome="handleReturnHome" :cancel="handleCancel" />
+  <div class="fixed inset-x-0 bottom-0 flex justify-center">
+    <RegisterModal v-show="showUserRegister" />
   </div>
 </template>  
 

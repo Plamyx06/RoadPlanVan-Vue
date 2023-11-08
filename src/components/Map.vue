@@ -1,5 +1,5 @@
 <template>
-  <div id="map-container">
+  <div id="map" :class="['map-container', { 'map-full': !isFullSize, 'map-container-full': isFullSize }]">
   </div>
   <div v-if="isLoading" class="absolute top-0 w-full h-[40vh] bg-gray-500 bg-opacity-40 flex justify-center items-center">
     <Spinner class="w-20 h-20" />
@@ -8,7 +8,7 @@
 
 
 <script setup>
-import { ref, onMounted, defineEmits } from 'vue'
+import { ref, onMounted, defineEmits, nextTick } from 'vue'
 import mapboxgl from 'mapbox-gl'
 import MapboxLanguage from '@mapbox/mapbox-gl-language'
 import 'mapbox-gl/dist/mapbox-gl.css'
@@ -29,6 +29,9 @@ const waypoints = ref([])
 const enabledLoop = ref(true);
 const isLoading = ref(false)
 
+const props = defineProps({
+  isFullSize: Boolean
+})
 
 emitter.on('enabled-loop', (enabledValue) => {
   enabledLoop.value = enabledValue
@@ -39,10 +42,13 @@ emitter.on('enabled-loop', (enabledValue) => {
 onMounted(() => {
   mapboxgl.accessToken = import.meta.env.VITE_APP_API_KEY
   const map = new mapboxgl.Map({
-    container: 'map-container',
+    container: 'map',
     style: 'mapbox://styles/mapbox/streets-v12',
     center: [2.3522, 48.8566],
-    zoom: 3
+    zoom: 3,
+    attributionControl: false,
+    logoPosition: 'top-left',
+    trackResize: true
   })
 
   map.addControl(
@@ -50,6 +56,13 @@ onMounted(() => {
       defaultLanguage: 'fr'
     })
   )
+  const handleResize = () => {
+    nextTick(() => {
+      map.resize();
+    });
+  };
+
+  emitter.on('Resize-map', handleResize);
 
   // GEOCODER ORIGN
   const geojsonMarkerOrigin = {
@@ -114,6 +127,7 @@ onMounted(() => {
 
 
   geocoderOrigin.on('result', (event) => {
+    lastSearchedCoords.value = []
     const { center } = event.result
     const city = event.result.text
 
@@ -129,6 +143,7 @@ onMounted(() => {
       countryCode: countryCode.toUpperCase(),
       country: country
     }
+
     lastSearchedCoords.value.push(startPoint)
     if (enabledLoop.value) {
       const EndPoint = {
@@ -570,9 +585,15 @@ onMounted(() => {
 </script>
 
 <style scoped>
-#map-container {
+.map-container {
   width: 100%;
   height: 40vh;
-  position: absolute;
+  position: absolute
+}
+
+
+.map-container-full {
+  height: 92vh;
+
 }
 </style>
