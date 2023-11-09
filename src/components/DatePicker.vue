@@ -11,7 +11,7 @@ import '@vuepic/vue-datepicker/dist/main.css'
 import '../assets/style/data-picker-custom.css'
 
 const date = ref(new Date());
-console.log(date)
+
 const props = defineProps({
   selectedDate: String
 });
@@ -25,11 +25,7 @@ const emit = defineEmits(["date-changed"]);
 
 const handleDate = (modelData) => {
   date.value = new Date(modelData)
-  console.log("je suis date", date.value)
   emit('date-changed', date.value);
-
-  console.log("je suis props",)
-
 }
 
 </script>

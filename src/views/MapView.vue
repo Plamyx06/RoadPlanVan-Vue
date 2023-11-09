@@ -39,8 +39,6 @@ const handleSelectedButton = (button) => {
     showItineraryMap.value = previousShowItineraryMap.value;
     showBeforeMap.value = previousShowBeforeMap.value;
     emitter.emit('Resize-map');
-  } else if (button === 'user') {
-
   }
 
 
