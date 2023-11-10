@@ -128,6 +128,7 @@ onMounted(() => {
 
   geocoderOrigin.on('result', (event) => {
     lastSearchedCoords.value = []
+
     const { center } = event.result
     const city = event.result.text
 
@@ -157,23 +158,21 @@ onMounted(() => {
       lastSearchedCoords.value.push(EndPoint)
     }
     const geocoderInput = document.querySelector('.mapboxgl-ctrl-geocoder--input');
-    console.log("je suis geocodeur input", geocoderInput)
     geocoderInput.blur()
-
+    console.log('geocodeurOn', lastSearchedCoords.value)
   })
 
 
   emitter.on('updated-waypoint-origin', handleGeocoderOrigin)
+
   function handleGeocoderOrigin() {
     if (!lastSearchedCoords.value || lastSearchedCoords.value.length === 0 || !lastSearchedCoords.value[0].lat) {
       emitter.emit('no-waypoint-origin');
-      console.log('Aucun point de départ défini');
+      console.log("j'ai emis no waypoint")
     }
     else {
       waypoints.value = lastSearchedCoords.value
       geocoderOrigin.clear();
-      console.log("je suis origine", geocoderOrigin)
-
       emit('update-waypoints', waypoints.value)
 
       const lastCoordLat = waypoints.value[0].lat
@@ -193,6 +192,7 @@ onMounted(() => {
       }
     }
   }
+
 
   emitter.on('get-road-draggable', handleGetRoadDraggable)
   function handleGetRoadDraggable(newWaypoints) {
@@ -228,6 +228,7 @@ onMounted(() => {
       console.log(getPointsIdsFromMap(map))
     }
   }
+
   function getPointsIdsFromMap(map) {
     const layers = map.getStyle().layers;
     const pointDetails = [];
@@ -276,8 +277,6 @@ onMounted(() => {
     const country = countryObject.text
     const countryCode = countryObject.short_code
 
-
-
     const newPoint = {
       id: uuidv4(),
       lon: center[0],
@@ -287,7 +286,6 @@ onMounted(() => {
       country: country
     }
     lastSearchedCoords.value = newPoint
-    console.log('je suis le second', geocoderInputs[1])
     geocoderInputs[1].blur()
   })
 

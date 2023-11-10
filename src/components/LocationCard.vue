@@ -1,5 +1,5 @@
 <script setup>
-import { onMounted, ref, watch, defineProps } from 'vue';
+import { onMounted, onUnmounted, ref, watch, defineProps } from 'vue';
 
 const props = defineProps({
   city: String,
@@ -25,6 +25,11 @@ const getCountryData = async (code) => {
 
 onMounted(() => {
   getCountryData(props.countryCode);
+});
+onUnmounted(() => {
+
+  countryFlag.value = '';
+
 });
 
 watch(() => props.countryCode, (newCode) => {

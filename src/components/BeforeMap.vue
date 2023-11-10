@@ -66,25 +66,23 @@ const emits = defineEmits(['hide']);
 
 
 const hideMe = () => {
+  hide.value = true
   emitter.emit('updated-waypoint-origin')
-  if (!hide.value) {
+
+  if (hide.value && !noWaypoint.value) {
     emits('hide');
   } else {
     return
   }
 }
-const hide = ref(false)
-
+const hide = ref(true)
 const noWaypoint = ref(false)
+
 emitter.on("no-waypoint-origin", () => {
   noWaypoint.value = true;
-  hide.value = true
   setTimeout(() => {
     noWaypoint.value = false;
   }, 3000);
-  setTimeout(() => {
-    hide.value = false
-  }, 10);
 });
 
 
