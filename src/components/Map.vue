@@ -584,6 +584,7 @@ onMounted(() => {
 
 <style scoped>
 .map-container {
+  margin-top: 5vh;
   width: 100%;
   height: 40vh;
   position: absolute
