@@ -26,7 +26,7 @@ const transitionToItinerary = () => {
 
 const handleSelectedButton = (button) => {
   selectedButton.value = button;
-
+  console.log(selectedButton.value)
   if (button === 'card') {
     previousShowBeforeMap.value = showBeforeMap.value;
     previousShowItineraryMap.value = showItineraryMap.value;
@@ -39,6 +39,15 @@ const handleSelectedButton = (button) => {
     showItineraryMap.value = previousShowItineraryMap.value;
     showBeforeMap.value = previousShowBeforeMap.value;
     emitter.emit('Resize-map');
+  } else if (button === 'user') {
+    showItineraryMap.value = previousShowItineraryMap.value;
+    showBeforeMap.value = previousShowBeforeMap.value;
+    mapFullSize.value = false;
+  } else if (button === 'home') {
+    showItineraryMap.value = previousShowItineraryMap.value;
+    showBeforeMap.value = previousShowBeforeMap.value;
+    mapFullSize.value = false;
+
   }
 
 

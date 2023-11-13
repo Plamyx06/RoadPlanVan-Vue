@@ -99,10 +99,7 @@ function handleEnable(newValue) {
 
 
 <template>
-  <div class="container fixed mt-[40vh] h-[52vh] w-screen overflow-y-auto px-5">
-
-
-
+  <div class="container fixed mt-[50vh] h-[50vh] w-screen overflow-y-auto px-5">
     <div v-if="showContent">
       <div class="flex justify-between items-center w-full p-2">
         <button v-if="confirmed" type="button" @click="modifyChoice"
@@ -150,7 +147,7 @@ function handleEnable(newValue) {
 
     <div :class="{ 'hidden': !confirmed }" class="...">
       <h2 class="flex-grow underline my-3">Créer ton itinéraire </h2>
-      <div class="w-7/12 mb-3">
+      <div class="w-7/12 h-full mb-3">
         <div id="geocoder-origin-container" class=""></div>
       </div>
       <ErrorAlert v-if="noWaypoint" text="Aucun point de départ !" />
@@ -169,5 +166,10 @@ function handleEnable(newValue) {
   font-family: 'Kalam', cursive;
   background-color: #F8EDE0;
   color: #8A4852;
+  font-size: 16px;
+}
+
+#geocoder-origin-container {
+  font-size: 16px;
 }
 </style>

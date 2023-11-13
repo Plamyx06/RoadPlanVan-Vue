@@ -101,7 +101,7 @@ watchEffect(() => {
 </script>
 
 <template>
-  <div class="container fixed mt-[40vh] h-[52vh] overflow-y-auto">
+  <div class="container fixed mt-[50vh] h-[50vh] w-screen overflow-y-auto">
     <div class="flex justify-between mt-3 px-5">
       <div class="w-7/12 mb-3">
         <div id="geocoder" class="geocoder"></div>

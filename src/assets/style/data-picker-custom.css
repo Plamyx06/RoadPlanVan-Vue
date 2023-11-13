@@ -22,8 +22,8 @@
     --dp-tooltip-color: #fafafa;
     --dp-disabled-color-text: #8e8e8e;
     --dp-highlight-color: rgb(25 118 210 / 10%);
-    /* filter: drop-shadow(0 10px 8px rgb(0 0 0 / 0.04)) drop-shadow(0 4px 3px rgb(0 0 0 / 0.1));*/
     width: 50%;
+
 }
 
 .dp__input::placeholder {
@@ -34,5 +34,6 @@
 .dp__input {
     border-radius: 9999px;
     height: 30px;
+    text-align: center;
 
 }

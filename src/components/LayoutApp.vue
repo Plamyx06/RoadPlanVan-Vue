@@ -49,7 +49,7 @@ function handleUserButton() {
 
 
 <template>
-  <div class="nav_container fixed w-screen h-[5vh] ">
+  <div :class="selectedButton === 'card' ? 'mt-[95vh]' : 'mt-[45vh]'" class="nav_container fixed w-screen h-[5vh] ">
     <div class="flex justify-between w-full h-full">
       <div :class="{ 'button_color_reverse': selectedButton === 'home' }"
         class="flex-1 h-18 w-1/4 flex items-center justify-center">
@@ -116,7 +116,7 @@ function handleUserButton() {
 .nav_container {
   background-color: #8A4852;
   color: #F8EDE0;
-  z-index: 1;
+
 }
 
 .button_color_reverse {

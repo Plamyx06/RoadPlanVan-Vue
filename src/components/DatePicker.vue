@@ -1,7 +1,7 @@
 <template>
   <VueDatePicker v-model="date" @update:model-value="handleDate" :enable-time-picker="false" locale="fr-FR"
     cancelText="annuler" selectText="valider" :format="format" min-date="new Date()" placeholder="Dâte de départ"
-    :year-range="[2023, 2040]" teleport-center />
+    :year-range="[2023, 2040]" :teleport="true" teleport-center />
 </template>
 
 <script setup>
@@ -12,10 +12,6 @@ import '../assets/style/data-picker-custom.css'
 
 const date = ref(new Date());
 
-const props = defineProps({
-  selectedDate: String
-});
-const propsDate = ref(new Date(props.selectedDate))
 
 const format = (date) => {
   return date.toLocaleDateString('fr-FR')
@@ -29,6 +25,7 @@ const handleDate = (modelData) => {
 }
 
 </script>
+
 
 
 <style scoped></style>

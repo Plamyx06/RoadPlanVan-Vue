@@ -4,31 +4,30 @@
 }
 
 .mapboxgl-ctrl-geocoder {
-    font-size: 16px;
-    height: 30px;
+    font-size: 18px;
     line-height: 24px;
     font-family: "Open Sans", -apple-system, BlinkMacSystemFont, "Helvetica Neue", Arial, Helvetica, sans-serif;
     position: relative;
+    background-color: #fff;
     width: 100%;
-    min-width: 200px;
+    min-width: 240px;
+    z-index: 1;
+    border-radius: 4px;
     transition: width .25s, min-width .25s;
-    border-radius: 9999px;
 }
 
 .mapboxgl-ctrl-geocoder--input {
-    font: inherit;
+    font-size: 16px !important;
     width: 100%;
     background-color: white;
-    height: 30px;
+    height: 40px;
     color: #8A4852;
-    padding: 3px 45px;
+    padding: 3px 0px;
     text-overflow: ellipsis;
     white-space: nowrap;
     overflow: hidden;
     border-radius: 9999px;
 }
-
-
 
 .mapboxgl-ctrl-geocoder--icon-search {
     position: absolute;
@@ -63,7 +62,7 @@
 
 .mapboxgl-ctrl-geocoder .suggestions,
 .mapboxgl-ctrl-geocoder .active {
-    font-size: 13px;
+    font-size: 16px;
     color: #8A4852;
 
 }
@@ -71,12 +70,12 @@
 .mapboxgl-ctrl-geocoder--suggestion-title,
 .mapboxgl-ctrl-geocoder--suggestion-address {
     color: #8A4852;
-    font-size: 13px;
+    font-size: 16px;
 }
 
 .suggestions-wrapper .mapboxgl-ctrl-geocoder--suggestion {
-    font-size: 13px;
-    /* Ajustez la valeur selon vos besoins */
+    font-size: 16px;
+
 }
 
 .mapboxgl-ctrl-geocoder--suggestion {
@@ -86,5 +85,5 @@
 }
 
 .mapboxgl-ctrl-geocoder--powered-by {
-    display: none !important
+    font-size: 16px;
 }
