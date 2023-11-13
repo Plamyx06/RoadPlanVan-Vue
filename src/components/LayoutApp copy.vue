@@ -49,35 +49,7 @@ function handleUserButton() {
 
 
 <template>
-  <div v-show="selectedButton === 'card'" class="absolute mt-[45vh] right-0 overflow-hidden">
-    <button style="background-color: #8A4852; color: #F8F4E8;"
-      class="justify-center rounded-l-full  pl-3 pr-3 py-3 text-sm font-semibold shadow-sm hover:bg-indigo-700 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-indigo-800"
-      @click="handleItineraryButton" type="button">
-
-      <div class="flex">
-        <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor"
-          class="w-6 h-6">
-          <path stroke-linecap="round" stroke-linejoin="round" d="M15 10.5a3 3 0 11-6 0 3 3 0 016 0z" />
-          <path stroke-linecap="round" stroke-linejoin="round"
-            d="M19.5 10.5c0 7.142-7.5 11.25-7.5 11.25S4.5 17.642 4.5 10.5a7.5 7.5 0 1115 0z" />
-        </svg>
-        <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor"
-          class="w-5 h-5">
-          <path stroke-linecap="round" stroke-linejoin="round"
-            d="M2.25 18L9 11.25l4.306 4.307a11.95 11.95 0 015.814-5.519l2.74-1.22m0 0l-5.94-2.28m5.94 2.28l-2.28 5.941" />
-        </svg>
-
-        <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor"
-          class="w-4 h-4">
-          <path stroke-linecap="round" stroke-linejoin="round" d="M15 10.5a3 3 0 11-6 0 3 3 0 016 0z" />
-          <path stroke-linecap="round" stroke-linejoin="round"
-            d="M19.5 10.5c0 7.142-7.5 11.25-7.5 11.25S4.5 17.642 4.5 10.5a7.5 7.5 0 1115 0z" />
-        </svg>
-      </div>
-    </button>
-  </div>
-
-  <div v-show="selectedButton !== 'card'" class="nav_container fixed mt-[45vh] w-screen h-[5vh] ">
+  <div :class="selectedButton === 'card' ? 'mt-[95vh]' : 'mt-[45vh]'" class="nav_container fixed w-screen h-[5vh] ">
     <div class="flex justify-between w-full h-full">
       <div :class="{ 'button_color_reverse': selectedButton === 'home' }"
         class="flex-1 h-18 w-1/4 flex items-center justify-center">
