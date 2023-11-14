@@ -162,17 +162,14 @@ onMounted(() => {
     console.log('geocodeurOn', lastSearchedCoords.value)
   })
 
-
   emitter.on('updated-waypoint-origin', handleGeocoderOrigin)
 
   function handleGeocoderOrigin() {
 
-    if (lastSearchedCoords.value.length === 0 || lastSearchedCoords.value === null) {
-      console.log("je suis lastSearchedCord", lastSearchedCoords.value);
+    if (lastSearchedCoords.value.length === 0) {
       emitter.emit('no-waypoint-origin');
     }
     else {
-
       waypoints.value = lastSearchedCoords.value
       geocoderOrigin.clear();
       emit('update-waypoints', waypoints.value)
@@ -192,7 +189,7 @@ onMounted(() => {
       if (enabledLoop.value) {
         getRoad(waypoints.value)
       }
-      lastSearchedCoords.value = null
+      lastSearchedCoords.value = []
     }
   }
 
@@ -200,6 +197,7 @@ onMounted(() => {
   emitter.on('get-road-draggable', handleGetRoadDraggable)
   function handleGetRoadDraggable(newWaypoints) {
     waypoints.value = newWaypoints
+    emit('update-waypoints', waypoints.value)
     getRoad(newWaypoints)
   }
 

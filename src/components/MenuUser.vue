@@ -1,7 +1,7 @@
 <template>
     <Menu as="div" class="relative inline-block text-left">
         <div>
-            <MenuButton @click="handleUserButton" class="w-full h-full pt-3 pb-2.5
+            <MenuButton @click="handleUserButton" class="w-full h-[5vh] 
             ">
                 <div class="flex justify-center items-center">
                     <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5"
