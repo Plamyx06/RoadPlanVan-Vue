@@ -167,7 +167,7 @@ onMounted(() => {
 
   function handleGeocoderOrigin() {
 
-    if (lastSearchedCoords.value.length === 0) {
+    if (lastSearchedCoords.value.length === 0 || lastSearchedCoords.value === null) {
       console.log("je suis lastSearchedCord", lastSearchedCoords.value);
       emitter.emit('no-waypoint-origin');
     }
