@@ -33,7 +33,9 @@ emitter.on('waypointExist', () => {
 });
 
 const enableLoopMode = ref(true);
-
+emitter.on('enabled-loop', (enabledValue) => {
+  enableLoopMode.value = enabledValue
+});
 const clonedWaypoints = ref([]);
 
 function handleDraggableStart() {
