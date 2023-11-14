@@ -16,7 +16,6 @@ const getCountryData = async (code) => {
       throw new Error('Network response was not ok');
     }
     const data = await response.json();
-    console.log("je suis data ", data)
 
     countryFlag.value = data[0].flags.png;
   } catch (error) {

@@ -10,7 +10,8 @@
     position: relative;
     background-color: #fff;
     width: 100%;
-    min-width: 240px;
+    min-width: 300px;
+    padding: 2.5px;
     z-index: 1;
     border-radius: 4px;
     transition: width .25s, min-width .25s;
@@ -20,9 +21,8 @@
     font-size: 16px !important;
     width: 100%;
     background-color: white;
-    height: 40px;
+    height: 30px;
     color: #8A4852;
-    padding: 3px 0px;
     text-overflow: ellipsis;
     white-space: nowrap;
     overflow: hidden;
@@ -50,7 +50,7 @@
 .mapboxgl-ctrl-geocoder .mapboxgl-ctrl-geocoder--pin-right>* {
     position: absolute;
     right: 8px;
-    top: -3px;
+    top: 0px;
     display: none;
     background: transparent
 }
@@ -70,11 +70,11 @@
 .mapboxgl-ctrl-geocoder--suggestion-title,
 .mapboxgl-ctrl-geocoder--suggestion-address {
     color: #8A4852;
-    font-size: 16px;
+    font-size: 14px;
 }
 
 .suggestions-wrapper .mapboxgl-ctrl-geocoder--suggestion {
-    font-size: 16px;
+    font-size: 14px;
 
 }
 
@@ -82,8 +82,4 @@
     display: flex;
     justify-content: space-between;
 
-}
-
-.mapboxgl-ctrl-geocoder--powered-by {
-    font-size: 16px;
 }

@@ -166,11 +166,13 @@ onMounted(() => {
   emitter.on('updated-waypoint-origin', handleGeocoderOrigin)
 
   function handleGeocoderOrigin() {
-    if (!lastSearchedCoords.value || lastSearchedCoords.value.length === 0 || !lastSearchedCoords.value[0].lat) {
+
+    if (lastSearchedCoords.value.length === 0) {
+      console.log("je suis lastSearchedCord", lastSearchedCoords.value);
       emitter.emit('no-waypoint-origin');
-      console.log("j'ai emis no waypoint")
     }
     else {
+
       waypoints.value = lastSearchedCoords.value
       geocoderOrigin.clear();
       emit('update-waypoints', waypoints.value)
@@ -186,10 +188,11 @@ onMounted(() => {
         map.addLayer(markerCircleStyleOrigin)
         map.addLayer(markerTextStyleOrigin)
       }
-      lastSearchedCoords.value = null
+
       if (enabledLoop.value) {
         getRoad(waypoints.value)
       }
+      lastSearchedCoords.value = null
     }
   }
 

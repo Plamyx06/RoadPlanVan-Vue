@@ -1,8 +1,9 @@
 <template>
     <Menu as="div" class="relative inline-block text-left">
         <div>
-            <MenuButton @click="handleUserButton">
-                <div class="flex flex-col items-center">
+            <MenuButton @click="handleUserButton" class="w-full h-full pt-3 pb-2.5
+            ">
+                <div class="flex justify-center items-center">
                     <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5"
                         stroke="currentColor" class="w-6 h-6">
                         <path stroke-linecap="round" stroke-linejoin="round"

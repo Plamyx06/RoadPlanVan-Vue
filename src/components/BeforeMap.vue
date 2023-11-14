@@ -69,7 +69,7 @@ const hideMe = () => {
   hide.value = true
   emitter.emit('updated-waypoint-origin')
 
-  if (hide.value && !noWaypoint.value) {
+  if (hide.value) {
     emits('hide');
   } else {
     return
@@ -80,6 +80,7 @@ const noWaypoint = ref(false)
 
 emitter.on("no-waypoint-origin", () => {
   noWaypoint.value = true;
+  hide.value = false
   setTimeout(() => {
     noWaypoint.value = false;
   }, 3000);
@@ -101,11 +102,13 @@ function handleEnable(newValue) {
 <template>
   <div class="container fixed mt-[50vh] h-[50vh] w-screen overflow-y-auto px-5">
     <div v-if="showContent">
-      <div class="flex justify-between items-center w-full p-2">
-        <button v-if="confirmed" type="button" @click="modifyChoice"
-          class="rounded-full bg-[#8A4852] p-1 text-[#F8F4E8] shadow-sm hover:bg-indigo-500 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-[#8A4852]">
-          <ChevronLeftIcon class="h-5 w-5" aria-hidden="true" />
-        </button>
+      <div class="flex justify-between items-center w-full pt-2">
+        <div v-if="confirmed" class="ml-[-15px]">
+          <button type="button" @click="modifyChoice"
+            class="rounded-full bg-[#8A4852] p-1 text-[#F8F4E8] shadow-sm hover:bg-indigo-500 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-[#8A4852]">
+            <ChevronLeftIcon class="h-5 w-5" aria-hidden="true" />
+          </button>
+        </div>
         <h1 class="text-xl underline flex-1 text-center">Avant de commencer</h1>
       </div>
 
@@ -147,7 +150,7 @@ function handleEnable(newValue) {
 
     <div :class="{ 'hidden': !confirmed }" class="...">
       <h2 class="flex-grow underline my-3">Créer ton itinéraire </h2>
-      <div class="w-7/12 h-full mb-3">
+      <div class="w-7/12 mb-3">
         <div id="geocoder-origin-container" class=""></div>
       </div>
       <ErrorAlert v-if="noWaypoint" text="Aucun point de départ !" />
