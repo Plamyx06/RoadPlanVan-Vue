@@ -1,3 +1,22 @@
+<script setup>
+import { Menu, MenuButton, MenuItem, MenuItems } from '@headlessui/vue'
+import { ref } from 'vue';
+import Trip from './modal/Trip.vue';
+
+const emit = defineEmits(['user-button'])
+const handleUserButton = () => {
+    emit('user-button');
+};
+const showTrip = ref(false)
+
+function handleOpenTrip() {
+    showTrip.value = true
+}
+function handleCloseTrip() {
+    showTrip.value = false
+}
+</script>
+
 <template>
     <Menu as="div" class="relative inline-block text-left">
         <div>
@@ -20,36 +39,30 @@
                 class="absolute right-0 z-50 w-56 origin-bottom-right rounded-md bg-beigeCustom shadow-lg ring-1 ring-black ring-opacity-5 focus:outline-none">
                 <div class="py-1">
                     <MenuItem v-slot="{ active }">
-                    <a href="#"
-                        :class="[active ? 'bg-redCustom text-beigeCustom' : 'text-redCustom', 'block px-4 py-2 text-sm font-semibold']">Mes
+                    <button @click="handleOpenTrip"
+                        :class="[active ? 'bg-redCustom text-beigeCustom' : 'text-redCustom', 'block px-4 py-2 text-left text-sm font-semibold w-full h-full']">Mes
                         trajets
 
-                    </a>
+                    </button>
                     </MenuItem>
                     <MenuItem v-slot="{ active }">
-                    <a href="#"
-                        :class="[active ? 'bg-redCustom text-beigeCustom' : 'text-redCustom', 'block px-4 py-2 text-sm font-semibold']">Option
-                        du compte</a>
+                    <button
+                        :class="[active ? 'bg-redCustom text-beigeCustom' : 'text-redCustom', 'block px-4 py-2 text-left text-sm font-semibold  w-full h-full']">Option
+                        du compte</button>
                     </MenuItem>
                     <form method="POST" action="#">
                         <MenuItem v-slot="{ active }">
                         <button type="submit"
-                            :class="[active ? 'bg-redCustom text-beigeCustom' : 'text-redCustom', 'block w-full px-4 py-2 text-left text-sm font-semibold']">Déconnexion</button>
+                            :class="[active ? 'bg-redCustom text-beigeCustom' : 'text-redCustom', 'block w-full px-4 py-2 text-left text-sm font-semibold h-full']">Déconnexion</button>
                         </MenuItem>
                     </form>
                 </div>
             </MenuItems>
+
         </transition>
+        <div class="fixed inset-x-0 bottom-0 flex justify-center">
+            <Trip v-show="showTrip" @close="handleCloseTrip" />
+        </div>
     </Menu>
 </template>
   
-<script setup>
-import { Menu, MenuButton, MenuItem, MenuItems } from '@headlessui/vue'
-
-
-const emit = defineEmits(['user-button'])
-const handleUserButton = () => {
-
-    emit('user-button');
-};
-</script>

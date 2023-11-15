@@ -127,70 +127,67 @@ onMounted(() => {
 
 
   geocoderOrigin.on('result', (event) => {
-    lastSearchedCoords.value = []
 
-    const { center } = event.result
-    const city = event.result.text
+    lastSearchedCoords.value = [];
+    const { center } = event.result;
+    const city = event.result.text;
 
-    const countryObject = event.result.context.find((item) => item.id.startsWith('country'))
-    const country = countryObject.text
-    const countryCode = countryObject.short_code
+    const countryObject = event.result.context.find((item) => item.id.startsWith('country'));
+    const country = countryObject.text;
+    const countryCode = countryObject.short_code;
 
-    const startPoint = {
-      id: uuidv4(),
-      lon: center[0],
-      lat: center[1],
-      city: city,
-      countryCode: countryCode.toUpperCase(),
-      country: country
-    }
+    const startPoint = createWaypoint(center[0], center[1], city, countryCode.toUpperCase(), country);
 
-    lastSearchedCoords.value.push(startPoint)
+    lastSearchedCoords.value.push(startPoint);
+
     if (enabledLoop.value) {
-      const EndPoint = {
-        id: uuidv4(),
-        lon: center[0],
-        lat: center[1],
-        city: city,
-        countryCode: countryCode.toUpperCase(),
-        country: country
-      }
-      lastSearchedCoords.value.push(EndPoint)
+      const endPoint = createWaypoint(center[0], center[1], city, countryCode.toUpperCase(), country);
+      lastSearchedCoords.value.push(endPoint);
     }
-    const geocoderInput = document.querySelector('.mapboxgl-ctrl-geocoder--input');
-    geocoderInput.blur()
-    console.log('geocodeurOn', lastSearchedCoords.value)
-  })
 
-  emitter.on('updated-waypoint-origin', handleGeocoderOrigin)
+    const geocoderInput = document.querySelector('.mapboxgl-ctrl-geocoder--input');
+    geocoderInput.blur();
+
+    console.log('geocodeurOn', lastSearchedCoords.value);
+  });
+
+  emitter.on('updated-waypoint-origin', handleGeocoderOrigin);
 
   function handleGeocoderOrigin() {
-
-    if (lastSearchedCoords.value.length === 0) {
+    const valueWaypoint = lastSearchedCoords.value
+    if (valueWaypoint === 0) {
       emitter.emit('no-waypoint-origin');
-    }
-    else {
-      waypoints.value = lastSearchedCoords.value
+    } else {
+      waypoints.value = lastSearchedCoords.value;
       geocoderOrigin.clear();
-      emit('update-waypoints', waypoints.value)
-
-      const lastCoordLat = waypoints.value[0].lat
-      const lastCoordLon = waypoints.value[0].lon
+      emit('update-waypoints', waypoints.value);
+      const lastCoordLat = waypoints.value[0].lat;
+      const lastCoordLon = waypoints.value[0].lon;
       const center = [lastCoordLon, lastCoordLat];
-      geojsonMarkerOrigin.features[0].geometry.coordinates = center
+      geojsonMarkerOrigin.features[0].geometry.coordinates = center;
       if (map.getSource('point-start')) {
-        map.getSource('point-start').setData(geojsonMarkerOrigin)
-        map.getSource('point-label-start').setData(geojsonMarkerOrigin)
+        map.getSource('point-start').setData(geojsonMarkerOrigin);
+        map.getSource('point-label-start').setData(geojsonMarkerOrigin);
       } else {
-        map.addLayer(markerCircleStyleOrigin)
-        map.addLayer(markerTextStyleOrigin)
+        map.addLayer(markerCircleStyleOrigin);
+        map.addLayer(markerTextStyleOrigin);
       }
-
       if (enabledLoop.value) {
-        getRoad(waypoints.value)
+        getRoad(waypoints.value);
       }
-      lastSearchedCoords.value = []
+      lastSearchedCoords.value = [];
     }
+  }
+
+  function createWaypoint(lon, lat, city, countryCode, country) {
+    return {
+      id: uuidv4(),
+      lon,
+      lat,
+      city,
+      countryCode,
+      country,
+    };
   }
 
 
@@ -258,7 +255,7 @@ onMounted(() => {
     language: 'fr-FR',
     types: 'place',
     bbox: [-31.266001, 27.636311, 69.033946, 81.008797],
-    placeholder: 'Ajoute une destination',
+    placeholder: 'Cherche une destination',
     flyTo: {
       speed: 1,
       curve: 1,
@@ -278,14 +275,8 @@ onMounted(() => {
     const country = countryObject.text
     const countryCode = countryObject.short_code
 
-    const newPoint = {
-      id: uuidv4(),
-      lon: center[0],
-      lat: center[1],
-      city: city,
-      countryCode: countryCode,
-      country: country
-    }
+    const newPoint = createWaypoint(center[0], center[1], city, countryCode.toUpperCase(), country);
+
     lastSearchedCoords.value = newPoint
     geocoderInputs[1].blur()
   })
@@ -578,9 +569,8 @@ onMounted(() => {
     waypoints.value.push(...orderedWaypoints);
     console.log('waypoint : ', waypoints.value);
   }
-
-
 })
+
 </script>
 
 <style scoped>

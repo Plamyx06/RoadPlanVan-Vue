@@ -103,9 +103,8 @@ function handleEnable(newValue) {
   <div class="container fixed mt-[50vh] h-[50vh] w-screen overflow-y-auto px-5">
     <div v-if="showContent">
       <div class="flex justify-between items-center w-full pt-2">
-        <div v-if="confirmed" class="ml-[-15px]">
-          <button type="button" @click="modifyChoice"
-            class="rounded-full bg-[#8A4852] p-1 text-[#F8F4E8] shadow-sm hover:bg-indigo-500 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-[#8A4852]">
+        <div v-if="confirmed" class="ml-[-12px]">
+          <button type="button" @click="modifyChoice" class="rounded-full bg-[#8A4852] p-1 text-[#F8F4E8] shadow-sm">
             <ChevronLeftIcon class="h-5 w-5" aria-hidden="true" />
           </button>
         </div>
@@ -127,7 +126,7 @@ function handleEnable(newValue) {
                 </svg>
               </div>
             </div>
-            <div class="text-center">{{ item.consumption }}L/100km</div> <!-- Texte centré sous l'icône -->
+            <div class="text-center">{{ item.consumption }}L/100km</div>
           </div>
         </div>
         <div class="my-6">

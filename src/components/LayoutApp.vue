@@ -1,7 +1,7 @@
 <script setup>
 import { ref, defineEmits } from 'vue'
 import Modal from '../components/DeleteModal.vue'
-import RegisterModal from '../components/UserRegister.vue'
+import RegisterModal from '../components/RegisterModal.vue'
 import { useRouter } from 'vue-router'
 import MenuUser from '../components/MenuUser.vue'
 
@@ -19,6 +19,9 @@ const handleItineraryButton = () => handleButton('itinerary')
 
 const showModal = ref(false)
 const showUserRegister = ref(false)
+function handleCloseRegisterModal() {
+  showUserRegister.value = false
+}
 function handleHomeButton() {
   handleButton('home')
   showModal.value = true
@@ -120,7 +123,7 @@ function handleUserButton() {
 
   <Modal :show="showModal" :save="handleSave" :returnHome="handleReturnHome" :cancel="handleCancel" />
   <div class="fixed inset-x-0 bottom-0 flex justify-center">
-    <RegisterModal v-show="showUserRegister" />
+    <RegisterModal v-show="showUserRegister" @close="handleCloseRegisterModal" />
   </div>
 </template>
 

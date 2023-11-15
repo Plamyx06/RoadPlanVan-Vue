@@ -31,9 +31,7 @@ onMounted(() => {
   getCountryData(props.countryCode);
 });
 onUnmounted(() => {
-
   countryFlag.value = '';
-
 });
 
 watch(() => props.countryCode, (newCode) => {

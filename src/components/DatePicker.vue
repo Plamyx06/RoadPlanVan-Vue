@@ -5,13 +5,17 @@
 </template>
 
 <script setup>
-import { ref, defineEmits } from 'vue';
+import { ref, defineEmits, onUnmounted } from 'vue';
 import VueDatePicker from '@vuepic/vue-datepicker';
 import '@vuepic/vue-datepicker/dist/main.css'
 import '../assets/style/data-picker-custom.css'
 
 const date = ref(new Date());
 
+const savedDate = localStorage.getItem('selectedDate');
+if (savedDate) {
+  date.value = new Date(savedDate);
+}
 
 const format = (date) => {
   return date.toLocaleDateString('fr-FR')
@@ -20,11 +24,20 @@ const format = (date) => {
 const emit = defineEmits(["date-changed"]);
 
 const handleDate = (modelData) => {
-  date.value = new Date(modelData)
+  date.value = new Date(modelData);
+
+
+  localStorage.setItem('selectedDate', date.value.toISOString());
+
   emit('date-changed', date.value);
 }
 
+
+
+
 </script>
+
+
 
 
 

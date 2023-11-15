@@ -36,6 +36,14 @@ const enableLoopMode = ref(true);
 emitter.on('enabled-loop', (enabledValue) => {
   enableLoopMode.value = enabledValue
 });
+const isLoading = ref(false)
+emitter.on('isLoading', (loadingValue) => {
+  isLoading.value = loadingValue
+  console.log(isLoading.value)
+});
+
+
+
 const clonedWaypoints = ref([]);
 
 function handleDraggableStart() {
@@ -132,20 +140,19 @@ watchEffect(() => {
 
 <template>
   <div class="container fixed mt-[50vh] h-[50vh] w-screen overflow-y-auto">
-    <div class="flex justify-between mt-3 px-5">
-      <div class="w-7/12 mb-3">
+    <div class="flex justify-between items-center my-5 px-5">
+      <div class="w-7/12 ">
         <div id="geocoder" class="geocoder"></div>
       </div>
       <div>
-        <button type="button" @click="addNewWaypoint" style="background-color: #8A4852; color: #F8F4E8;"
-          class="rounded-full bg-indigo-600 p-1 text-white shadow-sm hover:bg-indigo-500 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-indigo-600">
+        <button type="button" @click="addNewWaypoint" class="rounded-full bg-redCustom p-1 text-beigeCustom shadow-sm">
           <PlusIcon class="h-5 w-5" aria-hidden="true" />
         </button>
       </div>
 
     </div>
     <div class="px-5">
-      <ErrorAlert v-if="noWaypoint" text="selectionne un point" />
+      <ErrorAlert v-if="noWaypoint" text="Aucune destination !" />
       <ErrorAlert v-if="waypointExist" text="Cet destination a déjà été ajouté" />
     </div>
 
@@ -172,13 +179,14 @@ watchEffect(() => {
 
                 <button
                   v-if="!enableLoopMode && index > 0 || (enableLoopMode && index > 0 && index < (mutableWaypoints.length - 1))"
-                  @click="openDeleteModal(element)" style="background-color: #8A4852; color: #F8F4E8;"
-                  class="rounded-full bg-indigo-600 p-1 text-white shadow-sm hover:bg-indigo-500 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-indigo-600 ml-3">
+                  @click="openDeleteModal(element)" :disabled="isLoading"
+                  class="rounded-full bg-redCustom p-1 text-beigeCustom shadow-sm ml-3">
                   <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5"
                     stroke="currentColor" class="w-4 h-4">
                     <path stroke-linecap="round" stroke-linejoin="round" d="M6 18L18 6M6 6l12 12" />
                   </svg>
                 </button>
+
 
               </div>
 
@@ -192,7 +200,7 @@ watchEffect(() => {
         </VueDraggable>
       </div>
       <div class="w-1/6 flex items-center flex-col space-between h-full" style="position: relative;">
-        <template v-for="(waypoint, index) in mutableWaypoints">
+        <template v-for="( waypoint, index ) in  mutableWaypoints ">
           <button v-if="index === 0 || index === mutableWaypoints.length - 1"
             class="rounded-full w-5 h-5 text-center py-1 text-sm " style=" background-color: #8A4852;">
           </button>
