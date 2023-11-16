@@ -5,7 +5,7 @@ import RegisterModal from '../components/RegisterModal.vue'
 import { useRouter } from 'vue-router'
 import MenuUser from '../components/MenuUser.vue'
 
-const emit = defineEmits(['select-button'])
+const emit = defineEmits(['select-button'], 'cancel')
 const selectedButton = ref('itinerary')
 const router = useRouter()
 
@@ -33,6 +33,7 @@ function handleReturnHome() {
 }
 function handleCancel() {
   showModal.value = false
+  selectedButton.value = 'itinerary'
 }
 function handleSave() {
   showModal.value = false

@@ -44,10 +44,7 @@ const handleSelectedButton = (button) => {
     showBeforeMap.value = previousShowBeforeMap.value;
     mapFullSize.value = false;
   } else if (button === 'home') {
-    showItineraryMap.value = previousShowItineraryMap.value;
-    showBeforeMap.value = previousShowBeforeMap.value;
     mapFullSize.value = false;
-
   }
 
 

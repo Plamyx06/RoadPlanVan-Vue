@@ -64,19 +64,13 @@ const handleDateChange = (newDate) => {
 
 const emits = defineEmits(['hide']);
 
+const hide = ref(false)
+const noWaypoint = ref(false)
 
 const hideMe = () => {
-  hide.value = true
   emitter.emit('updated-waypoint-origin')
-
-  if (hide.value) {
-    emits('hide');
-  } else {
-    return
-  }
 }
-const hide = ref(true)
-const noWaypoint = ref(false)
+
 
 emitter.on("no-waypoint-origin", () => {
   noWaypoint.value = true;
@@ -84,6 +78,9 @@ emitter.on("no-waypoint-origin", () => {
   setTimeout(() => {
     noWaypoint.value = false;
   }, 3000);
+});
+emitter.on("have-waypoint-origin", () => {
+  emits('hide');
 });
 
 

@@ -39,7 +39,7 @@ emitter.on('enabled-loop', (enabledValue) => {
 const isLoading = ref(false)
 emitter.on('isLoading', (loadingValue) => {
   isLoading.value = loadingValue
-  console.log(isLoading.value)
+
 });
 
 

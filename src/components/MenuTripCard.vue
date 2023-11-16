@@ -15,7 +15,7 @@ function handleOpenTrip() {
 <template>
     <Menu as="div" class="relative inline-block text-left">
         <div>
-            <MenuButton @click="handleUserButton" class="w-full ">
+            <MenuButton class="w-full ">
                 <div class="flex justify-center items-center rounded-full">
                     <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5"
                         stroke="currentColor" class="w-6 h-6 text-beigeCustom">
@@ -35,12 +35,12 @@ function handleOpenTrip() {
                 <div class="py-1">
                     <MenuItem v-slot="{ active }">
                     <button @click="handleOpenTrip"
-                        :class="[active ? 'bg-redCustom text-beigeCustom' : 'text-redCustom', 'block px-4 py-2 text-left text-sm font-semibold w-full h-full']">Continuer
+                        :class="[active ? 'bg-redCustom text-beigeCustom' : 'text-redCustom', 'block px-4 py-2 text-left text-sm font-semibold w-full h-full']">Modifier
                     </button>
                     </MenuItem>
                     <MenuItem v-slot="{ active }">
                     <button
-                        :class="[active ? 'bg-redCustom text-beigeCustom' : 'text-redCustom', 'block px-4 py-2 text-left text-sm font-semibold  w-full h-full']">Supprimer</button>
+                        :class="[active ? 'bg-red-500 text-beigeCustom' : 'text-red-500', 'block px-4 py-2 text-left text-sm font-semibold  w-full h-full']">Supprimer</button>
                     </MenuItem>
                 </div>
             </MenuItems>

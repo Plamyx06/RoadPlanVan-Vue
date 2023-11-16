@@ -156,7 +156,7 @@ onMounted(() => {
   });
 
   async function checkLastSearchValue(value) {
-    if (value === 0) {
+    if (value.length === 0) {
       return false
     }
     else {
@@ -166,11 +166,10 @@ onMounted(() => {
 
   async function handleGeocoderOrigin() {
     const haveWaypoint = await checkLastSearchValue(lastSearchedCoords.value)
-    console.log("je suis have", haveWaypoint)
-
-    if (!haveWaypoint === 0) {
+    if (!haveWaypoint) {
       emitter.emit('no-waypoint-origin');
     } else if (haveWaypoint) {
+      emitter.emit('have-waypoint-origin')
       waypoints.value = lastSearchedCoords.value;
       geocoderOrigin.clear();
       emit('update-waypoints', waypoints.value);
