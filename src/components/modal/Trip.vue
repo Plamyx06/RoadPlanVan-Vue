@@ -25,13 +25,11 @@ function closeModal() {
                     </roundedButton>
                 </div>
                 <div class="sm:mx-auto sm:w-full sm:max-w-md">
-                    <h2 class=" text-center text-2xl font-bold leading-9 tracking-tight text-redCustom">Mes trajets
-                        sauvegardés
+                    <h2 class=" text-center text-2xl font-bold leading-9 tracking-tight text-redCustom mb-3">Mes trajets
                     </h2>
                 </div>
                 <TripCard />
-                <TripCard />
-                <TripCard />
+
             </div>
         </div>
     </div>

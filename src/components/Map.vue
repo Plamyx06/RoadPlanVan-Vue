@@ -151,13 +151,26 @@ onMounted(() => {
     console.log('geocodeurOn', lastSearchedCoords.value);
   });
 
-  emitter.on('updated-waypoint-origin', handleGeocoderOrigin);
+  emitter.on('updated-waypoint-origin', async () => {
+    await handleGeocoderOrigin();
+  });
 
-  function handleGeocoderOrigin() {
-    const valueWaypoint = lastSearchedCoords.value
-    if (valueWaypoint === 0) {
+  async function checkLastSearchValue(value) {
+    if (value === 0) {
+      return false
+    }
+    else {
+      return true
+    }
+  }
+
+  async function handleGeocoderOrigin() {
+    const haveWaypoint = await checkLastSearchValue(lastSearchedCoords.value)
+    console.log("je suis have", haveWaypoint)
+
+    if (!haveWaypoint === 0) {
       emitter.emit('no-waypoint-origin');
-    } else {
+    } else if (haveWaypoint) {
       waypoints.value = lastSearchedCoords.value;
       geocoderOrigin.clear();
       emit('update-waypoints', waypoints.value);
@@ -178,6 +191,7 @@ onMounted(() => {
       lastSearchedCoords.value = [];
     }
   }
+
 
   function createWaypoint(lon, lat, city, countryCode, country) {
     return {
