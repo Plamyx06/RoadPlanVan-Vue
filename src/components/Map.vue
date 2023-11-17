@@ -1,8 +1,9 @@
 <template>
   <div id="map" :class="['map-container', { 'map-full': !isFullSize, 'map-container-full': isFullSize }]">
   </div>
-  <div v-if="isLoading" class="absolute top-0 w-full h-[45vh] bg-gray-500 bg-opacity-40 flex justify-center items-center">
-    <Spinner class="w-20 h-20" />
+  <div v-if="isLoading"
+    class="absolute top-0 w-full h-[45vh] bg-gray-500 bg-opacity-40 flex justify-center items-center lg:h-full">
+    <Spinner class="w-20 h-20 lg:w-40 lg:h-40" />
   </div>
 </template>
 
@@ -597,5 +598,12 @@ onMounted(() => {
 
 .map-container-full {
   height: 95vh;
+}
+
+@media (min-width: 1024px) {
+  .map-container {
+    height: 100vh;
+  }
+
 }
 </style>

@@ -8,7 +8,6 @@ import DeleteModal from '../components/DeleteModal.vue';
 import Road from '../components/RoadInformation.vue';
 import ErrorAlert from '../components/ErrorAlert.vue'
 
-
 const props = defineProps(['waypoints']);
 const mutableWaypoints = ref(props.waypoints);
 
@@ -139,108 +138,111 @@ watchEffect(() => {
 </script>
 
 <template>
-  <div class="container fixed mt-[50vh] h-[50vh] w-screen overflow-y-auto">
-    <div class="flex justify-between items-center my-5 px-5">
-      <div class="w-7/12 ">
-        <div id="geocoder" class="geocoder"></div>
+  <div
+    class="fixed mt-[49vh] h-[51vh] w-screen overflow-y-auto bg-beigeCustom text-redCustom px-5 lg:max-w-lg lg:w-4/12 lg:mt-[10vh]  lg:h-[85vh] lg:ml-5 lg:drop-shadow-lg lg:rounded-b-lg">
+    <div class="sm:max-w-lg sm:mx-auto">
+      <div class="flex justify-between items-center my-5 px-5 sm:max-w-lg">
+        <div class="w-7/12 ">
+          <div id="geocoder" class="geocoder"></div>
+        </div>
+        <div>
+          <button type="button" @click="addNewWaypoint" class="rounded-full bg-redCustom p-1 text-beigeCustom shadow-sm ">
+            <PlusIcon class="h-5 w-5" aria-hidden="true" />
+          </button>
+        </div>
+
       </div>
-      <div>
-        <button type="button" @click="addNewWaypoint" class="rounded-full bg-redCustom p-1 text-beigeCustom shadow-sm">
-          <PlusIcon class="h-5 w-5" aria-hidden="true" />
-        </button>
+      <div class="px-5">
+        <ErrorAlert v-if="noWaypoint" text="Aucune destination !" />
+        <ErrorAlert v-if="waypointExist" text="Cet destination a déjà été ajouté" />
       </div>
 
-    </div>
-    <div class="px-5">
-      <ErrorAlert v-if="noWaypoint" text="Aucune destination !" />
-      <ErrorAlert v-if="waypointExist" text="Cet destination a déjà été ajouté" />
-    </div>
+      <div class="flex items-center mt-3">
+        <div class="w-5/6">
+          <VueDraggable class="" v-model="mutableWaypoints" handle=".drag-handle" item-key="index"
+            @change="handleDraggableChange" @start="handleDraggableStart">
 
-    <div class="flex items-center mt-3">
-      <div class="w-5/6">
-        <VueDraggable class="" v-model="mutableWaypoints" handle=".drag-handle" item-key="index"
-          @change="handleDraggableChange" @start="handleDraggableStart">
-
-          <template v-slot:item="{ element, index }">
-            <div>
-              <div class="flex items-center h-12 ">
-                <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5"
-                  stroke="currentColor" class="w-5 h-5">
-                  <path stroke-linecap="round" stroke-linejoin="round"
-                    d="M12 6.75a.75.75 0 110-1.5.75.75 0 0100 1.5zM12 12.75a.75.75 0 110-1.5.75.75 0 0100 1.5zM12 18.75a.75.75 0 110-1.5.75.75 0 0100 1.5z" />
-                </svg>
-
-                <LocationCard v-if="index === 0 || (index === mutableWaypoints.length - 1 && enableLoopMode)"
-                  :lon="element.lon" :lat="element.lat" :city="element.city" :country="element.country"
-                  :countryCode="element.countryCode" />
-
-                <LocationCard v-else :lon="element.lon" :lat="element.lat" :city="element.city" :country="element.country"
-                  :countryCode="element.countryCode" :class="{ 'drag-handle': index > 0 }" />
-
-                <button
-                  v-if="!enableLoopMode && index > 0 || (enableLoopMode && index > 0 && index < (mutableWaypoints.length - 1))"
-                  @click="openDeleteModal(element)" :disabled="isLoading"
-                  class="rounded-full bg-redCustom p-1 text-beigeCustom shadow-sm ml-3">
+            <template v-slot:item="{ element, index }">
+              <div>
+                <div class="flex items-center h-12 ">
                   <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5"
-                    stroke="currentColor" class="w-4 h-4">
-                    <path stroke-linecap="round" stroke-linejoin="round" d="M6 18L18 6M6 6l12 12" />
+                    stroke="currentColor" class="w-5 h-5">
+                    <path stroke-linecap="round" stroke-linejoin="round"
+                      d="M12 6.75a.75.75 0 110-1.5.75.75 0 0100 1.5zM12 12.75a.75.75 0 110-1.5.75.75 0 0100 1.5zM12 18.75a.75.75 0 110-1.5.75.75 0 0100 1.5z" />
                   </svg>
-                </button>
 
+                  <LocationCard v-if="index === 0 || (index === mutableWaypoints.length - 1 && enableLoopMode)"
+                    :lon="element.lon" :lat="element.lat" :city="element.city" :country="element.country"
+                    :countryCode="element.countryCode" />
+
+                  <LocationCard v-else :lon="element.lon" :lat="element.lat" :city="element.city"
+                    :country="element.country" :countryCode="element.countryCode" :class="{ 'drag-handle': index > 0 }" />
+
+                  <button
+                    v-if="!enableLoopMode && index > 0 || (enableLoopMode && index > 0 && index < (mutableWaypoints.length - 1))"
+                    @click="openDeleteModal(element)" :disabled="isLoading"
+                    class="rounded-full bg-redCustom  text-beigeCustom shadow-sm ml-3 p-1">
+                    <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5"
+                      stroke="currentColor" class="w-4 h-4">
+                      <path stroke-linecap="round" stroke-linejoin="round" d="M6 18L18 6M6 6l12 12" />
+                    </svg>
+                  </button>
+
+
+                </div>
+
+                <template v-if="element.duration !== '' && index !== (mutableWaypoints.length - 1)">
+                  <Road :duration="formatDuration(element.duration)" :distance="element.distance"
+                    :price="Math.ceil((element.distance / 100) * consumption * PRICE_GASOLINE)" />
+                </template>
 
               </div>
+            </template>
+          </VueDraggable>
+        </div>
+        <div class="w-1/6 flex items-center flex-col space-between h-full sm:ml-4 md:ml-12" style="position: relative;">
+          <template v-for="(waypoint, index ) in  mutableWaypoints ">
+            <button v-if="index === 0 || index === mutableWaypoints.length - 1"
+              class="rounded-full w-5 h-5 text-center py-1 text-sm " style=" background-color: #8A4852;">
+            </button>
+            <button v-else class="rounded-full w-5 h-5 text-sm font-semibold text-center "
+              style="border: 1px solid #8A4852; background-color: transparent;">
+              {{ index + 1 }}
+            </button>
 
-              <template v-if="element.duration !== '' && index !== (mutableWaypoints.length - 1)">
-                <Road :duration="formatDuration(element.duration)" :distance="element.distance"
-                  :price="Math.ceil((element.distance / 100) * 8 * 1.8)" />
-              </template>
 
-            </div>
+            <div v-if="index !== mutableWaypoints.length - 1"
+              class="border-l-2 border-dashed h-[56px] border-custom-color animate-opacity"
+              :style="`animation-delay: ${index * 0.5}s`"></div>
+
+
           </template>
-        </VueDraggable>
-      </div>
-      <div class="w-1/6 flex items-center flex-col space-between h-full" style="position: relative;">
-        <template v-for="( waypoint, index ) in  mutableWaypoints ">
-          <button v-if="index === 0 || index === mutableWaypoints.length - 1"
-            class="rounded-full w-5 h-5 text-center py-1 text-sm " style=" background-color: #8A4852;">
-          </button>
-          <button v-else class="rounded-full w-5 h-5 text-sm font-semibold  pl-px"
-            style="border: 1px solid #8A4852; background-color: transparent;">
-            {{ index + 1 }}
-          </button>
+
+        </div>
 
 
-          <div v-if="index !== mutableWaypoints.length - 1"
-            class="border-l-2 border-dashed h-[56px] border-custom-color animate-opacity"
-            :style="`animation-delay: ${index * 0.5}s`"></div>
 
-
-        </template>
 
       </div>
 
 
+      <div v-if="mutableWaypoints.length > 2">
+        <div class="border-b border-gray-500 my-3 mx-5 border-custom-color"></div>
+        <div class="px-5 flex justify-between items-center">
+          <p class="">Total :</p>
+          <Road class="" :duration="formatDuration(totalDuration)" :distance="totalDistance" :price="totalPrice">
+
+          </Road>
+
+        </div>
+
+      </div>
 
 
+
+      <DeleteModal :show="showDeleteModal" :cancel="handleCancel" :deleted="handleDelete" :city="deleteObject.city"
+        :placeLocation="deleteObject.placeLocation" />
     </div>
-
-
-    <div v-if="mutableWaypoints.length > 2">
-      <div class="border-b border-gray-500 my-3 mx-5 border-custom-color"></div>
-      <div class="px-5 flex justify-between items-center">
-        <p class="">Total :</p>
-        <Road class="" :duration="formatDuration(totalDuration)" :distance="totalDistance" :price="totalPrice">
-
-        </Road>
-
-      </div>
-
-    </div>
-
-
-
-    <DeleteModal :show="showDeleteModal" :cancel="handleCancel" :deleted="handleDelete" :city="deleteObject.city"
-      :placeLocation="deleteObject.placeLocation" />
   </div>
 </template>
 
@@ -249,12 +251,6 @@ watchEffect(() => {
 .border-custom-color {
   border-color: #8A4852;
 
-}
-
-.container {
-  font-family: 'Kalam', cursive;
-  background-color: #F8EDE0;
-  color: #8A4852;
 }
 
 body {

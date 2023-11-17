@@ -13,7 +13,7 @@ function closeModal() {
 
 
 <template >
-    <div class="relative flex flex-1 flex-col justify-center py-12   lg:px-8 w-full h-screen">
+    <div class="relative flex flex-1 flex-col justify-center py-12   lg:px-8 w-full h-screen lg">
         <div class="absolute inset-0 bg-gray-500 opacity-75"></div>
         <div class="sm:mx-auto sm:w-full sm:max-w-[480px] shadow rounded-lg px-6 py-12 relative">
 
@@ -30,6 +30,7 @@ function closeModal() {
                         </roundedButton>
                     </div>
                 </div>
+
                 <TripCard />
                 <TripCard />
                 <TripCard />

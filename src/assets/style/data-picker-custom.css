@@ -23,7 +23,8 @@
     --dp-disabled-color-text: #8e8e8e;
     --dp-highlight-color: rgb(25 118 210 / 10%);
     width: 50%;
-
+    min-width: 10rem;
+    max-width: 10rem;
 }
 
 .dp__input::placeholder {
@@ -35,5 +36,6 @@
     border-radius: 9999px;
     height: 30px;
     text-align: center;
+
 
 }

@@ -4,8 +4,8 @@ import menuTripCard from './MenuTripCard.vue'
 </script>
 
 <template>
-    <h4 class="sr-only">Items</h4>
-    <ul role="list" class="divide-y divide-gray-200 bg-redCustom border-2 border-redCustom rounded-lg drop-shadow-xl my-2">
+    <ul role="list"
+        class="divide-y divide-gray-200 bg-redCustom border-2 border-redCustom rounded-lg drop-shadow-xl my-2 lg:my-6">
         <li class="p-4">
             <div class="flex">
                 <div class="h-20 w-20 flex-shrink-0 overflow-hidden rounded-lg drop-shadow-xl">

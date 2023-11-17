@@ -45,7 +45,7 @@ function handleUserButton() {
 </script>
 
 <template>
-  <div v-show="selectedButton === 'card'" class="absolute mt-[45vh] left-0 overflow-hidden">
+  <div v-show="selectedButton === 'card'" class="absolute mt-[45vh] left-0 overflow-hidden lg:mt-[5vh] lg:w-4/12">
     <button style="background-color: #8a4852; color: #f8f4e8"
       class="justify-center rounded-r-full pl-3 pr-3 h-[5vh] text-sm font-semibold shadow-sm hover:bg-indigo-700 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-indigo-800"
       @click="handleItineraryButton" type="button">
@@ -72,9 +72,10 @@ function handleUserButton() {
     </button>
   </div>
 
-  <div v-show="selectedButton !== 'card'" class="nav_container fixed mt-[45vh] w-screen h-[5vh]">
+  <div v-show="selectedButton !== 'card'"
+    class="bg-redCustom text-beigeCustom fixed mt-[45vh] w-screen h-[5vh] lg:mt-[5vh] lg:ml-5 lg:rounded-t-lg lg:w-4/12 lg:max-w-lg">
     <div class="flex justify-between w-full h-full">
-      <div :class="{ button_color_reverse: selectedButton === 'home' }" class="flex-1">
+      <div :class="{ button_color_reverse: selectedButton === 'home' }" class="flex-1 lg:rounded-tl-lg">
         <button @click="handleHomeButton" type="button" class="w-full h-full flex justify-center items-center">
           <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor"
             class="w-6 h-6">
@@ -116,7 +117,7 @@ function handleUserButton() {
           </div>
         </button>
       </div>
-      <div :class="{ button_color_reverse: selectedButton === 'user' }" class="flex-1">
+      <div :class="{ button_color_reverse: selectedButton === 'user' }" class="flex-1 lg:rounded-tr-lg">
         <MenuUser class="h-full w-full" v-on:user-button="handleUserButton" />
       </div>
     </div>
@@ -129,11 +130,6 @@ function handleUserButton() {
 </template>
 
 <style scoped>
-.nav_container {
-  background-color: #8a4852;
-  color: #f8ede0;
-}
-
 .button_color_reverse {
   background-color: #f8ede0;
   color: #8a4852;

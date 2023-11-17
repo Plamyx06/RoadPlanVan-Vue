@@ -1,7 +1,7 @@
 <template>
     <SwitchGroup as="div" class="">
         <span class="flex flex-grow flex-col">
-            <SwitchDescription as="span" class="text-redCustom underline">Activé le retour au point de départ ?
+            <SwitchDescription as="span" class="text-redCustom underline">Activer le retour au point de départ ?
             </SwitchDescription>
         </span>
         <div class="flex justify-end">

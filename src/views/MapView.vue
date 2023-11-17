@@ -62,10 +62,4 @@ const handleSelectedButton = (button) => {
   </main>
 </template>
 
-<style scoped>
-.container {
-  font-family: 'Nunito Sans', sans-serif;
-  background-color: #F8EDE0;
-  color: #8A4852;
-}
-</style>
+<style scoped></style>

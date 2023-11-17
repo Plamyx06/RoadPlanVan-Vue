@@ -44,6 +44,4 @@ body {
   font-family: 'Nunito Sans', sans-serif;
   background-color: #F8EDE0;
 }
-
-;
 </style>

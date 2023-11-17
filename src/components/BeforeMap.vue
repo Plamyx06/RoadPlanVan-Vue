@@ -97,77 +97,69 @@ function handleEnable(newValue) {
 
 
 <template>
-  <div class="container fixed mt-[50vh] h-[50vh] w-screen overflow-y-auto px-5">
-    <div v-if="showContent">
-      <div class="flex justify-between items-center w-full pt-2">
-        <div v-if="confirmed" class="ml-[-12px]">
-          <button type="button" @click="modifyChoice" class="rounded-full bg-[#8A4852] p-1 text-[#F8F4E8] shadow-sm">
-            <ChevronLeftIcon class="h-5 w-5" aria-hidden="true" />
-          </button>
+  <div
+    class="fixed mt-[49vh] h-[51vh] w-screen overflow-y-auto bg-beigeCustom text-redCustom px-5 lg:max-w-lg lg:w-4/12 lg:mt-[10vh]  lg:h-[85vh] lg:ml-5 lg:drop-shadow-lg lg:rounded-b-lg">
+    <div class="sm:max-w-lg sm:mx-auto ">
+      <div v-if="showContent">
+        <div class="flex justify-between items-center w-full pt-2 mt-3 lg:mt-1">
+          <div v-if="confirmed" class="ml-[-12px]">
+            <button type="button" @click="modifyChoice" class="rounded-full bg-[#8A4852] p-1 text-[#F8F4E8] shadow-sm">
+              <ChevronLeftIcon class="h-5 w-5" aria-hidden="true" />
+            </button>
+          </div>
+          <h1 class="text-xl underline flex-1 text-center">Avant de commencer</h1>
         </div>
-        <h1 class="text-xl underline flex-1 text-center">Avant de commencer</h1>
-      </div>
 
-      <div v-if="!confirmed">
-        <p class="py-2 underline">Sélectionne ton véhicule : </p>
-        <div class="grid gap-2 grid-cols-2 w-full">
-          <div v-for="(item, index) in items" :key="index" class="w-full">
+        <div v-if="!confirmed">
+          <p class="py-2 underline">Sélectionne ton véhicule : </p>
+          <div class="grid gap-2 grid-cols-2 w-full sm:gap-3 sm:grid-cols-3">
+            <div v-for="(item, index) in items" :key="index" class="w-full">
 
-            <div @click="toggleSelect(index)" class="relative flex justify-center">
-              <component :is="item.svg" :class="[item.class, 'block mx-auto']" />
+              <div @click="toggleSelect(index)" class="relative flex justify-center">
+                <component :is="item.svg" :class="[item.class, 'block mx-auto']" />
 
-              <div v-if="item.selected" class="absolute top-0 bottom-0 left-0 right-0 flex items-center justify-center">
-                <svg xmlns="http://www.w3.org/2000/svg" class="h-16 w-16 text-green-500" fill="none" viewBox="0 0 24 24"
-                  stroke="currentColor">
-                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="4" d="M5 13l4 4L19 7" />
-                </svg>
+                <div v-if="item.selected" class="absolute top-0 bottom-0 left-0 right-0 flex items-center justify-center">
+                  <svg xmlns="http://www.w3.org/2000/svg" class="h-16 w-16 text-green-500" fill="none" viewBox="0 0 24 24"
+                    stroke="currentColor">
+                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="4" d="M5 13l4 4L19 7" />
+                  </svg>
+                </div>
               </div>
+              <div class="text-center">{{ item.consumption }}L/100km</div>
             </div>
-            <div class="text-center">{{ item.consumption }}L/100km</div>
+          </div>
+          <div class="my-6 w-full">
+            <h2 class="underline">Date de départ: </h2>
+            <div class="flex justify-end w-full ">
+              <DatePicker :selectedDate="selectedDate" @date-changed="handleDateChange" />
+            </div>
+          </div>
+          <div>
+            <ToggleSelect @update-enabled="handleEnable" />
+          </div>
+          <div class="flex justify-center my-5 mb-36">
+            <MainButton text="Suivant" @click="validateSelection" />
           </div>
         </div>
-        <div class="my-6">
-          <h2 class="underline">Date de départ: </h2>
-          <div class="flex justify-end">
-            <DatePicker :selectedDate="selectedDate" @date-changed="handleDateChange" />
-          </div>
-        </div>
-        <div>
-          <ToggleSelect @update-enabled="handleEnable" />
-        </div>
-        <div class="flex justify-center my-5 mb-36">
-          <MainButton text="Suivant" @click="validateSelection" />
-        </div>
       </div>
-    </div>
+      <div :class="{ 'hidden': !confirmed }" class="...">
+        <h2 class="flex-grow underline my-3">Créer ton itinéraire </h2>
+        <div class="w-7/12 mb-3">
+          <div id="geocoder-origin-container" class=""></div>
+        </div>
+        <ErrorAlert v-if="noWaypoint" text="Aucun point de départ !" />
+        <div class="text-center mt-6">
+          <MainButton text="Commencer" @click="hideMe" />
+        </div>
 
-
-
-
-    <div :class="{ 'hidden': !confirmed }" class="...">
-      <h2 class="flex-grow underline my-3">Créer ton itinéraire </h2>
-      <div class="w-7/12 mb-3">
-        <div id="geocoder-origin-container" class=""></div>
       </div>
-      <ErrorAlert v-if="noWaypoint" text="Aucun point de départ !" />
-      <div class="text-center mt-6">
-        <MainButton text="Commencer" @click="hideMe" />
-      </div>
+
 
     </div>
-
-
   </div>
 </template>
 
 <style scoped>
-.container {
-  font-family: 'Kalam', cursive;
-  background-color: #F8EDE0;
-  color: #8A4852;
-  font-size: 16px;
-}
-
 #geocoder-origin-container {
   font-size: 16px;
 }
