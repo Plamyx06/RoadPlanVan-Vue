@@ -27,15 +27,15 @@ const emit = defineEmits(['update-waypoints'])
 
 const lastSearchedCoords = ref([])
 const waypoints = ref([])
-const enabledLoop = ref(true);
+const enableReturnStart = ref(true);
 const isLoading = ref(false)
 
 const props = defineProps({
   isFullSize: Boolean
 })
 
-emitter.on('enabled-loop', (enabledValue) => {
-  enabledLoop.value = enabledValue
+emitter.on('enabled-return-start', (enabledValue) => {
+  enableReturnStart.value = enabledValue
 });
 
 
@@ -49,7 +49,7 @@ onMounted(() => {
     zoom: 3,
     attributionControl: false,
     logoPosition: 'top-left',
-    trackResize: true
+
   })
 
   map.addControl(
@@ -63,7 +63,7 @@ onMounted(() => {
     });
   };
 
-  emitter.on('Resize-map', handleResize);
+  emitter.on('resize-map', handleResize);
 
   // GEOCODER ORIGN
   const geojsonMarkerOrigin = {
@@ -137,12 +137,12 @@ onMounted(() => {
     const country = countryObject.text;
     const countryCode = countryObject.short_code;
 
-    const startPoint = createWaypoint(center[0], center[1], city, countryCode.toUpperCase(), country);
+    const startPoint = createWaypoint(center[0], center[1], city, countryCode, country);
 
     lastSearchedCoords.value.push(startPoint);
 
-    if (enabledLoop.value) {
-      const endPoint = createWaypoint(center[0], center[1], city, countryCode.toUpperCase(), country);
+    if (enableReturnStart.value) {
+      const endPoint = createWaypoint(center[0], center[1], city, countryCode, country);
       lastSearchedCoords.value.push(endPoint);
     }
 
@@ -185,7 +185,7 @@ onMounted(() => {
         map.addLayer(markerCircleStyleOrigin);
         map.addLayer(markerTextStyleOrigin);
       }
-      if (enabledLoop.value) {
+      if (enableReturnStart.value) {
         getRoad(waypoints.value);
       }
       lastSearchedCoords.value = [];
@@ -318,11 +318,11 @@ onMounted(() => {
         }
         lastSearchedCoords.value = null;
       } else {
-        emitter.emit('waypointExist');
+        emitter.emit('waypoint-exist');
         lastSearchedCoords.value = null;
       }
     } else {
-      emitter.emit('noWaypoint');
+      emitter.emit('no-waypoint');
     }
   }
 
@@ -331,7 +331,7 @@ onMounted(() => {
   // API DIRECTION  
   async function getRoad(waypoints) {
     isLoading.value = true
-    emitter.emit('isLoading', isLoading.value);
+    emitter.emit('is-loading', isLoading.value);
     const coordinates = waypoints.map((point) => `${point.lon},${point.lat}`).join(';')
 
     const query = await fetch(
@@ -475,14 +475,14 @@ onMounted(() => {
       }
     }
     isLoading.value = false
-    emitter.emit('isLoading', isLoading.value);
+    emitter.emit('is-loading', isLoading.value);
   }
   async function addWaypoint(arrLngLat) {
     if (!arrLngLat || typeof arrLngLat !== 'object' || !arrLngLat.lon || !arrLngLat.lat) {
       console.error('arrLngLat is invalid:', arrLngLat)
       return
     }
-    if (enabledLoop.value) {
+    if (enableReturnStart.value) {
       insertToMinimizeDistanceLoop(arrLngLat);
     } else {
       insertToMinimizeDistance(arrLngLat)
@@ -589,7 +589,6 @@ onMounted(() => {
 
 <style scoped>
 .map-container {
-
   width: 100%;
   height: 45vh;
   position: absolute

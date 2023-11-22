@@ -4,8 +4,8 @@ module.exports = {
   theme: {
     extend: {
       colors: {
-        beigeCustom: '#F8EDE0',
-        redCustom: '#8A4852'
+        'beige-custom': '#F8EDE0',
+        'red-custom': '#8A4852'
       }
     }
   },

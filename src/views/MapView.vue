@@ -1,63 +1,60 @@
 <script setup>
 import { ref } from 'vue';
-import BeforeMap from '../components/BeforeMap.vue';
-import Map from '../components/Map.vue';
-import LayoutApp from '../components/LayoutApp.vue';
-import ItineraryMap from '../components/ItinaryMap.vue';
-import emitter from '../components/utility/eventBus';
+import StarterOptions from '@/components/pages/StarterOptions.vue';
+import Map from '@/components/map/Map.vue';
+import LayoutApp from '@/components/layout/LayoutApp.vue';
+import ItineraryDetails from '@/components/pages/ItineraryDetails.vue';
+import emitter from '@/components/utility/eventBus';
 
-const showBeforeMap = ref(true);
-const previousShowBeforeMap = ref(true);
-const showItineraryMap = ref(false);
-const previousShowItineraryMap = ref(false);
+const showStarterOptions = ref(true);
+const previousShowStarterOptions = ref(true);
+const showItineraryDetails = ref(false);
+const previousShowItineraryDetails = ref(false);
 const waypoints = ref([]);
 const mapFullSize = ref(false);
 const selectedButton = ref('itinerary');
 
-const updateWaypoints = (updatedWaypoints) => {
+function updateWaypoints(updatedWaypoints) {
   waypoints.value = updatedWaypoints;
 };
 
-const transitionToItinerary = () => {
-  showBeforeMap.value = false;
-  showItineraryMap.value = true;
+function transitionToItinerary() {
+  showStarterOptions.value = false;
+  showItineraryDetails.value = true;
 };
 
-
-const handleSelectedButton = (button) => {
+function handleSelectedButton(button) {
   selectedButton.value = button;
-  console.log(selectedButton.value)
+  console.log(selectedButton.value);
   if (button === 'card') {
-    previousShowBeforeMap.value = showBeforeMap.value;
-    previousShowItineraryMap.value = showItineraryMap.value;
+    previousShowStarterOptions.value = showStarterOptions.value;
+    previousShowItineraryDetails.value = showItineraryDetails.value;
     mapFullSize.value = true;
-    showItineraryMap.value = false;
-    showBeforeMap.value = false;
-    emitter.emit('Resize-map');
+    showItineraryDetails.value = false;
+    showStarterOptions.value = false;
+    emitter.emit('resize-map');
   } else if (button === 'itinerary') {
     mapFullSize.value = false;
-    showItineraryMap.value = previousShowItineraryMap.value;
-    showBeforeMap.value = previousShowBeforeMap.value;
-    emitter.emit('Resize-map');
+    showItineraryDetails.value = previousShowItineraryDetails.value;
+    showStarterOptions.value = previousShowStarterOptions.value;
+    emitter.emit('resize-map');
   } else if (button === 'user') {
-    showItineraryMap.value = previousShowItineraryMap.value;
-    showBeforeMap.value = previousShowBeforeMap.value;
     mapFullSize.value = false;
+    previousShowItineraryDetails.value = showItineraryDetails.value;
+    previousShowStarterOptions.value = showStarterOptions.value;
   } else if (button === 'home') {
     mapFullSize.value = false;
   }
-
-
-
 };
 </script>
+
 
 
 <template>
   <main>
     <Map @update-waypoints="updateWaypoints" :is-full-size="mapFullSize" />
-    <BeforeMap v-show="showBeforeMap" @hide="transitionToItinerary" />
-    <ItineraryMap v-show="showItineraryMap" :waypoints="waypoints" />
+    <StarterOptions v-show="showStarterOptions" @hide="transitionToItinerary" />
+    <ItineraryDetails v-show="showItineraryDetails" :waypoints="waypoints" />
     <LayoutApp @select-button="handleSelectedButton" />
   </main>
 </template>

@@ -1,6 +1,6 @@
 <script setup>
 import { onMounted, onUnmounted, ref, watch, defineProps } from 'vue';
-import Spinner from './Spinner.vue';
+import Spinner from '@/components/Spinner.vue';
 
 const props = defineProps({
   city: String,
@@ -11,7 +11,7 @@ const props = defineProps({
 const countryFlag = ref('');
 const isLoading = ref(false)
 
-const getCountryData = async (code) => {
+async function getFlag(code) {
   isLoading.value = true
   try {
     const response = await fetch(`https://restcountries.com/v3.1/alpha/${code}`);
@@ -27,15 +27,16 @@ const getCountryData = async (code) => {
   isLoading.value = false
 };
 
-onMounted(() => {
-  getCountryData(props.countryCode);
+onMounted(async () => {
+  await getFlag(props.countryCode);
 });
+
 onUnmounted(() => {
   countryFlag.value = '';
 });
 
 watch(() => props.countryCode, (newCode) => {
-  getCountryData(newCode);
+  getFlag(newCode);
 });
 </script>
 

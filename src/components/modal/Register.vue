@@ -1,7 +1,8 @@
 <script setup>
-import roundedButton from '@/components/roundedButton.vue';
+import RoundedButton from '@/components/button/RoundedButton.vue'
 import { XMarkIcon } from '@heroicons/vue/24/outline';
 import { defineEmits } from 'vue';
+import Logo from '@/components/Logo.vue'
 
 const emit = defineEmits(['close']);
 
@@ -17,15 +18,16 @@ function closeModal() {
         <div class="sm:mx-auto sm:w-full sm:max-w-[480px] rounded-lg px-6 py-12 relative">
 
 
-            <div class="bg-beigeCustom px-6 py-6 shadow rounded-lg sm:px-12">
+            <div class="bg-beige-custom px-6 py-6 shadow rounded-lg sm:px-12">
                 <div class="flex justify-end ">
-                    <roundedButton @click="closeModal">
-                        <XMarkIcon class="h-5 w-5" />
-                    </roundedButton>
+                    <RoundedButton @click="closeModal">
+                        <XMarkIcon class="h-4 w-4" />
+                    </RoundedButton>
                 </div>
                 <div class="sm:mx-auto sm:w-full sm:max-w-md">
-                    <img class="mx-auto h-32 w-auto " src="../assets/logo.svg" alt="Logo" />
-                    <h2 class=" text-center text-2xl font-bold leading-9 tracking-tight text-redCustom">Tu souhaites
+
+                    <Logo class="mx-auto h-36 w-auto " alt="logo" />
+                    <h2 class=" text-center text-2xl font-bold leading-9 tracking-tight text-red-custom">Tu souhaites
                         enregistrer ton Roadtrip ?
                     </h2>
                 </div>
@@ -33,7 +35,7 @@ function closeModal() {
                 <div>
                     <div class="relative mt-6">
                         <div class="relative flex justify-center text-sm font-medium leading-6">
-                            <span class="text-xl px-6 text-redCustom">
+                            <span class="text-xl px-6 text-red-custom">
                                 Je m'inscris ou me connecte </span>
                         </div>
                     </div>
@@ -59,7 +61,7 @@ function closeModal() {
                             <span class="text-sm font-semibold leading-6">Google</span>
                         </button>
                         <div class="relative flex justify-center text-sm font-medium leading-6 mx-3">
-                            <span class=" px-6 text-redCustom"></span>
+                            <span class=" px-6 text-red-custom"></span>
                         </div>
                         <button @click="loginWithFacebook"
                             class="flex w-full hover:border-[#0a80ec] bg-white hover:border-2 items-center justify-center gap-3 rounded-md border px-3 py-1.5 mt-3 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[#24292F]">

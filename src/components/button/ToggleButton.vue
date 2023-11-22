@@ -1,12 +1,28 @@
+<script setup>
+import { ref, defineEmits, defineProps } from 'vue'
+import { Switch, SwitchDescription, SwitchGroup } from '@headlessui/vue'
+
+const enabled = ref(true)
+const props = defineProps({
+    label: String
+})
+const emit = defineEmits(["update-enabled"])
+
+function updateEnabled(value) {
+    enabled.value = value;
+    emit("update-enabled", value)
+}
+</script>
+
 <template>
-    <SwitchGroup as="div" class="">
+    <SwitchGroup as="div" class="flex items-center">
         <span class="flex flex-grow flex-col">
-            <SwitchDescription as="span" class="text-redCustom underline">Activer le retour au point de départ ?
+            <SwitchDescription as="span" class="text-red-custom underline">{{ props.label }}
             </SwitchDescription>
         </span>
-        <div class="flex justify-end">
+        <div class="">
             <Switch v-model="enabled" @update:model-value="updateEnabled"
-                :class="[enabled ? 'bg-redCustom' : 'bg-gray-200', 'relative inline-flex h-6 w-11 flex-shrink-0 cursor-pointer rounded-full border-2 border-transparent transition-colors duration-200 ease-in-out focus:outline-none focus:ring-2 focus:ring-redCustom focus:ring-offset-2']">
+                :class="[enabled ? 'bg-red-custom' : 'bg-gray-200', 'relative inline-flex h-6 w-11 flex-shrink-0 cursor-pointer rounded-full border-2 border-transparent transition-colors duration-200 ease-in-out focus:outline-none focus:ring-2 focus:ring-red-custom focus:ring-offset-2']">
                 <span class="sr-only">Use setting</span>
                 <span
                     :class="[enabled ? 'translate-x-5' : 'translate-x-0', 'pointer-events-none relative inline-block h-5 w-5 transform rounded-full bg-white shadow ring-0 transition duration-200 ease-in-out']">
@@ -21,7 +37,7 @@
                     <span
                         :class="[enabled ? 'opacity-100 duration-200 ease-in' : 'opacity-0 duration-100 ease-out', 'absolute inset-0 flex h-full w-full items-center justify-center transition-opacity']"
                         aria-hidden="true">
-                        <svg class="h-3 w-3 text-redCustom" fill="currentColor" viewBox="0 0 12 12">
+                        <svg class="h-3 w-3 text-red-custom" fill="currentColor" viewBox="0 0 12 12">
                             <path
                                 d="M3.707 5.293a1 1 0 00-1.414 1.414l1.414-1.414zM5 8l-.707.707a1 1 0 001.414 0L5 8zm4.707-3.293a1 1 0 00-1.414-1.414l1.414 1.414zm-7.414 2l2 2 1.414-1.414-2-2-1.414 1.414zm3.414 2l4-4-1.414-1.414-4 4 1.414 1.414z" />
                         </svg>
@@ -32,16 +48,5 @@
     </SwitchGroup>
 </template>
   
-<script setup>
-import { ref } from 'vue'
-import { Switch, SwitchDescription, SwitchGroup } from '@headlessui/vue'
 
-const enabled = ref(true)
-const emit = defineEmits(["update-enabled"])
-
-function updateEnabled(value) {
-    enabled.value = value;
-    emit("update-enabled", value)
-}
-</script>
 
