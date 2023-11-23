@@ -6,6 +6,7 @@ export function handleResize(map) {
     map.resize()
   })
 }
+
 export function createWaypoint(lon, lat, city, countryCode, country) {
   return {
     id: uuidv4(),
@@ -16,9 +17,11 @@ export function createWaypoint(lon, lat, city, countryCode, country) {
     country
   }
 }
+
 export async function checkLastSearchValue(value) {
   return value.length > 0
 }
+
 export function getPointsIdsFromMap(map) {
   const layers = map.getStyle().layers
   const pointDetails = []

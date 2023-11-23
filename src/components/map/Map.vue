@@ -9,7 +9,7 @@
 
 
 <script setup>
-import { ref, onMounted, defineEmits, nextTick } from 'vue';
+import { ref, onMounted, defineEmits } from 'vue';
 import mapboxgl from 'mapbox-gl';
 import MapboxLanguage from '@mapbox/mapbox-gl-language';
 import MapboxGeocoder from '@mapbox/mapbox-gl-geocoder';

@@ -1,22 +1,19 @@
 <script setup>
-import { ref } from 'vue'
+import { defineComponent, h, ref } from 'vue'
 import { Dialog, DialogPanel, Disclosure, DisclosureButton, DisclosurePanel } from '@headlessui/vue'
 import { Bars3Icon, MinusSmallIcon, PlusSmallIcon, XMarkIcon } from '@heroicons/vue/24/outline'
 import {
     ArrowPathIcon,
-    CheckIcon,
     CloudArrowUpIcon,
-    Cog6ToothIcon,
-    FingerPrintIcon,
-    LockClosedIcon,
-    ServerIcon,
+    CurrencyEuroIcon, TruckIcon,
+    MapIcon, ClockIcon
 } from '@heroicons/vue/20/solid'
 import Logo from '@/components/Logo.vue'
 import MainButton from '@/components/button/MainButton.vue'
 import LooseIcon from '@/components/icon/LooseIcon.vue'
 import { RouterLink } from 'vue-router'
 
-const navigation = [
+const navbar = [
     { name: 'Product', href: '#' },
     { name: 'Features', href: '#' },
     { name: 'Marketplace', href: '#' },
@@ -24,102 +21,120 @@ const navigation = [
 ]
 const features = [
     {
-        name: 'Push to deploy.',
-        description: 'Lorem ipsum, dolor sit amet consectetur adipisicing elit aute id magna.',
+        name: 'Estime ton budget',
+        description: 'Calcule le coût de ton roadtrip',
+        icon: CurrencyEuroIcon,
+    },
+    {
+        name: 'Estime le temps de tes trajets',
+        description: 'Obtenez des estimations précises du temps de trajet entre chaque ville',
+        icon: ClockIcon,
+    },
+    {
+        name: 'Visualise tes destinations',
+        description: "Une carte interactive qui te montre l'itinéraire de ton road trip",
+        icon: MapIcon,
+    },
+    {
+        name: 'Sauvegarde tes trajets',
+        description: 'Enregistre tes itinéraires pour les consulter ou les modifier plus tard',
         icon: CloudArrowUpIcon,
     },
     {
-        name: 'SSL certificates.',
-        description: 'Anim aute id magna aliqua ad ad non deserunt sunt. Qui irure qui lorem cupidatat commodo.',
-        icon: LockClosedIcon,
-    },
-    {
-        name: 'Simple queues.',
-        description: 'Ac tincidunt sapien vehicula erat auctor pellentesque rhoncus.',
+        name: 'Organise ton roadtrip',
+        description: "Ajuste ton itinéraire en fonction de tes préférences",
         icon: ArrowPathIcon,
     },
     {
-        name: 'Advanced security.',
-        description: 'Lorem ipsum, dolor sit amet consectetur adipisicing elit aute id magna.',
-        icon: FingerPrintIcon,
-    },
-    {
-        name: 'Powerful API.',
-        description: 'Anim aute id magna aliqua ad ad non deserunt sunt. Qui irure qui lorem cupidatat commodo.',
-        icon: Cog6ToothIcon,
-    },
-    {
-        name: 'Database backups.',
-        description: 'Ac tincidunt sapien vehicula erat auctor pellentesque rhoncus. ',
-        icon: ServerIcon,
+        name: 'Adapté à la van life',
+        description: "Tout l'itineraire sera réalisable avec ton véhicule",
+        icon: TruckIcon,
     },
 ]
-const tiers = [
-    {
-        name: 'Hobby',
-        id: 'tier-hobby',
-        href: '#',
-        priceMonthly: '$19',
-        description: "The perfect plan if you're just getting started with our product.",
-        features: ['25 products', 'Up to 10,000 subscribers', 'Advanced analytics', '24-hour support response time'],
-        featured: false,
-    },
-    {
-        name: 'Enterprise',
-        id: 'tier-enterprise',
-        href: '#',
-        priceMonthly: '$49',
-        description: 'Dedicated support and infrastructure for your company.',
-        features: [
-            'Unlimited products',
-            'Unlimited subscribers',
-            'Advanced analytics',
-            'Dedicated support representative',
-            'Marketing automations',
-            'Custom integrations',
-        ],
-        featured: true,
-    },
-]
+
 const faqs = [
     {
-        question: "What's the best thing about Switzerland?",
+        question: "Pourquoi utiliser Roadplanvan ?",
         answer:
             "I don't know, but the flag is a big plus. Lorem ipsum dolor sit amet consectetur adipisicing elit. Quas cupiditate laboriosam fugiat.",
     },
     // More questions...
 ]
-const footerNavigation = {
-    solutions: [
-        { name: 'Marketing', href: '#' },
-        { name: 'Analytics', href: '#' },
-        { name: 'Commerce', href: '#' },
-        { name: 'Insights', href: '#' },
-    ],
-    support: [
-        { name: 'Pricing', href: '#' },
-        { name: 'Documentation', href: '#' },
-        { name: 'Guides', href: '#' },
-        { name: 'API Status', href: '#' },
-    ],
-    company: [
-        { name: 'About', href: '#' },
-        { name: 'Blog', href: '#' },
-        { name: 'Jobs', href: '#' },
-        { name: 'Press', href: '#' },
-        { name: 'Partners', href: '#' },
-    ],
-    legal: [
-        { name: 'Claim', href: '#' },
-        { name: 'Privacy', href: '#' },
-        { name: 'Terms', href: '#' },
-    ],
-}
+const navigation = [
+    {
+        name: 'Facebook',
+        href: '#',
+        icon: defineComponent({
+            render: () =>
+                h('svg', { fill: 'currentColor', viewBox: '0 0 24 24' }, [
+                    h('path', {
+                        'fill-rule': 'evenodd',
+                        d: 'M22 12c0-5.523-4.477-10-10-10S2 6.477 2 12c0 4.991 3.657 9.128 8.438 9.878v-6.987h-2.54V12h2.54V9.797c0-2.506 1.492-3.89 3.777-3.89 1.094 0 2.238.195 2.238.195v2.46h-1.26c-1.243 0-1.63.771-1.63 1.562V12h2.773l-.443 2.89h-2.33v6.988C18.343 21.128 22 16.991 22 12z',
+                        'clip-rule': 'evenodd',
+                    }),
+                ]),
+        }),
+    },
+    {
+        name: 'Instagram',
+        href: '#',
+        icon: defineComponent({
+            render: () =>
+                h('svg', { fill: 'currentColor', viewBox: '0 0 24 24' }, [
+                    h('path', {
+                        'fill-rule': 'evenodd',
+                        d: 'M12.315 2c2.43 0 2.784.013 3.808.06 1.064.049 1.791.218 2.427.465a4.902 4.902 0 011.772 1.153 4.902 4.902 0 011.153 1.772c.247.636.416 1.363.465 2.427.048 1.067.06 1.407.06 4.123v.08c0 2.643-.012 2.987-.06 4.043-.049 1.064-.218 1.791-.465 2.427a4.902 4.902 0 01-1.153 1.772 4.902 4.902 0 01-1.772 1.153c-.636.247-1.363.416-2.427.465-1.067.048-1.407.06-4.123.06h-.08c-2.643 0-2.987-.012-4.043-.06-1.064-.049-1.791-.218-2.427-.465a4.902 4.902 0 01-1.772-1.153 4.902 4.902 0 01-1.153-1.772c-.247-.636-.416-1.363-.465-2.427-.047-1.024-.06-1.379-.06-3.808v-.63c0-2.43.013-2.784.06-3.808.049-1.064.218-1.791.465-2.427a4.902 4.902 0 011.153-1.772A4.902 4.902 0 015.45 2.525c.636-.247 1.363-.416 2.427-.465C8.901 2.013 9.256 2 11.685 2h.63zm-.081 1.802h-.468c-2.456 0-2.784.011-3.807.058-.975.045-1.504.207-1.857.344-.467.182-.8.398-1.15.748-.35.35-.566.683-.748 1.15-.137.353-.3.882-.344 1.857-.047 1.023-.058 1.351-.058 3.807v.468c0 2.456.011 2.784.058 3.807.045.975.207 1.504.344 1.857.182.466.399.8.748 1.15.35.35.683.566 1.15.748.353.137.882.3 1.857.344 1.054.048 1.37.058 4.041.058h.08c2.597 0 2.917-.01 3.96-.058.976-.045 1.505-.207 1.858-.344.466-.182.8-.398 1.15-.748.35-.35.566-.683.748-1.15.137-.353.3-.882.344-1.857.048-1.055.058-1.37.058-4.041v-.08c0-2.597-.01-2.917-.058-3.96-.045-.976-.207-1.505-.344-1.858a3.097 3.097 0 00-.748-1.15 3.098 3.098 0 00-1.15-.748c-.353-.137-.882-.3-1.857-.344-1.023-.047-1.351-.058-3.807-.058zM12 6.865a5.135 5.135 0 110 10.27 5.135 5.135 0 010-10.27zm0 1.802a3.333 3.333 0 100 6.666 3.333 3.333 0 000-6.666zm5.338-3.205a1.2 1.2 0 110 2.4 1.2 1.2 0 010-2.4z',
+                        'clip-rule': 'evenodd',
+                    }),
+                ]),
+        }),
+    },
+    {
+        name: 'Twitter',
+        href: '#',
+        icon: defineComponent({
+            render: () =>
+                h('svg', { fill: 'currentColor', viewBox: '0 0 24 24' }, [
+                    h('path', {
+                        d: 'M8.29 20.251c7.547 0 11.675-6.253 11.675-11.675 0-.178 0-.355-.012-.53A8.348 8.348 0 0022 5.92a8.19 8.19 0 01-2.357.646 4.118 4.118 0 001.804-2.27 8.224 8.224 0 01-2.605.996 4.107 4.107 0 00-6.993 3.743 11.65 11.65 0 01-8.457-4.287 4.106 4.106 0 001.27 5.477A4.072 4.072 0 012.8 9.713v.052a4.105 4.105 0 003.292 4.022 4.095 4.095 0 01-1.853.07 4.108 4.108 0 003.834 2.85A8.233 8.233 0 012 18.407a11.616 11.616 0 006.29 1.84',
+                    }),
+                ]),
+        }),
+    },
+    {
+        name: 'GitHub',
+        href: '#',
+        icon: defineComponent({
+            render: () =>
+                h('svg', { fill: 'currentColor', viewBox: '0 0 24 24' }, [
+                    h('path', {
+                        'fill-rule': 'evenodd',
+                        d: 'M12 2C6.477 2 2 6.484 2 12.017c0 4.425 2.865 8.18 6.839 9.504.5.092.682-.217.682-.483 0-.237-.008-.868-.013-1.703-2.782.605-3.369-1.343-3.369-1.343-.454-1.158-1.11-1.466-1.11-1.466-.908-.62.069-.608.069-.608 1.003.07 1.531 1.032 1.531 1.032.892 1.53 2.341 1.088 2.91.832.092-.647.35-1.088.636-1.338-2.22-.253-4.555-1.113-4.555-4.951 0-1.093.39-1.988 1.029-2.688-.103-.253-.446-1.272.098-2.65 0 0 .84-.27 2.75 1.026A9.564 9.564 0 0112 6.844c.85.004 1.705.115 2.504.337 1.909-1.296 2.747-1.027 2.747-1.027.546 1.379.202 2.398.1 2.651.64.7 1.028 1.595 1.028 2.688 0 3.848-2.339 4.695-4.566 4.943.359.309.678.92.678 1.855 0 1.338-.012 2.419-.012 2.747 0 .268.18.58.688.482A10.019 10.019 0 0022 12.017C22 6.484 17.522 2 12 2z',
+                        'clip-rule': 'evenodd',
+                    }),
+                ]),
+        }),
+    },
+    {
+        name: 'YouTube',
+        href: '#',
+        icon: defineComponent({
+            render: () =>
+                h('svg', { fill: 'currentColor', viewBox: '0 0 24 24' }, [
+                    h('path', {
+                        'fill-rule': 'evenodd',
+                        d: 'M19.812 5.418c.861.23 1.538.907 1.768 1.768C21.998 8.746 22 12 22 12s0 3.255-.418 4.814a2.504 2.504 0 0 1-1.768 1.768c-1.56.419-7.814.419-7.814.419s-6.255 0-7.814-.419a2.505 2.505 0 0 1-1.768-1.768C2 15.255 2 12 2 12s0-3.255.417-4.814a2.507 2.507 0 0 1 1.768-1.768C5.744 5 11.998 5 11.998 5s6.255 0 7.814.418ZM15.194 12 10 15V9l5.194 3Z',
+                        'clip-rule': 'evenodd',
+                    }),
+                ]),
+        }),
+    },
+]
 
 const mobileMenuOpen = ref(false)
 </script>
 <template>
-    <div class="bg-white">
+    <div class="bg-beige-custom">
         <header class="absolute inset-x-0 top-0 z-50">
             <nav class="flex items-center justify-between px-6 py-3" aria-label="Global">
                 <div class="flex lg:flex-1">
@@ -136,7 +151,7 @@ const mobileMenuOpen = ref(false)
                     </button>
                 </div>
                 <div class="hidden lg:flex lg:gap-x-12">
-                    <a v-for="item in navigation" :key="item.name" :href="item.href"
+                    <a v-for="item in navbar" :key="item.name" :href="item.href"
                         class="text-sm font-semibold leading-6 text-red-custom">{{ item.name }}</a>
                 </div>
                 <div class="hidden lg:flex lg:flex-1 lg:justify-end">
@@ -162,7 +177,7 @@ const mobileMenuOpen = ref(false)
                     <div class="mt-6 flow-root">
                         <div class="-my-6 divide-y divide-red-custom">
                             <div class="space-y-2 py-6">
-                                <a v-for="item in navigation" :key="item.name" :href="item.href"
+                                <a v-for="item in navbar" :key="item.name" :href="item.href"
                                     class="-mx-3 block rounded-lg px-3 py-2 text-base font-semibold leading-7 text-red-custom hover:bg-red-custom hover:text-beige-custom hover:rounded-full">{{
                                         item.name }}</a>
                             </div>
@@ -189,62 +204,95 @@ const mobileMenuOpen = ref(false)
                 <div class="mx-auto max-w-7xl px-6 lg:px-8">
                     <div class="mx-auto max-w-2xl py-32 sm:py-48 lg:py-56">
                         <div class="hidden sm:mb-8 sm:flex sm:justify-center">
-
                         </div>
-                        <div class="text-center">
-                            <h1 class="text-4xl font-bold tracking-tight text-white sm:text-6xl">ROADPLANVAN
+                        <div class="text-center rounded-lg">
+                            <h1 class="text-4xl font-bold tracking-tight text-white sm:text-6xl lg:text-8xl">
+                                ROADPLANVAN
                             </h1>
-                            <p class="mt-6 text-lg leading-8 text-white font-bold lg:text-2xl">TON COMPAGNON DE
+                            <p class="mt-6 text-lg leading-8 text-white font-bold sm:text-2xl lg:text-4xl">
+                                TON COMPAGNON
+                                DE
                                 VOYAGE<br>Planifie !
                                 Explore ! Profite !</p>
-                            <div class="mt-10 flex items-center justify-center gap-x-6">
-                                <RouterLink to="/map">
-                                    <MainButton text="Je commence">
-                                    </MainButton>
-                                </RouterLink>
-                            </div>
+                        </div>
+                        <div class="mt-10 flex items-center justify-center gap-x-6">
+                            <RouterLink to="/map">
+                                <MainButton text="Je commence">
+                                </MainButton>
+                            </RouterLink>
                         </div>
                     </div>
                 </div>
             </div>
 
 
-            <!-- Feature section -->
-            <div class="pt-20 sm:pt-20 bg-beige-custom">
-                <div class="mx-auto max-w-7xl px-6 lg:px-8">
+            <div class="mt-20 sm:mt-20 bg-beige-custom px-3 lg:px-8 ">
+                <div class="mx-auto max-w-7xl px-6 lg:px-8 ">
                     <div class="mx-auto max-w-7xl ">
-                        <div class="md:flex md:space-between md:items-center">
-                            <div>
-                                <p class="mt-2 text-3xl font-bold tracking-tight text-red-custom sm:text-4xl">Tu prepares un
-                                    long
-                                    roadtrip
+                        <div class="md:flex md:justify-center md:items-center">
+                            <div class="md:flex-1 md:mr-5 md:mb-0">
+                                <p class="text-center mt-2 text-3xl font-bold tracking-tight text-red-custom sm:text-4xl">Tu
+                                    prepares un
+                                    long roadtrip
                                 </p>
                                 <p class="mt-6 text-lg leading-8 text-black">Tu as une liste de villes et autres
                                     merveilles à découvrir, tant
                                     d'endroits magnifiques qu'il devient difficile de savoir par où commencer...</p>
                             </div>
-                            <LooseIcon class="max-w-[700px]" />
+                            <div class=" mb-4 md:flex-1 md:ml-5 md:mb-0">
+                                <LooseIcon class="w-full" />
+                            </div>
                         </div>
                     </div>
                 </div>
-                <div class="relative overflow-hidden pt-16">
+                <div class="border-2 border-red-custom mx-20 rounded-full my-16 lg:mx-96 md:hidden"></div>
+                <div class="mx-auto max-w-7xl px-6 lg:px-8">
+                    <div class="mx-auto max-w-7xl md:mt-32">
+                        <div class="md:flex md:justify-center md:items-center">
+                            <div class="flex-1 mb-4 md:ml-5 md:order-last">
+                                <p class="text-center mt-2 text-3xl font-bold tracking-tight text-red-custom sm:text-4xl">
+                                    L’organisation
+                                    devient un problème ?
+                                </p>
+                                <p class="mt-6 text-lg leading-8 text-black">Avec autant de villes, monuments c’est des
+                                    heures et des heures de travail pour reussir a les reliers en etant sur de pas ce
+                                    tromper </p>
+                            </div>
+                            <div class="flex-1 md:mr-5 ">
+                                <img src="@/assets/van-img.jpg" class="w-screen h-[320px] object-cover rounded-lg mr-10" />
+                            </div>
+
+                        </div>
+                    </div>
+                </div>
+                <div class="border-2 border-red-custom mx-20 rounded-full my-16 md:hidden"></div>
+                <div class="mx-auto max-w-7xl px-6 mt-16 lg:px-8">
+                    <div class="mx-auto max-w-7xl ">
+                        <div class="text-center ">
+                            <p class="mt-2 text-3xl font-bold tracking-tight text-red-custom sm:text-4xl">
+                                Nous avons la solution !
+                            </p>
+                            <p class="mt-6 text-lg leading-8 text-black">Tu peux rechercher les villes que tu aimerais
+                                visiter, les ajouter à ton itinéraire, et elles s'organiseront automatiquement. Tu auras
+                                également la possibilité de modifier cet ordre si nécessaire</p>
+                        </div>
+                    </div>
+                </div>
+                <div class="relative overflow-hidden mt-16">
                     <div class="mx-auto max-w-7xl px-6 lg:px-8">
-                        <img src="https://tailwindui.com/img/component-images/project-app-screenshot.png"
-                            alt="App screenshot" class="mb-[-12%] rounded-xl shadow-2xl ring-1 ring-gray-900/10"
-                            width="2432" height="1442" />
-                        <div class="relative" aria-hidden="true">
-                            <div class="absolute -inset-x-20 bottom-0 bg-gradient-to-t from-white pt-[7%]" />
-                        </div>
+                        <img src="@/assets/screen-app.jpg" alt="App screenshot"
+                            class="mb-[-12%] rounded-xl shadow-2xl ring-1 ring-gray-900/10" width="2432" height="1442" />
+
                     </div>
                 </div>
-                <div class="mx-auto mt-16 max-w-7xl px-6 sm:mt-20 md:mt-24 lg:px-8">
+                <div class="mx-auto mt-16 max-w-7xl px-6 sm:mt-20 md:mt-24 lg:px-8 ">
                     <dl
                         class="mx-auto grid max-w-2xl grid-cols-1 gap-x-6 gap-y-10 text-base leading-7 text-gray-600 sm:grid-cols-2 lg:mx-0 lg:max-w-none lg:grid-cols-3 lg:gap-x-8 lg:gap-y-16">
                         <div v-for="feature in features" :key="feature.name" class="relative pl-9">
                             <dt class="inline font-semibold text-gray-900">
-                                <component :is="feature.icon" class="absolute left-1 top-1 h-5 w-5 text-indigo-600"
+                                <component :is="feature.icon" class="absolute left-1 top-1 h-5 w-5 text-red-custom"
                                     aria-hidden="true" />
-                                {{ feature.name }}
+                                {{ feature.name }}<br>
                             </dt>
                             {{ ' ' }}
                             <dd class="inline">{{ feature.description }}</dd>
@@ -254,10 +302,10 @@ const mobileMenuOpen = ref(false)
             </div>
 
             <!-- Testimonial section -->
-            <div class="relative z-10 mt-32 bg-gray-900 pb-20 sm:mt-56 sm:pb-24 xl:pb-0">
+            <div class="relative z-10 mt-32 bg-red-custom pb-20 sm:mt-56 sm:pb-24 xl:pb-0">
                 <div class="absolute inset-0 overflow-hidden" aria-hidden="true">
                     <div class="absolute left-[calc(50%-19rem)] top-[calc(50%-36rem)] transform-gpu blur-3xl">
-                        <div class="aspect-[1097/1023] w-[68.5625rem] bg-gradient-to-r from-[#ff4694] to-[#776fff] opacity-25"
+                        <div class="aspect-[1097/1023] w-[68.5625rem] bg-gradient-to-r from-red-custom to-beige-custom opacity-25"
                             style="clip-path: polygon(74.1% 44.1%, 100% 61.6%, 97.5% 26.9%, 85.5% 0.1%, 80.7% 2%, 72.5% 32.5%, 60.2% 62.4%, 52.4% 68.1%, 47.5% 58.3%, 45.2% 34.5%, 27.5% 76.7%, 0.1% 64.9%, 17.9% 100%, 27.6% 76.8%, 76.1% 97.7%, 74.1% 44.1%)" />
                     </div>
                 </div>
@@ -293,54 +341,10 @@ const mobileMenuOpen = ref(false)
                 </div>
             </div>
 
-            <!-- Pricing section -->
-            <div class="relative isolate mt-32 bg-white px-6 sm:mt-56 lg:px-8">
-                <div class="absolute inset-x-0 -top-3 -z-10 transform-gpu overflow-hidden px-36 blur-3xl"
-                    aria-hidden="true">
-                    <div class="mx-auto aspect-[1155/678] w-[72.1875rem] bg-gradient-to-tr from-[#ff80b5] to-[#9089fc] opacity-30"
-                        style="clip-path: polygon(74.1% 44.1%, 100% 61.6%, 97.5% 26.9%, 85.5% 0.1%, 80.7% 2%, 72.5% 32.5%, 60.2% 62.4%, 52.4% 68.1%, 47.5% 58.3%, 45.2% 34.5%, 27.5% 76.7%, 0.1% 64.9%, 17.9% 100%, 27.6% 76.8%, 76.1% 97.7%, 74.1% 44.1%)" />
-                </div>
-                <div class="mx-auto max-w-2xl text-center lg:max-w-4xl">
-                    <h2 class="text-base font-semibold leading-7 text-indigo-600">Pricing</h2>
-                    <p class="mt-2 text-4xl font-bold tracking-tight text-gray-900 sm:text-5xl">The right price for you,
-                        whoever you are</p>
-                </div>
-                <p class="mx-auto mt-6 max-w-2xl text-center text-lg leading-8 text-gray-600">Qui iusto aut est earum
-                    eos
-                    quae. Eligendi est at nam aliquid ad quo reprehenderit in aliquid fugiat dolorum voluptatibus.</p>
-                <div
-                    class="mx-auto mt-16 grid max-w-lg grid-cols-1 items-center gap-y-6 sm:mt-20 sm:gap-y-0 lg:max-w-4xl lg:grid-cols-2">
-                    <div v-for="(tier, tierIdx) in tiers" :key="tier.id"
-                        :class="[tier.featured ? 'relative bg-gray-900 shadow-2xl' : 'bg-white/60 sm:mx-8 lg:mx-0', tier.featured ? '' : tierIdx === 0 ? 'rounded-t-3xl sm:rounded-b-none lg:rounded-tr-none lg:rounded-bl-3xl' : 'sm:rounded-t-none lg:rounded-tr-3xl lg:rounded-bl-none', 'rounded-3xl p-8 ring-1 ring-gray-900/10 sm:p-10']">
-                        <h3 :id="tier.id"
-                            :class="[tier.featured ? 'text-indigo-400' : 'text-indigo-600', 'text-base font-semibold leading-7']">
-                            {{ tier.name }}</h3>
-                        <p class="mt-4 flex items-baseline gap-x-2">
-                            <span
-                                :class="[tier.featured ? 'text-white' : 'text-gray-900', 'text-5xl font-bold tracking-tight']">{{
-                                    tier.priceMonthly }}</span>
-                            <span :class="[tier.featured ? 'text-gray-400' : 'text-gray-500', 'text-base']">/month</span>
-                        </p>
-                        <p :class="[tier.featured ? 'text-gray-300' : 'text-gray-600', 'mt-6 text-base leading-7']">{{
-                            tier.description }}</p>
-                        <ul role="list"
-                            :class="[tier.featured ? 'text-gray-300' : 'text-gray-600', 'mt-8 space-y-3 text-sm leading-6 sm:mt-10']">
-                            <li v-for="feature in tier.features" :key="feature" class="flex gap-x-3">
-                                <CheckIcon
-                                    :class="[tier.featured ? 'text-indigo-400' : 'text-indigo-600', 'h-6 w-5 flex-none']"
-                                    aria-hidden="true" />
-                                {{ feature }}
-                            </li>
-                        </ul>
-                        <a :href="tier.href" :aria-describedby="tier.id"
-                            :class="[tier.featured ? 'bg-indigo-500 text-white shadow-sm hover:bg-indigo-400 focus-visible:outline-indigo-500' : 'text-indigo-600 ring-1 ring-inset ring-indigo-200 hover:ring-indigo-300 focus-visible:outline-indigo-600', 'mt-8 block rounded-md py-2.5 px-3.5 text-center text-sm font-semibold focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 sm:mt-10']">Get
-                            started today</a>
-                    </div>
-                </div>
-            </div>
+
 
             <!-- FAQ section -->
-            <div class="mx-auto mt-32 max-w-7xl px-6 sm:mt-56 lg:px-8">
+            <div class="mx-auto my-32 max-w-7xl px-6 sm:mt-56 lg:px-8">
                 <div class="mx-auto max-w-4xl divide-y divide-gray-900/10">
                     <h2 class="text-2xl font-bold leading-10 tracking-tight text-gray-900">Frequently asked questions
                     </h2>
@@ -365,54 +369,17 @@ const mobileMenuOpen = ref(false)
         </main>
 
         <!-- Footer -->
-        <footer class="mt-32 bg-gray-900 sm:mt-56" aria-labelledby="footer-heading">
-            <h2 id="footer-heading" class="sr-only">Footer</h2>
-            <div class="mx-auto max-w-7xl px-6 py-16 sm:py-24 lg:px-8 lg:py-32">
-                <div class="xl:grid xl:grid-cols-3 xl:gap-8">
-                    <img class="h-7" src="https://tailwindui.com/img/logos/mark.svg?color=indigo&shade=500"
-                        alt="Company name" />
-                    <div class="mt-16 grid grid-cols-2 gap-8 xl:col-span-2 xl:mt-0">
-                        <div class="md:grid md:grid-cols-2 md:gap-8">
-                            <div>
-                                <h3 class="text-sm font-semibold leading-6 text-white">Solutions</h3>
-                                <ul role="list" class="mt-6 space-y-4">
-                                    <li v-for="item in footerNavigation.solutions" :key="item.name">
-                                        <a :href="item.href" class="text-sm leading-6 text-gray-300 hover:text-white">{{
-                                            item.name }}</a>
-                                    </li>
-                                </ul>
-                            </div>
-                            <div class="mt-10 md:mt-0">
-                                <h3 class="text-sm font-semibold leading-6 text-white">Support</h3>
-                                <ul role="list" class="mt-6 space-y-4">
-                                    <li v-for="item in footerNavigation.support" :key="item.name">
-                                        <a :href="item.href" class="text-sm leading-6 text-gray-300 hover:text-white">{{
-                                            item.name }}</a>
-                                    </li>
-                                </ul>
-                            </div>
-                        </div>
-                        <div class="md:grid md:grid-cols-2 md:gap-8">
-                            <div>
-                                <h3 class="text-sm font-semibold leading-6 text-white">Company</h3>
-                                <ul role="list" class="mt-6 space-y-4">
-                                    <li v-for="item in footerNavigation.company" :key="item.name">
-                                        <a :href="item.href" class="text-sm leading-6 text-gray-300 hover:text-white">{{
-                                            item.name }}</a>
-                                    </li>
-                                </ul>
-                            </div>
-                            <div class="mt-10 md:mt-0">
-                                <h3 class="text-sm font-semibold leading-6 text-white">Legal</h3>
-                                <ul role="list" class="mt-6 space-y-4">
-                                    <li v-for="item in footerNavigation.legal" :key="item.name">
-                                        <a :href="item.href" class="text-sm leading-6 text-gray-300 hover:text-white">{{
-                                            item.name }}</a>
-                                    </li>
-                                </ul>
-                            </div>
-                        </div>
-                    </div>
+        <footer class="bg-red-custom">
+            <div class="mx-auto max-w-7xl px-6 py-12 md:flex md:items-center md:justify-between lg:px-8">
+                <div class="flex justify-center space-x-6 md:order-2">
+                    <a v-for="item in navigation" :key="item.name" :href="item.href"
+                        class="text-beige-custom hover:text-white">
+                        <span class="sr-only">{{ item.name }}</span>
+                        <component :is="item.icon" class="h-6 w-6" aria-hidden="true" />
+                    </a>
+                </div>
+                <div class="mt-8 md:order-1 md:mt-0">
+                    <p class="text-center text-xs leading-5 text-beige-custom">2023 RoadPlanVan. </p>
                 </div>
             </div>
         </footer>
