@@ -9,6 +9,8 @@ import Delete from '@/components/modal/Delete.vue';
 import Road from '@/components/RoadInformation.vue';
 import ErrorAlert from '@/components/ErrorAlert.vue';
 import RoundedButton from '@/components/button/RoundedButton.vue';
+import MainButton from '@/components/button/MainButton.vue';
+import Register from '@/components/modal/Register.vue'
 
 
 const props = defineProps(['waypoints']);
@@ -19,6 +21,7 @@ const waypointExist = ref(false);
 const enableReturnStart = ref(true);
 const isLoading = ref(false);
 const showDeleteModal = ref(false);
+
 const deleteLocation = ref({});
 const consumption = ref();
 
@@ -37,16 +40,13 @@ function addNewWaypoint() {
   emitter.emit('add-point');
   mutableWaypoints.value = props.waypoints;
 }
-
 function openDeleteModal(element) {
   deleteLocation.value = element;
   showDeleteModal.value = true;
 }
-
 function handleCancel() {
   showDeleteModal.value = false;
 }
-
 function handleDelete() {
   const idToDelete = deleteLocation.value.id;
   const index = mutableWaypoints.value.findIndex(waypoint => waypoint.id === idToDelete);
@@ -54,6 +54,10 @@ function handleDelete() {
   emitter.emit('get-road-delete', mutableWaypoints.value);
   showDeleteModal.value = false;
 }
+function handleSave() {
+  emitter.emit('open-save-modal')
+}
+
 
 // Draggable Handlers
 function handleDraggableStart() {
@@ -64,6 +68,9 @@ function handleDraggableChange() {
   if (enableReturnStart.value && clonedWaypoints.value.length > 0) {
     mutableWaypoints.value = clonedWaypoints.value;
     clonedWaypoints.value = [];
+    emitter.emit('get-road-draggable', mutableWaypoints.value);
+  }
+  else {
     emitter.emit('get-road-draggable', mutableWaypoints.value);
   }
 }
@@ -104,17 +111,16 @@ watchEffect(() => {
 
 <template>
   <div
-    class="fixed mt-[49vh] h-[51vh] w-screen overflow-y-auto bg-beige-custom text-red-custom px-2.5 lg:max-w-lg lg:w-4/12 lg:mt-[10vh]  lg:h-[85vh] lg:ml-5 lg:drop-shadow-lg lg:rounded-b-lg">
-    <div class="sm:max-w-2xl  sm:mx-auto">
+    class="fixed mt-[49vh] h-[51vh] w-screen overflow-y-auto bg-beige-custom text-red-custom px-5 lg:max-w-lg lg:w-4/12 lg:mt-[10vh]  lg:h-[85vh] lg:ml-5 lg:drop-shadow-lg lg:rounded-b-lg">
+    <div class="sm:max-w-lg sm:mx-auto ">
       <div class="flex justify-between items-center my-5 px-5 sm:max-w-2xl">
         <div class="w-7/12 ">
           <div id="geocoder" class="geocoder"></div>
         </div>
         <div>
-          <button type="button" @click="addNewWaypoint"
-            class="rounded-full bg-red-custom p-1 text-beige-custom shadow-sm ">
+          <RoundedButton @click="addNewWaypoint">
             <PlusIcon class="h-5 w-5" aria-hidden="true" />
-          </button>
+          </RoundedButton>
         </div>
 
       </div>
@@ -173,11 +179,15 @@ watchEffect(() => {
 
       <div v-if="mutableWaypoints.length > 2">
         <div class="border-b my-3 mx-5 border-red-custom"></div>
-        <div class="px-5 flex justify-between items-center max-w-screen mb-32">
+        <div class="px-5 flex justify-between items-center max-w-screen ">
           <p>Total :</p>
           <Road :duration="formatDuration(totalDuration)" :distance="totalDistance" :price="totalPrice">
           </Road>
+
         </div>
+      </div>
+      <div v-if="mutableWaypoints.length > 2" class="mb-32 mt-6 text-center">
+        <MainButton @click="handleSave" text="Sauvegarder" />
       </div>
 
       <Delete :show="showDeleteModal" :cancel="handleCancel" :deleted="handleDelete">
@@ -185,6 +195,7 @@ watchEffect(() => {
         }}</span> de ton RoadTrip ?
       </Delete>
     </div>
+
   </div>
 </template>
 

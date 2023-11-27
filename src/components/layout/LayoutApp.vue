@@ -5,9 +5,12 @@ import Register from '@/components/modal/Register.vue'
 import MenuUser from '@/components/dropDownMenu/UserMenu.vue'
 import NavbarButton from '@/components/button/NavbarButton.vue'
 import { MapPinIcon, ArrowTrendingUpIcon, HomeIcon, MapIcon, UserIcon } from '@heroicons/vue/24/outline'
+import emitter from '../utility/eventBus'
 
 const emit = defineEmits(['select-button'], 'cancel')
 const selectedButton = ref('itinerary')
+
+emitter.on('open-save-modal', handleSave)
 
 const handleButton = (button) => {
   selectedButton.value = button
@@ -56,7 +59,7 @@ function handleUserButton() {
   </div>
 
   <div v-show="selectedButton !== 'card'"
-    class="bg-red-custom text-beige-custom fixed mt-[45vh] w-screen h-[5vh] lg:mt-[5vh] lg:ml-5 lg:rounded-t-lg lg:w-4/12 lg:max-w-lg">
+    class=" bg-red-custom text-beige-custom fixed mt-[45vh] w-screen h-[5vh] lg:mt-[5vh] lg:ml-5 lg:rounded-t-lg lg:w-4/12 lg:max-w-lg">
     <div class="grid gap-4 grid-cols-4 w-full h-full">
 
       <NavbarButton :class="{ 'bg-beige-custom text-red-custom': selectedButton === 'home' }" @click="handleHomeButton">
