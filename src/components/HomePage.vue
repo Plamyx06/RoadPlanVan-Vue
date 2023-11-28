@@ -10,7 +10,7 @@ import {
 } from '@heroicons/vue/20/solid'
 import Logo from '@/components/Logo.vue'
 import MainButton from '@/components/button/MainButton.vue'
-import LooseIcon from '@/components/icon/LooseIcon.vue'
+import InterrogationAndMapPin from '@/components/icon/InterrogationAndMapPin.vue'
 import { RouterLink } from 'vue-router'
 import MenuUser from '@/components/dropDownMenu/UserMenu.vue'
 
@@ -130,7 +130,7 @@ const navigation = [
 </script>
 <template>
     <div class="bg-beige-custom">
-
+        <!--Navbar Section-->
         <header class="absolute inset-x-0 top-0 z-50">
             <div class="flex justify-between items-center p-3">
                 <div>
@@ -147,7 +147,8 @@ const navigation = [
         <main>
             <!-- Hero section -->
             <div class="relative isolate overflow-hidden pb-16 pt-14 sm:pb-20">
-                <img src="@/assets/main-img.jpg" alt="" class="absolute inset-0 -z-10 h-full w-full object-cover" />
+                <img src="@/assets/main-van-on-road-desert.jpg" alt=""
+                    class="absolute inset-0 -z-10 h-full w-full object-cover" />
                 <div class="absolute inset-x-0 -top-40 -z-10 transform-gpu overflow-hidden blur-3xl sm:-top-80"
                     aria-hidden="true">
                     <div class="relative left-[calc(50%-11rem)] aspect-[1155/678] w-[36.125rem] -translate-x-1/2 rotate-[30deg] bg-gradient-to-tr from-red-custom to-beige-custom opacity-20 sm:left-[calc(50%-30rem)] sm:w-[72.1875rem]"
@@ -177,7 +178,6 @@ const navigation = [
                 </div>
             </div>
 
-
             <div class="mt-20 sm:mt-20 bg-beige-custom px-3 lg:px-8 ">
                 <div class="mx-auto max-w-7xl px-6 lg:px-8 ">
                     <div class="mx-auto max-w-7xl ">
@@ -192,7 +192,7 @@ const navigation = [
                                     d'endroits magnifiques qu'il devient difficile de savoir par où commencer...</p>
                             </div>
                             <div class=" mb-4 md:flex-1 md:ml-5 md:mb-0">
-                                <LooseIcon class="w-full" />
+                                <InterrogationAndMapPin class="w-full" />
                             </div>
                         </div>
                     </div>
@@ -211,7 +211,8 @@ const navigation = [
                                     tromper </p>
                             </div>
                             <div class="flex-1 md:mr-5 ">
-                                <img src="@/assets/van-img.jpg" class="w-screen h-[320px] object-cover rounded-lg mr-10" />
+                                <img src="@/assets/van-in-desert.jpg"
+                                    class="w-screen h-[320px] object-cover rounded-lg mr-10" />
                             </div>
 
                         </div>
@@ -232,7 +233,7 @@ const navigation = [
                 </div>
                 <div class="relative overflow-hidden mt-16">
                     <div class="mx-auto max-w-7xl px-6 lg:px-8">
-                        <img src="@/assets/screen-app.jpg" alt="App screenshot"
+                        <img src="@/assets/itinerary-exemple.jpg" alt="App screenshot"
                             class="mb-[-12%] rounded-xl shadow-2xl ring-1 ring-gray-900/10" width="2432" height="1442" />
 
                     </div>
@@ -266,7 +267,7 @@ const navigation = [
                     <div class="-mt-8 w-full max-w-2xl xl:-mb-8 xl:w-96 xl:flex-none">
                         <div class="relative aspect-[2/1] h-full md:-mx-8 xl:mx-0 xl:aspect-auto">
                             <img class="absolute inset-0 h-full w-full rounded-2xl bg-gray-800 object-cover shadow-2xl"
-                                src="@/assets/image-drone.jpg" alt="" />
+                                src="@/assets/my-van-and-me.jpg" alt="" />
                         </div>
                     </div>
                     <div class="w-full max-w-2xl xl:max-w-none xl:flex-auto xl:px-16 xl:py-24">
@@ -292,8 +293,6 @@ const navigation = [
                     </div>
                 </div>
             </div>
-
-
 
             <!-- FAQ section -->
             <div class="mx-auto my-32 max-w-7xl px-6 sm:mt-56 lg:px-8">

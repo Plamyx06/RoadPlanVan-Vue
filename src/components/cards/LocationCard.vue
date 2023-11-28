@@ -52,11 +52,9 @@ watch(() => props.countryCode, (newCode) => {
 
     </div>
     <div class="flex space-between w-3/4">
-      <div>
-        <p v-if="city" class="text-[#F8EDE0] text-sm mx-3 truncate capitalize">{{ city }}</p>
-        <p v-if="country" class="text-[#F8EDE0] font-semibold text-sm mx-3 truncate">{{ country }}</p>
-      </div>
-      <div>
+      <div class="w-full">
+        <p v-if="city" class="text-[#F8EDE0] text-sm mx-3 truncate capitalize ">{{ city }}</p>
+        <p v-if="country" class="text-[#F8EDE0] font-semibold text-sm mx-3 truncate w-4/6">{{ country }}</p>
       </div>
     </div>
 

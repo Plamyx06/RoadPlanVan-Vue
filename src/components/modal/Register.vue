@@ -13,12 +13,12 @@ function closeModal() {
 
 
 <template>
-    <div class="relative flex flex-1 flex-col justify-center py-12 px-3 sm:px-6 lg:px-8 w-full h-screen">
+    <div class="relative flex flex-1 flex-col justify-center py-12 px-3 w-full h-screen">
         <div class="absolute inset-0 bg-gray-500 opacity-75"></div>
         <div class="sm:mx-auto sm:w-full sm:max-w-[480px] rounded-lg px-6 py-12 relative">
 
 
-            <div class="bg-beige-custom px-6 py-6 shadow rounded-lg sm:px-12">
+            <div class="bg-beige-custom px-6 py-6 shadow rounded-lg ">
                 <div class="flex justify-end ">
                     <RoundedButton @click="closeModal">
                         <XMarkIcon class="h-4 w-4" />

@@ -232,6 +232,7 @@ function addWaypointFromSearch() {
     }
   } else {
     emitter.emit('no-waypoint');
+    console.log("je suis passé")
   }
 }
 async function addWaypoint(arrLngLat) {
