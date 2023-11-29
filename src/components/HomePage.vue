@@ -47,14 +47,20 @@ const features = [
         icon: TruckIcon,
     },
 ]
+
 const faqs = [
     {
         question: "Pourquoi utiliser Roadplanvan ?",
         answer:
             "Roadplanvan est idéal car il vous permet non seulement de créer un itinéraire, de le sauvegarder et de le reprendre plus tard, mais il fournit également des informations essentielles telles que le temps de trajet, la distance parcourue et le coût estimé de l'essence.",
     },
-    // More questions...
+    {
+        question: "Combien d'etapes je peux ajouter à mon trajet",
+        answer:
+            "Tu peux ajouter 22 points au maximum",
+    },
 ]
+
 const navigation = [
     {
         name: 'Facebook',
@@ -131,14 +137,14 @@ const navigation = [
 <template>
     <div class="bg-beige-custom">
         <!--Navbar Section-->
-        <header class="absolute inset-x-0 top-0 z-50">
+        <header class="absolute inset-x-0 top-0 z-10">
             <div class="flex justify-between items-center p-3">
                 <div>
-                    <Logo class="h-16 w-16" />
+                    <Logo class="w-full" />
                 </div>
                 <div>
                     <MenuUser>
-                        <UserCircleIcon class="h-10 w-10 text-red-custom" />
+                        <UserCircleIcon class="h-8 w-8 text-red-custom lg:h-10 lg:w-10" />
                     </MenuUser>
                 </div>
             </div>
@@ -296,6 +302,14 @@ const navigation = [
 
             <!-- FAQ section -->
             <div class="mx-auto my-32 max-w-7xl px-6 sm:mt-56 lg:px-8">
+                <div
+                    class="mx-auto max-w-4xl divide-y divide-gray-900/10 mb-32 text-center lg:flex lg:justify-between lg:items-center">
+                    <h2 class="text-2xl font-bold leading-10 tracking-tight text-red-custom mb-8">Prêt pour commencer à
+                        planifier
+                        ton roadtrip ?
+                    </h2>
+                    <MainButton text="C'est parti !" />
+                </div>
                 <div class="mx-auto max-w-4xl divide-y divide-gray-900/10">
                     <h2 class="text-2xl font-bold leading-10 tracking-tight text-red-custom">Questions fréquentes
                     </h2>

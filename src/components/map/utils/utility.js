@@ -19,7 +19,12 @@ export function createWaypoint(lon, lat, city, countryCode, country) {
 }
 
 export async function checkLastSearchValue(value) {
-  return value.length > 0
+  console.log(value)
+  if (value.length === 0) {
+    return false
+  } else {
+    return true
+  }
 }
 
 export function getPointsIdsFromMap(map) {

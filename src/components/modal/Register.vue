@@ -26,7 +26,7 @@ function closeModal() {
                 </div>
                 <div class="sm:mx-auto sm:w-full sm:max-w-md">
 
-                    <Logo class="mx-auto h-36 w-auto " alt="logo" />
+                    <Logo class="mx-auto max-w-96 my-16" alt="logo" />
                     <h2 class=" text-center text-2xl font-bold leading-9 tracking-tight text-red-custom">Tu souhaites
                         enregistrer ton Roadtrip ?
                     </h2>

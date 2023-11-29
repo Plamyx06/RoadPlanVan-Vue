@@ -5,7 +5,7 @@
 </template>
 
 <script setup>
-import { ref, defineEmits, onMounted, } from 'vue';
+import { ref, defineEmits, } from 'vue';
 import VueDatePicker from '@vuepic/vue-datepicker';
 import '@vuepic/vue-datepicker/dist/main.css'
 import '@/assets/style/data-picker-custom.css'

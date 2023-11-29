@@ -6,8 +6,6 @@
     <Spinner class="w-20 h-20 lg:w-40 lg:h-40" />
   </div>
 </template>
-
-
 <script setup>
 import { ref, onMounted, defineEmits } from 'vue';
 import mapboxgl from 'mapbox-gl';
@@ -15,50 +13,41 @@ import MapboxLanguage from '@mapbox/mapbox-gl-language';
 import MapboxGeocoder from '@mapbox/mapbox-gl-geocoder';
 import Spinner from '@/components/Spinner.vue';
 import emitter from '@/components/utility/eventBus.js';
-
 import { insertToMinimizeDistance, insertToMinimizeDistanceLoop, sortWaypointsByNearestNeighbor } from '@/components/map/utils/tspSolver.js'
 import {
   getGeojsonMarkerOrigin, getMarkerCircleStyleOrigin, getMarkerTextStyleOrigin
 } from '@/components/map/style/markerOrigin.js';
 import { handleResize, createWaypoint, checkLastSearchValue, getPointsIdsFromMap } from '@/components/map/utils/utility.js';
-
 import 'mapbox-gl/dist/mapbox-gl.css';
 import '@mapbox/mapbox-gl-geocoder/dist/mapbox-gl-geocoder.min.js';
 import '@mapbox/mapbox-gl-geocoder/dist/mapbox-gl-geocoder.css';
 import '@/components/map/style/mapbox-gl-geocoder-custom.css';
 import '@/mapbox-gl-direction/mapbox-gl-directions.css';
-
-
 const emit = defineEmits(['update-waypoints']);
 const props = defineProps({ isFullSize: Boolean });
 const lastSearchedCoords = ref([]);
 const waypoints = ref([]);
 const enableReturnStart = ref(true);
 const isLoading = ref(false);
-
 let map
 let geocoderOrigin
 let geocoder
-
 onMounted(() => {
   initializeMap();
   setupGeocoder();
   setupGeocoderOrigin()
 });
-
 // Emitter Event Handlers
 emitter.on('enabled-return-start', (enabledValue) => enableReturnStart.value = enabledValue);
 emitter.on('resize-map', () => handleResize(map));
 emitter.on('updated-waypoint-origin', async () => await handleGeocoderOrigin());
 emitter.on('get-road-draggable', handleGetRoadDraggable);
 emitter.on('get-road-delete', handleGetRoadDelete);
-emitter.on('add-point', addWaypointFromSearch);
-
+emitter.on('add-point', async () => await addWaypointFromSearch());
 // Marker Style
 const geojsonMarkerOrigin = getGeojsonMarkerOrigin(waypoints);
 const markerCircleStyleOrigin = getMarkerCircleStyleOrigin(geojsonMarkerOrigin);
 const markerTextStyleOrigin = getMarkerTextStyleOrigin(geojsonMarkerOrigin);
-
 // Functions
 function initializeMap() {
   mapboxgl.accessToken = import.meta.env.VITE_APP_API_KEY
@@ -70,7 +59,6 @@ function initializeMap() {
     attributionControl: false,
     logoPosition: 'top-left'
   });
-
   map.addControl(new MapboxLanguage({ defaultLanguage: 'fr' }));
 }
 function setupGeocoder() {
@@ -89,26 +77,20 @@ function setupGeocoder() {
     },
     marker: { color: '#8A4852' }
   });
-
   geocoder.on('result', (event) => {
     const { center } = event.result
     const city = event.result.text
-
-
     const countryObject = event.result.context.find((item) => item.id.startsWith('country'))
     const country = countryObject.text
     const countryCode = countryObject.short_code
-
     const newPoint = createWaypoint(center[0], center[1], city, countryCode.toUpperCase(), country);
     lastSearchedCoords.value = newPoint
     const geocoderInputs = document.querySelectorAll('.mapboxgl-ctrl-geocoder--input');
     geocoderInputs[1].blur()
   });
-
   document.getElementById('geocoder').appendChild(geocoder.onAdd(map));
 }
 function setupGeocoderOrigin() {
-
   geocoderOrigin = new MapboxGeocoder({
     accessToken: mapboxgl.accessToken,
     mapboxgl: mapboxgl,
@@ -119,33 +101,23 @@ function setupGeocoderOrigin() {
     marker: {
       color: '#8A4852'
     },
-
   })
   document.getElementById('geocoder-origin-container').appendChild(geocoderOrigin.onAdd(map))
-
-
   geocoderOrigin.on('result', (event) => {
-
     lastSearchedCoords.value = [];
     const { center } = event.result;
     const city = event.result.text;
-
     const countryObject = event.result.context.find((item) => item.id.startsWith('country'));
     const country = countryObject.text;
     const countryCode = countryObject.short_code;
-
     const startPoint = createWaypoint(center[0], center[1], city, countryCode, country);
-
     lastSearchedCoords.value.push(startPoint);
-
     if (enableReturnStart.value) {
       const endPoint = createWaypoint(center[0], center[1], city, countryCode, country);
       lastSearchedCoords.value.push(endPoint);
     }
-
     const geocoderInput = document.querySelector('.mapboxgl-ctrl-geocoder--input');
     geocoderInput.blur();
-
     console.log('geocodeurOn', lastSearchedCoords.value);
   });
 }
@@ -203,15 +175,17 @@ function handleGetRoadDelete(newWaypoints) {
     map.removeSource("point-1")
     map.removeLayer(`point-label-1`)
     map.removeSource(`point-label-1`)
-
     console.log(getPointsIdsFromMap(map))
   }
 }
-function addWaypointFromSearch() {
+async function addWaypointFromSearch() {
   geocoder.clear();
   const geocoderInputs = document.querySelectorAll('.mapboxgl-ctrl-geocoder--input');
-  geocoderInputs[1].blur()
-  if (lastSearchedCoords.value) {
+  geocoderInputs[1].blur();
+  const haveWaypoint = await checkLastSearchValue(lastSearchedCoords.value);
+
+  if (lastSearchedCoords.value && haveWaypoint) {
+
     const waypointExists = waypoints.value.some(waypoint =>
       waypoint.lat === lastSearchedCoords.value.lat &&
       waypoint.lng === lastSearchedCoords.value.lng
@@ -220,26 +194,20 @@ function addWaypointFromSearch() {
     if (!waypointExists) {
       if (waypoints.value.length === 1) {
         waypoints.value.push(lastSearchedCoords.value);
-        getRoad(waypoints.value);
       } else {
-        addWaypoint(lastSearchedCoords.value);
-        getRoad(waypoints.value);
+        await addWaypoint(lastSearchedCoords.value);
       }
-      lastSearchedCoords.value = null;
+      await getRoad(waypoints.value);
     } else {
       emitter.emit('waypoint-exist');
-      lastSearchedCoords.value = null;
     }
   } else {
     emitter.emit('no-waypoint');
-    console.log("je suis passé")
   }
+  lastSearchedCoords.value = [];
 }
+
 async function addWaypoint(arrLngLat) {
-  if (!arrLngLat || typeof arrLngLat !== 'object' || !arrLngLat.lon || !arrLngLat.lat) {
-    console.error('arrLngLat is invalid:', arrLngLat)
-    return
-  }
   if (enableReturnStart.value) {
     insertToMinimizeDistanceLoop(arrLngLat, waypoints.value);
   } else {
@@ -251,11 +219,9 @@ async function addWaypoint(arrLngLat) {
 async function getRoad(waypoints) {
   isLoading.value = true;
   emitter.emit('is-loading', isLoading.value);
-
   const road = await fetchRoad(waypoints);
   createAndUpdateRoad(road, waypoints);
   addLegDurationDistance(road.legs, waypoints);
-
   isLoading.value = false;
   emitter.emit('is-loading', isLoading.value);
 }
@@ -278,7 +244,6 @@ function addLegDurationDistance(legs, waypoints) {
     duration: leg.duration,
     distance: (leg.distance / 1000).toFixed(0)
   }));
-
   for (let i = 0; i < waypoints.length; i++) {
     if (i < legDataArray.length) {
       waypoints[i].duration = legDataArray[i].duration;
@@ -299,7 +264,6 @@ function createAndUpdateRoad(road, waypoints) {
       coordinates: route
     }
   };
-
   if (map.getSource('route')) {
     map.getSource('route').setData(geojson);
   } else {
@@ -321,16 +285,13 @@ function createAndUpdateRoad(road, waypoints) {
       }
     });
   }
-
   for (let index = 0; index < waypoints.length; index++) {
     const point = waypoints[index];
     const pointId = `point-${index}`;
     const labelId = `point-label-${index}`;
-
     let labelText = index === 0 ? 'Start' :
       index === waypoints.length - 1 ? 'End' :
         (index + 1).toString();
-
     const pointGeoJSON = {
       type: 'FeatureCollection',
       features: [{
@@ -342,12 +303,10 @@ function createAndUpdateRoad(road, waypoints) {
         }
       }]
     };
-
     if (map.getLayer(pointId)) {
       map.removeLayer(pointId);
       map.removeSource(pointId);
     }
-
     map.addLayer({
       id: pointId,
       type: 'circle',
@@ -360,12 +319,10 @@ function createAndUpdateRoad(road, waypoints) {
         'circle-color': index === 0 || index === waypoints.length - 1 ? '#8A4852' : '#A86C7A'
       }
     });
-
     if (map.getLayer(labelId)) {
       map.removeLayer(labelId);
       map.removeSource(labelId);
     }
-
     map.addLayer({
       id: labelId,
       type: 'symbol',
@@ -384,18 +341,13 @@ function createAndUpdateRoad(road, waypoints) {
     });
   }
 }
-
-
-
 </script>
-
 <style scoped>
 .map-container {
   width: 100%;
   height: 45vh;
   position: absolute
 }
-
 
 .map-container-full {
   height: 95vh;
@@ -405,6 +357,5 @@ function createAndUpdateRoad(road, waypoints) {
   .map-container {
     height: 100vh;
   }
-
 }
 </style>
