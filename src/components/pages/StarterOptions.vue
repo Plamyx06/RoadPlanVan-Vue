@@ -1,22 +1,16 @@
 <script setup>
 // Imports and Component Definitions
-import { ref, markRaw } from "vue";
+import { ref } from "vue";
 import { ChevronLeftIcon } from '@heroicons/vue/20/solid';
-import Car from '@/components/icon/Car.vue';
-import Van from '@/components/icon/Van.vue';
-import CampingCar from '@/components/icon/CampingCar.vue';
 import DatePicker from '@/components/DatePicker.vue';
 import MainButton from '@/components/button/MainButton.vue';
 import ToggleButton from '@/components/button/ToggleButton.vue';
 import RoundedButton from '@/components/button/RoundedButton.vue';
 import ErrorAlert from '@/components/ErrorAlert.vue';
 import emitter from "@/components/utility/eventBus";
+import VanRadioGroup from "@/components/VanRadioGroup.vue";
 
-const items = ref([
-  { svg: markRaw(Car), consumption: '6', selected: false },
-  { svg: markRaw(Van), consumption: '8', selected: true },
-  { svg: markRaw(CampingCar), consumption: '10', selected: false },
-]);
+
 const showContent = ref(true);
 const confirmed = ref(false);
 const selectedItem = ref();
@@ -32,9 +26,6 @@ emitter.on("no-waypoint-origin", () => errorAlert(noWaypoint, false));
 emitter.on("have-waypoint-origin", () => emits('hide'));
 
 // Functions Event Handlers
-function selectConsumption(index) {
-  items.value = items.value.map((item, idx) => ({ ...item, selected: idx === index }));
-}
 
 function validateSelection() {
   confirmed.value = true;
@@ -89,23 +80,7 @@ function errorAlert(errorAlert, hideValue) {
         </div>
 
         <div v-if="!confirmed">
-          <p class="py-2 underline">Sélectionne ton véhicule : </p>
-          <div class="grid gap-2 grid-cols-2 w-full sm:gap-3 sm:grid-cols-3">
-            <div v-for="(item, index) in items" :key="index" class="w-full">
-
-              <div @click="selectConsumption(index)" class="relative flex justify-center">
-                <component :is="item.svg" :class="'w-14 h-14 block mx-auto'" />
-
-                <div v-if="item.selected" class="absolute top-0 bottom-0 left-0 right-0 flex items-center justify-center">
-                  <svg xmlns="http://www.w3.org/2000/svg" class="h-16 w-16 text-green-500" fill="none" viewBox="0 0 24 24"
-                    stroke="currentColor">
-                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="4" d="M5 13l4 4L19 7" />
-                  </svg>
-                </div>
-              </div>
-              <div class="text-center">{{ item.consumption }}L/100km</div>
-            </div>
-          </div>
+          <VanRadioGroup class="mt-5" />
           <div class="my-6 w-full">
             <h2 class="underline">Date de départ: </h2>
             <div class="flex justify-end w-full ">

@@ -83,7 +83,7 @@ function setupGeocoder() {
     const countryObject = event.result.context.find((item) => item.id.startsWith('country'))
     const country = countryObject.text
     const countryCode = countryObject.short_code
-    const newPoint = createWaypoint(center[0], center[1], city, countryCode.toUpperCase(), country);
+    const newPoint = createWaypoint(center[0], center[1], city, countryCode, country);
     lastSearchedCoords.value = newPoint
     const geocoderInputs = document.querySelectorAll('.mapboxgl-ctrl-geocoder--input');
     geocoderInputs[1].blur()
@@ -152,6 +152,7 @@ function handleGetRoadDraggable(newWaypoints) {
   emit('update-waypoints', waypoints.value)
   getRoad(newWaypoints)
 }
+
 function handleGetRoadDelete(newWaypoints) {
   waypoints.value = newWaypoints
   const ArrPointId = getPointsIdsFromMap(map)
@@ -178,6 +179,7 @@ function handleGetRoadDelete(newWaypoints) {
     console.log(getPointsIdsFromMap(map))
   }
 }
+
 async function addWaypointFromSearch() {
   geocoder.clear();
   const geocoderInputs = document.querySelectorAll('.mapboxgl-ctrl-geocoder--input');

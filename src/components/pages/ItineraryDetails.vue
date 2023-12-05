@@ -65,9 +65,11 @@ function handleDraggableStart() {
 }
 
 function handleDraggableChange() {
+  console.log()
   if (enableReturnStart.value && clonedWaypoints.value.length > 0) {
     mutableWaypoints.value = clonedWaypoints.value;
     clonedWaypoints.value = [];
+    console.log("je suis mutable", mutableWaypoints)
     emitter.emit('get-road-draggable', mutableWaypoints.value);
   }
   else {

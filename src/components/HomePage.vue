@@ -140,7 +140,7 @@ const navigation = [
         <header class="absolute inset-x-0 top-0 z-10">
             <div class="flex justify-between items-center p-3">
                 <div>
-                    <Logo class="w-full" />
+                    <Logo class="w-4/6" />
                 </div>
                 <div>
                     <MenuUser>
@@ -165,14 +165,11 @@ const navigation = [
                         <div class="hidden sm:mb-8 sm:flex sm:justify-center">
                         </div>
                         <div class="text-center rounded-lg">
-                            <h1 class="text-4xl font-bold tracking-tight text-white sm:text-6xl lg:text-8xl">
-                                ROADPLANVAN
-                            </h1>
-                            <p class="mt-6 text-lg leading-8 text-white font-bold sm:text-2xl lg:text-4xl">
-                                TON COMPAGNON
-                                DE
-                                VOYAGE<br>Planifie !
-                                Explore ! Profite !</p>
+                            <p class="mt-6 text-2xl leading-8 uppercase text-white font-bold sm:text-2xl lg:text-4xl">
+                                Ton compagnon de voyage</p>
+                            <p class="mt-3 text-2xl leading-8 text-white font-bold sm:text-2xl lg:text-4xl">Planifie !
+                                Explore ! Profite !
+                            </p>
                         </div>
                         <div class="mt-10 flex items-center justify-center gap-x-6">
                             <RouterLink to="/map">

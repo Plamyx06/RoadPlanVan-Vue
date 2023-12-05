@@ -17,7 +17,6 @@ function closeModal() {
         <div class="absolute inset-0 bg-gray-500 opacity-75"></div>
         <div class="sm:mx-auto sm:w-full sm:max-w-[480px] shadow rounded-lg relative">
 
-
             <div class="bg-beige-custom px-6 py-6 shadow rounded-lg sm:px-12">
                 <div class="flex justify-between items-center">
                     <div class="sm:mx-auto sm:w-full sm:max-w-md">
