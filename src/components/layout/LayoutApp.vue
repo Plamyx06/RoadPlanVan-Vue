@@ -5,7 +5,7 @@ import Register from '@/components/modal/Register.vue'
 import MenuUser from '@/components/dropDownMenu/UserMenu.vue'
 import NavbarButton from '@/components/button/NavbarButton.vue'
 import { MapPinIcon, ArrowTrendingUpIcon, HomeIcon, MapIcon, UserIcon } from '@heroicons/vue/24/outline'
-import emitter from '../utility/eventBus'
+import emitter from '../utility/mapEvent.js'
 
 const emit = defineEmits(['select-button'], 'cancel')
 const selectedButton = ref('itinerary')

@@ -173,7 +173,8 @@ const navigation = [
                         </div>
                         <div class="mt-10 flex items-center justify-center gap-x-6">
                             <RouterLink to="/map">
-                                <MainButton text="Je commence">
+                                <MainButton>
+                                    Je commence
                                 </MainButton>
                             </RouterLink>
                         </div>
@@ -305,7 +306,7 @@ const navigation = [
                         planifier
                         ton roadtrip ?
                     </h2>
-                    <MainButton text="C'est parti !" />
+                    <MainButton>C'est parti !</MainButton>
                 </div>
                 <div class="mx-auto max-w-4xl divide-y divide-gray-900/10">
                     <h2 class="text-2xl font-bold leading-10 tracking-tight text-red-custom">Questions fréquentes

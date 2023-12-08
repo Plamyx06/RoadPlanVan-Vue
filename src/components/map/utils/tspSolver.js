@@ -1,7 +1,6 @@
 import * as turf from '@turf/turf'
 
 export function insertToMinimizeDistanceLoop(newWaypoint, waypoints) {
-  console.log(waypoints)
   let minimalAddedDistance = Infinity
   let optimalInsertPosition = 1
 

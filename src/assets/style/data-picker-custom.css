@@ -5,12 +5,12 @@
     --dp-hover-text-color: #8A4852;
     --dp-hover-icon-color: #8A4852;
     --dp-primary-color: #8A4852;
-    --dp-primary-disabled-color: #6bacea;
+    --dp-primary-disabled-color: #8A4852;
     --dp-primary-text-color: #f8f5f5;
     --dp-secondary-color: #c0c4cc;
     --dp-border-color: #ddd;
     --dp-menu-border-color: #ddd;
-    --dp-border-color-hover: white;
+    --dp-border-color-hover: #8A4852;
     --dp-disabled-color: #f6f6f6;
     --dp-scroll-bar-background: #f3f3f3;
     --dp-scroll-bar-color: #959595;
@@ -22,7 +22,7 @@
     --dp-tooltip-color: #fafafa;
     --dp-disabled-color-text: #8e8e8e;
     --dp-highlight-color: rgb(25 118 210 / 10%);
-    width: 50%;
+    max-width: 100%;
 
 
 }
@@ -32,7 +32,8 @@
 }
 
 .dp__input {
-    border-radius: 9999px;
-    height: 30px;
+    border-radius: 0.5rem;
+    height: 40px;
     text-align: center;
+
 }

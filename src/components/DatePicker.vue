@@ -1,7 +1,7 @@
 <template>
   <VueDatePicker v-model="date" @update:model-value="handleDate" :enable-time-picker="false" locale="fr-FR"
     cancelText="annuler" selectText="valider" :format="format" min-date="new Date()" placeholder="Dâte de départ"
-    :year-range="[2023, 2040]" :teleport="true" teleport-center />
+    :year-range="[2023, 2040]" :teleport="true" teleport-center :clearable="false" />
 </template>
 
 <script setup>
@@ -26,7 +26,7 @@ const emit = defineEmits(["date-changed"]);
 const handleDate = (modelData) => {
   date.value = new Date(modelData);
   localStorage.setItem('selectedDate', date.value.toISOString());
-  emit('date-changed', date.value);
+
 }
 
 </script>

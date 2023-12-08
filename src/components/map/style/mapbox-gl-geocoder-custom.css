@@ -1,6 +1,11 @@
 .mapboxgl-ctrl-geocoder--input:focus,
 .mapboxgl-ctrl-geocoder--input::placeholder {
-    color: #8A4852;
+    color: gray;
+
+}
+
+.mapboxgl-ctrl-geocoder--input:focus {
+    box-shadow: var(--tw-ring-inset) 0 0 0 calc(2px + var(--tw-ring-offset-width)) #8A4852;
 }
 
 .mapboxgl-ctrl-geocoder {
@@ -10,15 +15,16 @@
     position: relative;
     background-color: #fff;
     width: 100%;
-    min-width: 300px;
     padding: 2.5px;
     z-index: 1;
     border-radius: 4px;
     transition: width .25s, min-width .25s;
+    max-width: 100%;
+
 }
 
 .mapboxgl-ctrl-geocoder--input {
-    font-size: 16px !important;
+    font-size: 16px;
     width: 100%;
     background-color: white;
     height: 30px;
@@ -26,7 +32,8 @@
     text-overflow: ellipsis;
     white-space: nowrap;
     overflow: hidden;
-    border-radius: 9999px;
+    border-radius: 0.5rem;
+    max-width: 100%;
 }
 
 .mapboxgl-ctrl-geocoder--icon-search {
@@ -39,11 +46,11 @@
 }
 
 .mapboxgl-ctrl-geocoder--button {
-    border-radius: 9999px;
+    border-radius: 0.5rem;
     width: 23px;
     height: 23px;
     bottom: 3px;
-    top: 0px;
+    top: 3px;
     background: transparent
 }
 
@@ -84,7 +91,7 @@
     .mapboxgl-ctrl-geocoder--icon-close {
         width: 20px;
         height: 20px;
-        margin-top: 6px;
+        margin-top: 12px;
         margin-right: 0;
     }
 }

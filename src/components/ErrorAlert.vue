@@ -8,13 +8,13 @@ const props = defineProps({
 </script>
 
 <template>
-    <div class="rounded-full bg-red-100 py-1 w-11/12">
+    <div class="rounded-lg mt-2 bg-red-100 py-1 w-full">
         <div class="flex items-center">
             <div class="">
                 <XCircleIcon class="h-5 w-5 text-red-500" aria-hidden="true" />
             </div>
             <div class="ml-3">
-                <h3 class=" font-medium text-red-500">{{ text }}</h3>
+                <h3 class="text-red-500">{{ text }}</h3>
             </div>
         </div>
     </div>

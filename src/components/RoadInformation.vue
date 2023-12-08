@@ -1,5 +1,5 @@
 <script setup>
-import emitter from '@/components/utility/eventBus.js';
+import emitter from '@/components/utility/mapEvent.js';
 import { defineProps, ref } from 'vue';
 import Spinner from '@/components/Spinner.vue'
 import { TruckIcon, ClockIcon } from '@heroicons/vue/20/solid';

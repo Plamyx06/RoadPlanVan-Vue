@@ -1,5 +1,5 @@
 <template>
-  <div id="map" :class="['map-container', { 'map-full': !isFullSize, 'map-container-full': isFullSize }]">
+  <div id="map" class='map-container'>
   </div>
   <div v-if="isLoading"
     class="absolute top-0 w-full h-[45vh] bg-gray-500 bg-opacity-40 flex justify-center items-center lg:h-full">
@@ -12,7 +12,7 @@ import mapboxgl from 'mapbox-gl';
 import MapboxLanguage from '@mapbox/mapbox-gl-language';
 import MapboxGeocoder from '@mapbox/mapbox-gl-geocoder';
 import Spinner from '@/components/Spinner.vue';
-import emitter from '@/components/utility/eventBus.js';
+import emitter from '@/components/utility/mapEvent.js';
 import { insertToMinimizeDistance, insertToMinimizeDistanceLoop, sortWaypointsByNearestNeighbor } from '@/components/map/utils/tspSolver.js'
 import {
   getGeojsonMarkerOrigin, getMarkerCircleStyleOrigin, getMarkerTextStyleOrigin
@@ -22,21 +22,25 @@ import 'mapbox-gl/dist/mapbox-gl.css';
 import '@mapbox/mapbox-gl-geocoder/dist/mapbox-gl-geocoder.min.js';
 import '@mapbox/mapbox-gl-geocoder/dist/mapbox-gl-geocoder.css';
 import '@/components/map/style/mapbox-gl-geocoder-custom.css';
-import '@/mapbox-gl-direction/mapbox-gl-directions.css';
+import '@/components/map/style/mapbox-gl-directions-custom.css';
+
 const emit = defineEmits(['update-waypoints']);
 const props = defineProps({ isFullSize: Boolean });
 const lastSearchedCoords = ref([]);
 const waypoints = ref([]);
 const enableReturnStart = ref(true);
 const isLoading = ref(false);
+
 let map
 let geocoderOrigin
 let geocoder
+
 onMounted(() => {
   initializeMap();
   setupGeocoder();
   setupGeocoderOrigin()
 });
+
 // Emitter Event Handlers
 emitter.on('enabled-return-start', (enabledValue) => enableReturnStart.value = enabledValue);
 emitter.on('resize-map', () => handleResize(map));
@@ -44,18 +48,20 @@ emitter.on('updated-waypoint-origin', async () => await handleGeocoderOrigin());
 emitter.on('get-road-draggable', handleGetRoadDraggable);
 emitter.on('get-road-delete', handleGetRoadDelete);
 emitter.on('add-point', async () => await addWaypointFromSearch());
+
 // Marker Style
 const geojsonMarkerOrigin = getGeojsonMarkerOrigin(waypoints);
 const markerCircleStyleOrigin = getMarkerCircleStyleOrigin(geojsonMarkerOrigin);
 const markerTextStyleOrigin = getMarkerTextStyleOrigin(geojsonMarkerOrigin);
+
 // Functions
 function initializeMap() {
   mapboxgl.accessToken = import.meta.env.VITE_APP_API_KEY
   map = new mapboxgl.Map({
-    container: 'map', // ID of the map container
-    style: 'mapbox://styles/mapbox/streets-v12', // Map style
-    center: [2.3522, 48.8566], // Initial center of the map (Paris)
-    zoom: 3, // Initial zoom level
+    container: 'map',
+    style: 'mapbox://styles/mapbox/streets-v12',
+    center: [2.3522, 48.8566],
+    zoom: 3,
     attributionControl: false,
     logoPosition: 'top-left'
   });
@@ -65,7 +71,7 @@ function setupGeocoder() {
   geocoder = new MapboxGeocoder({
     accessToken: mapboxgl.accessToken,
     mapboxgl: mapboxgl,
-    placeholder: 'Cherche une destination',
+    placeholder: 'Ville, ex : Nice, France',
     language: 'fr-FR',
     bbox: [-31.266001, 27.636311, 69.033946, 81.008797],
     types: 'place',
@@ -123,6 +129,7 @@ function setupGeocoderOrigin() {
 }
 async function handleGeocoderOrigin() {
   const haveWaypoint = await checkLastSearchValue(lastSearchedCoords.value)
+  console.log('haveWaypoint', haveWaypoint)
   if (!haveWaypoint) {
     emitter.emit('no-waypoint-origin');
   } else if (haveWaypoint) {
@@ -149,6 +156,7 @@ async function handleGeocoderOrigin() {
 }
 function handleGetRoadDraggable(newWaypoints) {
   waypoints.value = newWaypoints
+  console.log("newWaypoint", newWaypoints)
   emit('update-waypoints', waypoints.value)
   getRoad(newWaypoints)
 }
@@ -217,6 +225,7 @@ async function addWaypoint(arrLngLat) {
     sortWaypointsByNearestNeighbor(waypoints.value)
   }
 }
+
 // GET ROAD
 async function getRoad(waypoints) {
   isLoading.value = true;
