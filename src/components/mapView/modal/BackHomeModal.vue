@@ -6,7 +6,7 @@ import { ExclamationTriangleIcon } from '@heroicons/vue/24/outline'
 
 const open = ref(true)
 
-const { deleted, cancel, city, placeLocation } = defineProps(['cancel', 'save', 'returnHome']);
+const { deleted, cancel } = defineProps(['cancel', 'save']);
 
 
 </script>

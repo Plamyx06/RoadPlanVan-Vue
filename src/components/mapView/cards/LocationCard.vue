@@ -1,6 +1,6 @@
 <script setup>
-import { ref, watch, defineProps } from 'vue';
-import Spinner from '@/components/Spinner.vue';
+import { ref, defineProps } from 'vue';
+import Spinner from '@/components/mapView/Spinner.vue';
 
 const props = defineProps({
   city: String,

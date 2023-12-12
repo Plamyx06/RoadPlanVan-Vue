@@ -1,28 +1,31 @@
 <template>
-  <div id="map" class='map-container'>
+  <div id="map" :class="['map-container', { 'map-full': !isFullSize, 'map-container-full': isFullSize }]">
   </div>
   <div v-if="isLoading"
     class="absolute top-0 w-full h-[45vh] bg-gray-500 bg-opacity-40 flex justify-center items-center lg:h-full">
     <Spinner class="w-20 h-20 lg:w-40 lg:h-40" />
   </div>
 </template>
+
 <script setup>
 import { ref, onMounted, defineEmits } from 'vue';
 import mapboxgl from 'mapbox-gl';
 import MapboxLanguage from '@mapbox/mapbox-gl-language';
 import MapboxGeocoder from '@mapbox/mapbox-gl-geocoder';
-import Spinner from '@/components/Spinner.vue';
-import emitter from '@/components/utility/mapEvent.js';
-import { insertToMinimizeDistance, insertToMinimizeDistanceLoop, sortWaypointsByNearestNeighbor } from '@/components/map/utils/tspSolver.js'
+import Spinner from '@/components/mapView/Spinner.vue';
+import mapEmitter from '@/components/mapView/mapEvent.js';
+
+import { insertToMinimizeDistance, insertToMinimizeDistanceLoop, sortWaypointsByNearestNeighbor } from '@/components/mapView/map/utils/tspSolver.js'
 import {
   getGeojsonMarkerOrigin, getMarkerCircleStyleOrigin, getMarkerTextStyleOrigin
-} from '@/components/map/style/markerOrigin.js';
-import { handleResize, createWaypoint, checkLastSearchValue, getPointsIdsFromMap } from '@/components/map/utils/utility.js';
+} from '@/components/mapView/map/style/markerOrigin.js';
+import { handleResize, createWaypoint, checkLastSearchValue, getPointsIdsFromMap } from '@/components/mapView/map/utils/utility.js';
+
 import 'mapbox-gl/dist/mapbox-gl.css';
 import '@mapbox/mapbox-gl-geocoder/dist/mapbox-gl-geocoder.min.js';
 import '@mapbox/mapbox-gl-geocoder/dist/mapbox-gl-geocoder.css';
-import '@/components/map/style/mapbox-gl-geocoder-custom.css';
-import '@/components/map/style/mapbox-gl-directions-custom.css';
+import '@/components/mapView/map/style/mapbox-gl-geocoder-custom.css';
+import '@/components/mapView/map/style/mapbox-gl-directions-custom.css';
 
 const emit = defineEmits(['update-waypoints']);
 const props = defineProps({ isFullSize: Boolean });
@@ -42,19 +45,19 @@ onMounted(() => {
 });
 
 // Emitter Event Handlers
-emitter.on('enabled-return-start', (enabledValue) => enableReturnStart.value = enabledValue);
-emitter.on('resize-map', () => handleResize(map));
-emitter.on('updated-waypoint-origin', async () => await handleGeocoderOrigin());
-emitter.on('get-road-draggable', handleGetRoadDraggable);
-emitter.on('get-road-delete', handleGetRoadDelete);
-emitter.on('add-point', async () => await addWaypointFromSearch());
+mapEmitter.on('enabled-return-start', (enabledValue) => enableReturnStart.value = enabledValue);
+mapEmitter.on('resize-map', () => handleResize(map));
+mapEmitter.on('updated-waypoint-origin', async () => await handleGeocoderOrigin());
+mapEmitter.on('get-road-draggable', handleGetRoadAfterDraggable);
+mapEmitter.on('get-road-delete', handleGetRoadAfterDelete);
+mapEmitter.on('add-point', async () => await addWaypointFromSearch());
 
 // Marker Style
 const geojsonMarkerOrigin = getGeojsonMarkerOrigin(waypoints);
 const markerCircleStyleOrigin = getMarkerCircleStyleOrigin(geojsonMarkerOrigin);
 const markerTextStyleOrigin = getMarkerTextStyleOrigin(geojsonMarkerOrigin);
 
-// Functions
+
 function initializeMap() {
   mapboxgl.accessToken = import.meta.env.VITE_APP_API_KEY
   map = new mapboxgl.Map({
@@ -67,6 +70,8 @@ function initializeMap() {
   });
   map.addControl(new MapboxLanguage({ defaultLanguage: 'fr' }));
 }
+
+//GEOCODEUR
 function setupGeocoder() {
   geocoder = new MapboxGeocoder({
     accessToken: mapboxgl.accessToken,
@@ -129,11 +134,11 @@ function setupGeocoderOrigin() {
 }
 async function handleGeocoderOrigin() {
   const haveWaypoint = await checkLastSearchValue(lastSearchedCoords.value)
-  console.log('haveWaypoint', haveWaypoint)
+
   if (!haveWaypoint) {
-    emitter.emit('no-waypoint-origin');
+    mapEmitter.emit('no-waypoint-origin');
   } else if (haveWaypoint) {
-    emitter.emit('have-waypoint-origin')
+    mapEmitter.emit('have-waypoint-origin')
     waypoints.value = lastSearchedCoords.value;
     geocoderOrigin.clear();
     emit('update-waypoints', waypoints.value);
@@ -152,16 +157,54 @@ async function handleGeocoderOrigin() {
       getRoad(waypoints.value);
     }
     lastSearchedCoords.value = [];
+    console.log('haveWaypoint', waypoints.value)
   }
 }
-function handleGetRoadDraggable(newWaypoints) {
+async function addWaypointFromSearch() {
+  geocoder.clear();
+  const geocoderInputs = document.querySelectorAll('.mapboxgl-ctrl-geocoder--input');
+  geocoderInputs[1].blur();
+  const haveWaypoint = await checkLastSearchValue(lastSearchedCoords.value);
+
+  if (lastSearchedCoords.value && haveWaypoint) {
+
+    const waypointExists = waypoints.value.some(waypoint =>
+      waypoint.lat === lastSearchedCoords.value.lat &&
+      waypoint.lng === lastSearchedCoords.value.lng
+    );
+
+    if (!waypointExists) {
+      if (waypoints.value.length === 1) {
+        waypoints.value.push(lastSearchedCoords.value);
+      } else {
+        await addWaypoint(lastSearchedCoords.value);
+      }
+      await getRoad(waypoints.value);
+    } else {
+      mapEmitter.emit('waypoint-exist');
+    }
+  } else {
+    mapEmitter.emit('no-waypoint');
+  }
+  lastSearchedCoords.value = [];
+}
+async function addWaypoint(arrLngLat) {
+  if (enableReturnStart.value) {
+    insertToMinimizeDistanceLoop(arrLngLat, waypoints.value);
+  } else {
+    insertToMinimizeDistance(arrLngLat, waypoints.value)
+    sortWaypointsByNearestNeighbor(waypoints.value)
+  }
+}
+
+
+function handleGetRoadAfterDraggable(newWaypoints) {
   waypoints.value = newWaypoints
   console.log("newWaypoint", newWaypoints)
   emit('update-waypoints', waypoints.value)
   getRoad(newWaypoints)
 }
-
-function handleGetRoadDelete(newWaypoints) {
+function handleGetRoadAfterDelete(newWaypoints) {
   waypoints.value = newWaypoints
   const ArrPointId = getPointsIdsFromMap(map)
   map.removeLayer('route')
@@ -188,53 +231,15 @@ function handleGetRoadDelete(newWaypoints) {
   }
 }
 
-async function addWaypointFromSearch() {
-  geocoder.clear();
-  const geocoderInputs = document.querySelectorAll('.mapboxgl-ctrl-geocoder--input');
-  geocoderInputs[1].blur();
-  const haveWaypoint = await checkLastSearchValue(lastSearchedCoords.value);
-
-  if (lastSearchedCoords.value && haveWaypoint) {
-
-    const waypointExists = waypoints.value.some(waypoint =>
-      waypoint.lat === lastSearchedCoords.value.lat &&
-      waypoint.lng === lastSearchedCoords.value.lng
-    );
-
-    if (!waypointExists) {
-      if (waypoints.value.length === 1) {
-        waypoints.value.push(lastSearchedCoords.value);
-      } else {
-        await addWaypoint(lastSearchedCoords.value);
-      }
-      await getRoad(waypoints.value);
-    } else {
-      emitter.emit('waypoint-exist');
-    }
-  } else {
-    emitter.emit('no-waypoint');
-  }
-  lastSearchedCoords.value = [];
-}
-
-async function addWaypoint(arrLngLat) {
-  if (enableReturnStart.value) {
-    insertToMinimizeDistanceLoop(arrLngLat, waypoints.value);
-  } else {
-    insertToMinimizeDistance(arrLngLat, waypoints.value)
-    sortWaypointsByNearestNeighbor(waypoints.value)
-  }
-}
-
 // GET ROAD
 async function getRoad(waypoints) {
   isLoading.value = true;
-  emitter.emit('is-loading', isLoading.value);
+  mapEmitter.emit('is-loading', isLoading.value);
   const road = await fetchRoad(waypoints);
   createAndUpdateRoad(road, waypoints);
   addLegDurationDistance(road.legs, waypoints);
   isLoading.value = false;
-  emitter.emit('is-loading', isLoading.value);
+  mapEmitter.emit('is-loading', isLoading.value);
 }
 async function fetchRoad(waypoints) {
   const coordinates = waypoints.map(point => `${point.lon},${point.lat}`).join(';');

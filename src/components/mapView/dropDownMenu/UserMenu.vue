@@ -1,9 +1,9 @@
 <script setup>
 import { Menu, MenuButton, MenuItem, MenuItems } from '@headlessui/vue'
-import { ref } from 'vue';
-import Trip from '@/components/modal/Trip.vue';
+import { ref, defineEmits } from 'vue';
+import LoadTripModal from '@/components/mapView/modal/LoadTripModal.vue';
 
-const emit = defineEmits('user-button')
+const emit = defineEmits(['user-button'])
 
 function handleUserButton() {
     emit('user-button');
@@ -17,8 +17,6 @@ function handleOpenTrip() {
 function handleCloseTrip() {
     showTrip.value = false
 }
-
-
 
 </script>
 
@@ -59,7 +57,7 @@ function handleCloseTrip() {
 
         </transition>
         <div class="fixed inset-x-0 bottom-0 flex justify-center">
-            <Trip v-show="showTrip" @close="handleCloseTrip" />
+            <LoadTripModal v-show="showTrip" @close="handleCloseTrip" />
         </div>
     </Menu>
 </template>

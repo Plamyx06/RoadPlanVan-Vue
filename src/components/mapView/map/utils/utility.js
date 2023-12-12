@@ -1,5 +1,5 @@
 import { nextTick } from 'vue'
-import { v4 as uuidv4 } from 'uuid'
+import cuid from 'cuid'
 
 export function handleResize(map) {
   nextTick(() => {
@@ -9,7 +9,7 @@ export function handleResize(map) {
 
 export function createWaypoint(lon, lat, city, countryCode, country) {
   return {
-    id: uuidv4(),
+    id: cuid(),
     lon,
     lat,
     city,

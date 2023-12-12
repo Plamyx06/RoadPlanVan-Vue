@@ -1,7 +1,7 @@
 <script setup>
-import { defineProps, ref, watchEffect, computed, toRefs } from "vue";
-import VanRadioGroup from "@/components/VanRadioGroup.vue";
-import DatePicker from '@/components/DatePicker.vue';
+import { defineProps, ref, watchEffect, computed } from "vue";
+import VanRadioGroup from "@/components/mapView/VanRadioGroup.vue";
+import DatePicker from '@/components/mapView/DatePicker.vue';
 import ToggleButton from '@/components/button/ToggleButton.vue';
 import MainButton from '@/components/button/MainButton.vue';
 import DividerWithMainButton from "@/components/button/DividerWithMainButton.vue";
@@ -9,32 +9,43 @@ import { ChevronLeftIcon } from '@heroicons/vue/20/solid';
 import VueDraggable from 'vuedraggable';
 import { PlusIcon, EllipsisVerticalIcon, XMarkIcon } from '@heroicons/vue/24/outline'
 import RoundedButton from '@/components/button/RoundedButton.vue';
-import LocationCard from '@/components/cards/LocationCard.vue';
-import Delete from '@/components/modal/Delete.vue';
-import Road from '@/components/RoadInformation.vue';
-import ErrorAlert from '@/components/ErrorAlert.vue';
-import emitter from "@/components/utility/mapEvent.js";
+import LocationCard from '@/components/mapView/cards/LocationCard.vue';
+import DeleteModal from '@/components/mapView/modal/DeleteModal.vue';
+import Road from '@/components/mapView/RoadInformation.vue';
+import ErrorAlert from '@/components/mapView/ErrorAlert.vue';
+import mapEmitter from "@/components/mapView/mapEvent.js";
 
+const props = defineProps(['waypoints']);
+const mutableWaypoints = ref(props.waypoints);
 const ShowStarterOptionSection = ref(true)
 const ShowDepartureSection = ref(false)
 const ShowItinerarySection = ref(false)
 const enabledReturnStart = ref(true);
 const vehicleConsumption = ref(8)
+const noWaypointOrigin = ref(false);
+const noWaypoint = ref(false);
+const waypointExist = ref(false);
+const isLoading = ref(false);
+const showDeleteModal = ref(false);
+const deleteLocation = ref({});
 
+// Constante
+const PRICE_GASOLINE = 1.9;
+const ERROR_ALERT_TIMEOUT = 3000;
 
-//DatePicker
-const selectedDate = ref(`${new Date().toLocaleDateString('fr-FR')}`);
+// Emitter Event Handlers
+mapEmitter.on("no-waypoint-origin", () => showErrorAlert(noWaypointOrigin));
+mapEmitter.on("have-waypoint-origin", haveWaypointOrigin);
+mapEmitter.on('no-waypoint', () => showErrorAlert(noWaypoint));
+mapEmitter.on('waypoint-exist', () => showErrorAlert(waypointExist));
+mapEmitter.on('is-loading', (value) => isLoading.value = value);
 
-function handleDateChange(newDate) {
-    selectedDate.value = new Date(newDate);
-}
 
 //Section 1 (StarterOption)
 function goToNextSection() {
     ShowStarterOptionSection.value = false
     ShowDepartureSection.value = true
-    emitter.emit('enabled-return-start', enabledReturnStart.value);
-    emitter.emit('consumption-value', vehicleConsumption.value);
+    mapEmitter.emit('enabled-return-start', enabledReturnStart.value);
 }
 
 //Section 2 (DepartureSection)
@@ -43,10 +54,8 @@ function goToStarterSection() {
     ShowDepartureSection.value = false
 }
 function goToItinerarySection() {
-    emitter.emit('updated-waypoint-origin');
+    mapEmitter.emit('updated-waypoint-origin');
 }
-emitter.on("no-waypoint-origin", () => showErrorAlert(noWaypointOrigin));
-emitter.on("have-waypoint-origin", haveWaypointOrigin);
 
 function haveWaypointOrigin() {
     ShowDepartureSection.value = false
@@ -60,9 +69,6 @@ function enableReturnStart(value) {
     enabledReturnStart.value = value;
 }
 
-const noWaypointOrigin = ref(false);
-const ERROR_ALERT_TIMEOUT = 3000;
-
 function showErrorAlert(errorAlertRef) {
     errorAlertRef.value = true;
     setTimeout(() => {
@@ -71,32 +77,14 @@ function showErrorAlert(errorAlertRef) {
 }
 
 //SECTION 3
-const props = defineProps(['waypoints']);
-const mutableWaypoints = ref(props.waypoints);
-
-const noWaypoint = ref(false);
-const waypointExist = ref(false);
-const isLoading = ref(false);
-const showDeleteModal = ref(false);
-const deleteLocation = ref({});
 
 
-
-const PRICE_GASOLINE = 1.9;
-
-// Emitter Event Handlers
-emitter.on('no-waypoint', () => showErrorAlert(noWaypoint));
-emitter.on('waypoint-exist', () => showErrorAlert(waypointExist));
-emitter.on('enabled-return-start', (value) => enableReturnStart.value = value);
-emitter.on('is-loading', (value) => isLoading.value = value);
-
-
-// Event Handlers
 function addNewWaypoint() {
-    emitter.emit('add-point');
+    mapEmitter.emit('add-point');
     mutableWaypoints.value = props.waypoints;
 
 }
+
 function openDeleteModal(element) {
     deleteLocation.value = element;
     showDeleteModal.value = true;
@@ -108,80 +96,53 @@ function handleDelete() {
     const idToDelete = deleteLocation.value.id;
     const index = mutableWaypoints.value.findIndex(waypoint => waypoint.id === idToDelete);
     mutableWaypoints.value.splice(index, 1);
-    emitter.emit('get-road-delete', mutableWaypoints.value);
+    mapEmitter.emit('get-road-delete', mutableWaypoints.value);
     showDeleteModal.value = false;
 }
 
 
-
-
 function handleSave() {
-    emitter.emit('open-save-modal')
+    mapEmitter.emit('open-save-modal')
 }
-
 
 // Draggable Handlers
-const clonedWaypoints = ref([])
-
-// enlever le .value de prop.waypoint ! 
-
 function handleDraggableChange() {
-    if (enabledReturnStart) {
-        const check = checkStartEndEquality()
-        if (check) {
-            emitter.emit('get-road-draggable', mutableWaypoints.value);
-        } else {
-            mutableWaypoints.value = props.waypoints
-            return
-        }
-    } else if (!enabledReturnStart) {
-        const check = checkStartEquality()
-        if (check) {
-            emitter.emit('get-road-draggable', mutableWaypoints.value);
-        } else {
-            mutableWaypoints.value = props.waypoints
-            return
-        }
+    const waypointsEquality = enabledReturnStart.value ? checkStartEndWaypointEquality() : checkStartWaypointEquality();
+
+    if (waypointsEquality) {
+        mapEmitter.emit('get-road-draggable', mutableWaypoints.value);
+    } else {
+        mutableWaypoints.value = props.waypoints;
     }
 }
+function checkStartWaypointEquality() {
 
-function checkStartEquality() {
-    console.log(props.waypoints)
-    const isFirstSame = props.waypoints[0] === mutableWaypoints.value[0];
-    return isFirstSame;
+    const isStartPointSame = props.waypoints[0] === mutableWaypoints.value[0];
+    return isStartPointSame;
 }
-
-function checkStartEndEquality() {
-    const isFirstSame = props.waypoints[0] === mutableWaypoints.value[0];
-    const isLastSame = props.waypoints[props.waypoints.length - 1] === mutableWaypoints.value[mutableWaypoints.value.length - 1];
-    return isFirstSame && isLastSame;
+function checkStartEndWaypointEquality() {
+    const isStartPointSame = props.waypoints[0] === mutableWaypoints.value[0];
+    const isEndPointSame = props.waypoints[props.waypoints.length - 1] === mutableWaypoints.value[mutableWaypoints.value.length - 1];
+    return isStartPointSame && isEndPointSame;
 }
-
-
-// Utility Functions
-function formatDuration(durationInSeconds) {
-    const hours = Math.floor(durationInSeconds / 3600);
-    const minutes = Math.floor((durationInSeconds % 3600) / 60);
-    const formattedMinutes = minutes < 10 ? `0${minutes}` : minutes;
-    return `${hours}h${formattedMinutes}`;
-}
-
-
 
 // Calculate Price Duration
 const totalDuration = computed(() => calculateTotal(mutableWaypoints.value, 'duration'));
 const totalDistance = computed(() => calculateTotal(mutableWaypoints.value, 'distance'));
 const totalPrice = computed(() => calculatePrice(totalDistance.value, vehicleConsumption.value, PRICE_GASOLINE));
 
-
 function calculateTotal(waypoints, key) {
     return waypoints.reduce((total, waypoint) => total + parseInt(waypoint[key] || 0), 0);
 }
-
 function calculatePrice(distance, consumption, priceGasoline) {
     return Math.ceil((distance / 100) * consumption * priceGasoline);
 }
-
+function formatDuration(durationInSeconds) {
+    const hours = Math.floor(durationInSeconds / 3600);
+    const minutes = Math.floor((durationInSeconds % 3600) / 60);
+    const formattedMinutes = minutes < 10 ? `0${minutes}` : minutes;
+    return `${hours}h${formattedMinutes}`;
+}
 
 watchEffect(() => {
     mutableWaypoints.value = props.waypoints;
@@ -206,10 +167,10 @@ watchEffect(() => {
                 <div class="my-6">
                     <h2 class="text-base font-semibold mb-4">Date de départ</h2>
                     <div class="mx-16 ">
-                        <DatePicker :selectedDate="selectedDate" @date-changed="handleDateChange" />
+                        <DatePicker />
                     </div>
                 </div>
-                <ToggleButton :label="'Activé le retour au point de départ ?'" @update-enabled="enableReturnStart" />
+                <ToggleButton :label="'Retour au point de départ'" @update-enabled="enableReturnStart" />
                 <div class="flex justify-center mt-10 mb-32 lg:mt-16 ">
                     <MainButton @click="goToNextSection">Suivant</MainButton>
                 </div>
@@ -259,7 +220,7 @@ watchEffect(() => {
                             @change="handleDraggableChange">
                             <template v-slot:item="{ element, index }">
                                 <div>
-                                    <div class="flex items-center h-12 ">
+                                    <div class="ml-[-20px] flex items-center h-12 ">
                                         <EllipsisVerticalIcon class="w-5 h-5" />
 
                                         <LocationCard
@@ -295,7 +256,7 @@ watchEffect(() => {
                             </div>
                             <div class="rounded-full bg-beige-custom p-0.5 text-red-custom shadow-lg ring-[1px] ring-red-custom"
                                 v-else>
-                                <p class="w-3 h-3 flex items-center justify-center text-sm ">{{ index + 1 }}
+                                <p class="h-3 flex items-center justify-center text-sm ">{{ index + 1 }}
                                 </p>
                             </div>
                             <div v-if="index !== mutableWaypoints.length - 1"
@@ -306,12 +267,17 @@ watchEffect(() => {
                 </div>
 
                 <div v-if="mutableWaypoints.length > 2">
-                    <div class="border-b my-3 mx-5 border-red-custom"></div>
-                    <div class="px-5 flex justify-between items-center max-w-screen ">
-                        <p>Total :</p>
+                    <div class="relative mt-3">
+                        <div class="absolute inset-0 flex items-center" aria-hidden="true">
+                            <div class="w-full border-t border-red-custom" />
+                        </div>
+                        <div class="relative flex justify-center">
+                            <span class="bg-beige-custom rounded-full px-3 font-semibold text-red-custom">Total</span>
+                        </div>
+                    </div>
+                    <div class="flex justify-center">
                         <Road :duration="formatDuration(totalDuration)" :distance="totalDistance" :price="totalPrice">
                         </Road>
-
                     </div>
                 </div>
                 <div v-if="mutableWaypoints.length > 2" class="mb-32 mt-6 text-center">
@@ -319,10 +285,10 @@ watchEffect(() => {
                         Sauvegarder</MainButton>
                 </div>
 
-                <Delete :show="showDeleteModal" :cancel="handleCancel" :deleted="handleDelete">
+                <DeleteModal :show="showDeleteModal" :cancel="handleCancel" :deleted="handleDelete">
                     Veux-tu supprimer <span class="font-bold">{{ deleteLocation.city }}, {{ deleteLocation.country
                     }}</span> de ton RoadTrip ?
-                </Delete>
+                </DeleteModal>
 
             </section>
 

@@ -1,6 +1,6 @@
 <script setup>
-import RoadInformation from '@/components/RoadInformation.vue';
-import TripCardMenu from '@/components/dropDownMenu/TripCardMenu.vue'
+import RoadInformation from '@/components/mapView/RoadInformation.vue';
+import TripCardMenu from '@/components/mapView/dropDownMenu/TripCardMenu.vue'
 import { MapPinIcon } from '@heroicons/vue/24/outline'
 
 </script>

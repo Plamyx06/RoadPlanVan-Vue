@@ -1,3 +1,26 @@
+<script setup>
+import { ref, markRaw, defineEmits } from 'vue'
+import { RadioGroup, RadioGroupDescription, RadioGroupLabel, RadioGroupOption } from '@headlessui/vue'
+import { CheckCircleIcon } from '@heroicons/vue/20/solid'
+import Car from '@/components/mapView/icon/CarIcon.vue'
+import Van from '@/components/mapView/icon/VanIcon.vue'
+import CampingCar from '@/components/mapView/icon/CampingCarIcon.vue'
+
+const emit = defineEmits(['vehicle-consumption'])
+
+const vehicles = [
+    { svg: markRaw(Car), consumption: 8 },
+    { svg: markRaw(Van), consumption: 10 },
+    { svg: markRaw(CampingCar), consumption: 12 },
+]
+const selectedVehicle = ref(vehicles[1])
+
+function updateVehicle(vehicle) {
+    selectedVehicle.value = vehicle
+    emit('vehicle-consumption', vehicle.consumption)
+}
+</script>
+
 <template>
     <RadioGroup v-model="selectedVehicle">
         <RadioGroupLabel class="text-base font-semibold leading-6 text-red-custom">
@@ -33,28 +56,4 @@
         </div>
     </RadioGroup>
 </template>
-  
-<script setup>
-import { ref, markRaw, defineEmits } from 'vue'
-import { RadioGroup, RadioGroupDescription, RadioGroupLabel, RadioGroupOption } from '@headlessui/vue'
-import { CheckCircleIcon } from '@heroicons/vue/20/solid'
-import Car from '@/components/icon/CarIcon.vue'
-import Van from '@/components/icon/VanIcon.vue'
-import CampingCar from '@/components/icon/CampingCarIcon.vue'
-
-const emit = defineEmits(['vehicle-consumption'])
-
-const vehicles = [
-    { svg: markRaw(Car), consumption: 8 },
-    { svg: markRaw(Van), consumption: 10 },
-    { svg: markRaw(CampingCar), consumption: 12 },
-]
-
-const selectedVehicle = ref(vehicles[1])
-
-function updateVehicle(vehicle) {
-    selectedVehicle.value = vehicle
-    emit('vehicle-consumption', vehicle.consumption)
-}
-</script>
   

@@ -10,9 +10,9 @@ import {
 } from '@heroicons/vue/20/solid'
 import Logo from '@/components/Logo.vue'
 import MainButton from '@/components/button/MainButton.vue'
-import InterrogationAndMapPin from '@/components/icon/InterrogationAndMapPin.vue'
+import InterrogationAndMapPin from '@/components/InterrogationAndMapPin.vue'
 import { RouterLink } from 'vue-router'
-import MenuUser from '@/components/dropDownMenu/UserMenu.vue'
+import MenuUser from '@/components/mapView/dropDownMenu/UserMenu.vue'
 
 
 const features = [
@@ -143,6 +143,7 @@ const navigation = [
                     <Logo class="w-4/6" />
                 </div>
                 <div>
+
                     <MenuUser>
                         <UserCircleIcon class="h-8 w-8 text-red-custom lg:h-10 lg:w-10" />
                     </MenuUser>

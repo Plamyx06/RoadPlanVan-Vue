@@ -1,27 +1,33 @@
 <script setup>
 import { ref, defineEmits } from 'vue'
-import ReturnHome from '@/components/modal/ReturnHome.vue'
-import Register from '@/components/modal/Register.vue'
-import MenuUser from '@/components/dropDownMenu/UserMenu.vue'
+import BackHomeModal from '@/components/mapView/modal/BackHomeModal.vue'
+import RegisterModal from '@/components/mapView/modal/RegisterModal.vue'
+import UserMenu from '@/components/mapView/dropDownMenu/UserMenu.vue'
 import NavbarButton from '@/components/button/NavbarButton.vue'
 import { MapPinIcon, ArrowTrendingUpIcon, HomeIcon, MapIcon, UserIcon } from '@heroicons/vue/24/outline'
-import emitter from '../utility/mapEvent.js'
+import mapEmitter from '@/components/mapView/mapEvent.js'
 
 const emit = defineEmits(['select-button'], 'cancel')
 const selectedButton = ref('itinerary')
+const showBackHomeModal = ref(false)
+const showRegisterModal = ref(false)
 
-emitter.on('open-save-modal', handleSave)
+mapEmitter.on('open-save-modal', handleSave)
 
-const handleButton = (button) => {
+function handleButton(button) {
   selectedButton.value = button
-  emit('select-button', button)
 }
 
-const handleCardButton = () => handleButton('card')
-const handleItineraryButton = () => handleButton('itinerary')
+function handleMapButton() {
+  handleButton('map')
+  emit('select-button', selectedButton.value)
+}
+function handleItineraryButton() {
+  handleButton('itinerary')
+  emit('select-button', selectedButton.value)
+}
 
-const showHomeModal = ref(false)
-const showRegisterModal = ref(false)
+
 
 function handleCloseRegisterModal() {
   showRegisterModal.value = false
@@ -29,15 +35,15 @@ function handleCloseRegisterModal() {
 }
 function handleHomeButton() {
   handleButton('home')
-  showHomeModal.value = true
+  showBackHomeModal.value = true
   showRegisterModal.value = false
 }
 function handleCancel() {
-  showHomeModal.value = false
+  showBackHomeModal.value = false
   selectedButton.value = 'itinerary'
 }
 function handleSave() {
-  showHomeModal.value = false
+  showBackHomeModal.value = false
   showRegisterModal.value = true
 }
 function handleUserButton() {
@@ -46,7 +52,7 @@ function handleUserButton() {
 </script>
 
 <template>
-  <div v-show="selectedButton === 'card'" class="absolute mt-[45vh] left-0 overflow-hidden lg:mt-[5vh] lg:w-4/12">
+  <div v-show="selectedButton === 'map'" class="absolute mt-[45vh] left-0 overflow-hidden lg:mt-[5vh] lg:w-4/12">
     <button
       class="justify-center bg-red-custom text-beige-custom rounded-r-full pl-3 pr-3 h-[5vh] text-sm font-semibold shadow-sm hover:bg-red-custom focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-red-custom"
       @click="handleItineraryButton" type="button">
@@ -58,7 +64,7 @@ function handleUserButton() {
     </button>
   </div>
 
-  <div v-show="selectedButton !== 'card'"
+  <div v-show="selectedButton !== 'map'"
     class=" bg-red-custom text-beige-custom fixed mt-[45vh] w-screen h-[5vh] lg:mt-[5vh] lg:ml-5 lg:rounded-t-lg lg:w-4/12 lg:max-w-lg">
     <div class="grid gap-4 grid-cols-4 w-full h-full">
 
@@ -67,7 +73,7 @@ function handleUserButton() {
       </NavbarButton>
 
 
-      <NavbarButton @click="handleCardButton" :class="{ 'bg-beige-custom text-red-custom': selectedButton === 'card' }"
+      <NavbarButton @click="handleMapButton" :class="{ 'bg-beige-custom text-red-custom': selectedButton === 'card' }"
         type="button">
         <MapIcon class="w-6 h-6" />
       </NavbarButton>
@@ -82,19 +88,19 @@ function handleUserButton() {
 
       <div :class="{ 'bg-beige-custom text-red-custom': selectedButton === 'user' }"
         class="flex justify-center w-full h-full lg:rounded-tr-lg">
-        <MenuUser v-on:user-button="handleUserButton" class="w-full h-full">
+        <UserMenu v-on:user-button="handleUserButton" class="w-full h-full">
           <div class="flex justify-center items-center w-full h-full">
             <UserIcon class="w-6 h-6" />
           </div>
-        </MenuUser>
+        </UserMenu>
       </div>
     </div>
   </div>
 
-  <ReturnHome :show="showHomeModal" :save="handleSave" :cancel="handleCancel" />
+  <BackHomeModal :show="showBackHomeModal" :save="handleSave" :cancel="handleCancel" />
   <div class="fixed inset-x-0 bottom-0 flex justify-center">
-    <Register v-show="showRegisterModal" @close="handleCloseRegisterModal" />
+    <RegisterModal v-show="showRegisterModal" @close="handleCloseRegisterModal" />
   </div>
 </template>
 
-<style scoped></style>
+

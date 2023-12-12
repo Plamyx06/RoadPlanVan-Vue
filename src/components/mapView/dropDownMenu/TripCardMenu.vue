@@ -2,7 +2,7 @@
 import { Menu, MenuButton, MenuItem, MenuItems } from '@headlessui/vue'
 import { ref } from 'vue';
 import { EllipsisVerticalIcon } from '@heroicons/vue/24/outline'
-import Delete from '@/components/modal/Delete.vue'
+import DeleteModal from '@/components/mapView/modal/DeleteModal.vue'
 
 const showTrip = ref(false)
 const showDeleteModal = ref(false)
@@ -50,9 +50,9 @@ function handleCancel() {
             </MenuItems>
         </transition>
 
-        <Delete :show="showDeleteModal" :cancel="handleCancel" :deleted="handleDelete">
+        <DeleteModal :show="showDeleteModal" :cancel="handleCancel" :deleted="handleDelete">
             Veux-tu supprimer <span class="font-bold">Nom du voyage</span> de ton RoadTrip ?
-        </Delete>
+        </DeleteModal>
     </Menu>
 </template>
   
