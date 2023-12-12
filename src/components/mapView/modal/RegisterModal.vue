@@ -2,7 +2,7 @@
 import RoundedButton from '@/components/button/RoundedButton.vue'
 import { XMarkIcon } from '@heroicons/vue/24/outline';
 import { defineEmits } from 'vue';
-import Logo from '@/components/Logo.vue'
+import LogoOnlyVan from '@/components/LogoOnlyVan.vue'
 
 const emit = defineEmits(['close']);
 
@@ -26,7 +26,8 @@ function closeModal() {
                 </div>
                 <div class="sm:mx-auto sm:w-full sm:max-w-md">
 
-                    <Logo class="mx-auto max-w-96 my-16" alt="logo" />
+
+                    <LogoOnlyVan class="mx-auto w-44" alt="logo" />
                     <h2 class=" text-center text-2xl font-bold leading-9 tracking-tight text-red-custom">Tu souhaites
                         enregistrer ton Roadtrip ?
                     </h2>

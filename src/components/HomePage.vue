@@ -9,6 +9,7 @@ import {
     MapIcon, ClockIcon,
 } from '@heroicons/vue/20/solid'
 import Logo from '@/components/Logo.vue'
+import DividerWithMainButton from '@/components/button/DividerWithMainButton.vue'
 import MainButton from '@/components/button/MainButton.vue'
 import InterrogationAndMapPin from '@/components/InterrogationAndMapPin.vue'
 import { RouterLink } from 'vue-router'
@@ -57,7 +58,7 @@ const faqs = [
     {
         question: "Combien d'etapes je peux ajouter à mon trajet",
         answer:
-            "Tu peux ajouter 22 points au maximum",
+            "Tu peux ajouter 22 etapes a ton trajet au maximum",
     },
 ]
 
@@ -172,7 +173,7 @@ const navigation = [
                                 Explore ! Profite !
                             </p>
                         </div>
-                        <div class="mt-10 flex items-center justify-center gap-x-6">
+                        <div class="mt-10 flex justify-center items-center  gap-x-6">
                             <RouterLink to="/map">
                                 <MainButton>
                                     Je commence
@@ -300,14 +301,17 @@ const navigation = [
             </div>
 
             <!-- FAQ section -->
-            <div class="mx-auto my-32 max-w-7xl px-6 sm:mt-56 lg:px-8">
-                <div
-                    class="mx-auto max-w-4xl divide-y divide-gray-900/10 mb-32 text-center lg:flex lg:justify-between lg:items-center">
-                    <h2 class="text-2xl font-bold leading-10 tracking-tight text-red-custom mb-8">Prêt pour commencer à
+            <div class="mx-auto my-32 max-w-7xl px-6  lg:px-8">
+                <div class="mx-auto max-w-4xl divide-y divide-gray-900/10 mb-32 text-center">
+                    <h2 class="text-2xl font-bold mb-8 text-red-custom">Prêt pour commencer à
                         planifier
                         ton roadtrip ?
                     </h2>
-                    <MainButton>C'est parti !</MainButton>
+                    <RouterLink to="/map">
+                        <DividerWithMainButton>
+                            Je commence
+                        </DividerWithMainButton>
+                    </RouterLink>
                 </div>
                 <div class="mx-auto max-w-4xl divide-y divide-gray-900/10">
                     <h2 class="text-2xl font-bold leading-10 tracking-tight text-red-custom">Questions fréquentes
