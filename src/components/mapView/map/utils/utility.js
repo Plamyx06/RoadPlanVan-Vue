@@ -1,7 +1,8 @@
 import { nextTick } from 'vue'
 import cuid from 'cuid'
 
-export function handleResize(map) {
+export function handleResize(map, isFullSize) {
+  isFullSize.value = !isFullSize.value
   nextTick(() => {
     map.resize()
   })

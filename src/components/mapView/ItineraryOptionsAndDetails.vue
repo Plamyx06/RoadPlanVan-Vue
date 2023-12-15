@@ -7,7 +7,7 @@ import MainButton from '@/components/button/MainButton.vue';
 import DividerWithMainButton from "@/components/button/DividerWithMainButton.vue";
 import { ChevronLeftIcon } from '@heroicons/vue/20/solid';
 import VueDraggable from 'vuedraggable';
-import { PlusIcon, EllipsisVerticalIcon, XMarkIcon } from '@heroicons/vue/24/outline'
+import { PlusIcon, EllipsisVerticalIcon, XMarkIcon, MapPinIcon, ArrowTrendingUpIcon, Cog8ToothIcon } from '@heroicons/vue/24/outline'
 import RoundedButton from '@/components/button/RoundedButton.vue';
 import LocationCard from '@/components/mapView/cards/LocationCard.vue';
 import DeleteModal from '@/components/mapView/modal/DeleteModal.vue';
@@ -17,10 +17,11 @@ import mapEmitter from "@/components/mapView/mapEvent.js";
 
 const props = defineProps(['waypoints']);
 const mutableWaypoints = ref(props.waypoints);
-const ShowStarterOptionSection = ref(true)
-const ShowDepartureSection = ref(false)
-const ShowItinerarySection = ref(false)
-const enabledReturnStart = ref(true);
+const showComponent = ref(true)
+const showStarterOptionSection = ref(true)
+const showDepartureSection = ref(false)
+const showItinerarySection = ref(false)
+const returnToStartingWaypoint = ref(true);
 const vehicleConsumption = ref(8)
 const noWaypointOrigin = ref(false);
 const noWaypoint = ref(false);
@@ -28,6 +29,7 @@ const waypointExist = ref(false);
 const isLoading = ref(false);
 const showDeleteModal = ref(false);
 const deleteLocation = ref({});
+const tripName = ref('')
 
 // Constante
 const PRICE_GASOLINE = 1.9;
@@ -41,32 +43,49 @@ mapEmitter.on('waypoint-exist', () => showErrorAlert(waypointExist));
 mapEmitter.on('is-loading', (value) => isLoading.value = value);
 
 
+// Header
+function handleCloseComponent() {
+    showComponent.value = false
+    mapEmitter.emit('resize-map');
+}
+function handleOpenComponent() {
+    showComponent.value = true
+    mapEmitter.emit('resize-map');
+}
+
 //Section 1 (StarterOption)
 function goToNextSection() {
-    ShowStarterOptionSection.value = false
-    ShowDepartureSection.value = true
-    mapEmitter.emit('enabled-return-start', enabledReturnStart.value);
+    const itineraryOptions = {
+        tripName: tripName.value,
+        returnToStartingWaypoint: returnToStartingWaypoint.value,
+        vehicleConsumption: vehicleConsumption.value
+    };
+    localStorage.setItem('itinerary-options', JSON.stringify(itineraryOptions));
+    showStarterOptionSection.value = false
+    showDepartureSection.value = true
+    mapEmitter.emit('return-to-starting-waypoint', returnToStartingWaypoint.value);
 }
 
 //Section 2 (DepartureSection)
 function goToStarterSection() {
-    ShowStarterOptionSection.value = true
-    ShowDepartureSection.value = false
+    showStarterOptionSection.value = true
+    showDepartureSection.value = false
+    showItinerarySection.value = false
 }
 function goToItinerarySection() {
     mapEmitter.emit('updated-waypoint-origin');
 }
 
 function haveWaypointOrigin() {
-    ShowDepartureSection.value = false
-    ShowItinerarySection.value = true
+    showDepartureSection.value = false
+    showItinerarySection.value = true
 }
 function UpdatedVehicleConsumption(consumption) {
     vehicleConsumption.value = consumption
 
 }
 function enableReturnStart(value) {
-    enabledReturnStart.value = value;
+    returnToStartingWaypoint.value = value;
 }
 
 function showErrorAlert(errorAlertRef) {
@@ -107,7 +126,7 @@ function handleSave() {
 
 // Draggable Handlers
 function handleDraggableChange() {
-    const waypointsEquality = enabledReturnStart.value ? checkStartEndWaypointEquality() : checkStartWaypointEquality();
+    const waypointsEquality = returnToStartingWaypoint.value ? checkStartEndWaypointEquality() : checkStartWaypointEquality();
 
     if (waypointsEquality) {
         mapEmitter.emit('get-road-draggable', mutableWaypoints.value);
@@ -115,11 +134,12 @@ function handleDraggableChange() {
         mutableWaypoints.value = props.waypoints;
     }
 }
-function checkStartWaypointEquality() {
 
+function checkStartWaypointEquality() {
     const isStartPointSame = props.waypoints[0] === mutableWaypoints.value[0];
     return isStartPointSame;
 }
+
 function checkStartEndWaypointEquality() {
     const isStartPointSame = props.waypoints[0] === mutableWaypoints.value[0];
     const isEndPointSame = props.waypoints[props.waypoints.length - 1] === mutableWaypoints.value[mutableWaypoints.value.length - 1];
@@ -148,150 +168,192 @@ watchEffect(() => {
     mutableWaypoints.value = props.waypoints;
 });
 
-
 </script>
 
 
 
 <template>
-    <div
-        class="fixed mt-[49vh] h-[51vh] w-screen overflow-y-auto bg-beige-custom text-red-custom px-5 lg:max-w-lg lg:w-4/12 lg:mt-[10vh]  lg:h-[85vh] lg:ml-5 lg:drop-shadow-lg lg:rounded-b-lg">
-        <div class="sm:max-w-lg sm:mx-auto ">
+    <div v-if="!showComponent">
+        <div class="absolute mt-[45vh] left-0 overflow-hidden lg:mt-[5vh] lg:w-4/12">
+            <button
+                class="justify-center bg-red-custom text-beige-custom rounded-r-full pl-3 pr-3 h-[5vh] text-sm font-semibold shadow-sm hover:bg-red-custom focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-red-custom"
+                @click="handleOpenComponent" type="button">
+                <div class="flex">
+                    <MapPinIcon class="w-6 h-6" />
+                    <ArrowTrendingUpIcon class="w-5 h-5" />
+                    <MapPinIcon class="w-4 h-4" />
+                </div>
+            </button>
+        </div>
 
-            <section v-if="ShowStarterOptionSection">
-                <div class="mt-4">
-                    <h1 class="text-center text-xl font-bold underline">Avant de commencer</h1>
-                </div>
-                <VanRadioGroup @vehicle-consumption="UpdatedVehicleConsumption" class="mt-5" />
+    </div>
+    <div :class="{ 'hidden': !showComponent }">
+        <div
+            class="fixed mt-[45vh] h-[5vh] w-full bg-red-custom text-beige-custom px-3 lg:max-w-lg lg:w-4/12 lg:mt-[6vh]  lg:h-[5vh] lg:ml-5 lg:drop-shadow-lg lg:rounded-t-lg">
 
-                <div class="my-6">
-                    <h2 class="text-base font-semibold mb-4">Date de départ</h2>
-                    <div class="mx-16 ">
-                        <DatePicker />
-                    </div>
+            <div class="flex items-center justify-between">
+                <div v-if="showDepartureSection">
+                    <RoundedButton @click="goToStarterSection">
+                        <ChevronLeftIcon class="h-8 w-8" aria-hidden="true" />
+                    </RoundedButton>
                 </div>
-                <ToggleButton :label="'Retour au point de départ'" @update-enabled="enableReturnStart" />
-                <div class="flex justify-center mt-10 mb-32 lg:mt-16 ">
-                    <MainButton @click="goToNextSection">Suivant</MainButton>
+                <div v-if="showItinerarySection">
+                    <RoundedButton @click="goToStarterSection">
+                        <Cog8ToothIcon class="h-8 w-8" aria-hidden="true" />
+                    </RoundedButton>
                 </div>
-            </section>
-
-            <section :class="{ 'hidden': !ShowDepartureSection }">
-                <div class="mt-4 flex">
-                    <div class="-ml-4 flex-none">
-                        <RoundedButton @click="goToStarterSection">
-                            <ChevronLeftIcon class="h-5 w-5" aria-hidden="true" />
-                        </RoundedButton>
-                    </div>
-                    <div class="grow">
-                        <h1 class="text-center text-xl font-bold underline">Créer ton itinéraire</h1>
-                    </div>
-                </div>
-                <div class="w-full mt-6">
-                    <div id="geocoder-origin-container" class=""></div>
-                </div>
-                <ErrorAlert v-if="noWaypointOrigin" text="Aucun point de départ !" />
-                <div class="flex justify-center mt-10 mb-32 lg:mt-16 ">
-                    <MainButton @click="goToItinerarySection">
-                        Suivant</MainButton>
-                </div>
-            </section>
-
-            <section :class="{ 'hidden': !ShowItinerarySection }">
-                <div class="w-full mt-4">
-                    <div id="geocoder" class="geocoder"></div>
+                <div v-if="showStarterOptionSection" class="h-8 w-8">
                 </div>
                 <div>
-                    <ErrorAlert v-if="noWaypoint" text="Aucune destination !" />
-                    <ErrorAlert v-if="waypointExist" text="Cet destination a déjà été ajouté" />
+                    <h1 v-if="showStarterOptionSection" class="text-center text-xl font-bold flex justify-center w-full">
+                        Options du
+                        roadtrip
+                    </h1>
+                    <h1 v-else-if='showDepartureSection' class="text-center text-xl font-bold">Créer ton itinéraire
+                    </h1>
+                    <h1 v-else='showItinerarySection' class="text-center text-xl font-bold capitalize">{{ tripName ||
+                        'Roadtrip' }}</h1>
                 </div>
-                <div class="text-center mt-2">
-                    <DividerWithMainButton @click="addNewWaypoint">
-                        <div class="flex justify-center items-center ">
-                            <PlusIcon class="text-beige-custom h-5 w-5 pr-1" />
-                            Ajouter
+                <div>
+                    <RoundedButton @click="handleCloseComponent">
+                        <XMarkIcon class="h-8 w-8" aria-hidden="true" />
+                    </RoundedButton>
+                </div>
+            </div>
+        </div>
+        <div v
+            class="fixed mt-[50vh] h-[50vh] w-screen overflow-y-auto bg-beige-custom text-red-custom px-5 lg:max-w-lg lg:w-4/12 lg:mt-[11vh]  lg:h-[85vh] lg:ml-5 lg:drop-shadow-lg lg:rounded-b-lg">
+            <div class="sm:max-w-lg sm:mx-auto ">
+
+                <section v-if="showStarterOptionSection">
+
+                    <VanRadioGroup @vehicle-consumption="UpdatedVehicleConsumption" class="mt-5" />
+
+                    <div class="my-6">
+                        <label for="tripName" class="text-red-custom text-base font-semibold">Nom du voyage</label>
+                        <div class="mt-4 mx-6">
+                            <input id="tripName" v-model="tripName" @input="saveToLocalStorage"
+                                class="block w-full rounded-md py-3 text-red-custom shadow-sm border-none placeholder:text-gray-400 focus:outline-none focus:border-red-custom focus:ring-2 focus:ring-red-custom "
+                                placeholder="Nom, ex: Voyage en Slovenie" maxlength="40">
+
                         </div>
-                    </DividerWithMainButton>
-                </div>
+                    </div>
+                    <ToggleButton :label="'Retour au point de départ'" @update-enabled="enableReturnStart" />
+                    <div class="flex justify-center mt-10 mb-32 lg:mt-16 ">
+                        <MainButton @click="goToNextSection">Suivant</MainButton>
+                    </div>
+                </section>
 
-                <div class="flex items-center mt-3">
-                    <div class="w-5/6">
-                        <VueDraggable v-model="mutableWaypoints" handle=".drag-handle" item-key="index"
-                            @change="handleDraggableChange">
-                            <template v-slot:item="{ element, index }">
-                                <div>
-                                    <div class="ml-[-20px] flex items-center h-12 ">
-                                        <EllipsisVerticalIcon class="w-5 h-5" />
+                <section :class="{ 'hidden': !showDepartureSection }">
 
-                                        <LocationCard
-                                            v-if="index === 0 || (index === mutableWaypoints.length - 1 && enabledReturnStart)"
-                                            :city="element.city" :country="element.country"
-                                            :countryCode="element.countryCode" />
+                    <div class="w-full mt-6">
+                        <div id="geocoder-origin-container" class=""></div>
+                    </div>
+                    <ErrorAlert v-if="noWaypointOrigin" text="Aucun point de départ !" />
+                    <div class="flex justify-center mt-10 mb-32 lg:mt-16 ">
+                        <MainButton @click="goToItinerarySection">
+                            Suivant</MainButton>
+                    </div>
+                </section>
 
-                                        <LocationCard v-else :city="element.city" :country="element.country"
-                                            :countryCode="element.countryCode" :class="{ 'drag-handle': index > 0 }" />
+                <section :class="{ 'hidden': !showItinerarySection }">
+                    <div class="w-full mt-4">
+                        <div id="geocoder" class="geocoder"></div>
+                    </div>
+                    <div>
+                        <ErrorAlert v-if="noWaypoint" text="Aucune destination !" />
+                        <ErrorAlert v-if="waypointExist" text="Cet destination a déjà été ajouté" />
+                    </div>
+                    <div class="text-center mt-2">
+                        <DividerWithMainButton @click="addNewWaypoint">
+                            <div class="flex justify-center items-center ">
+                                <PlusIcon class="text-beige-custom h-5 w-5 pr-1" />
+                                Ajouter
+                            </div>
+                        </DividerWithMainButton>
+                    </div>
 
-                                        <RoundedButton
-                                            v-if="!enabledReturnStart && index > 0 || (enabledReturnStart && index > 0 && index < (mutableWaypoints.length - 1))"
-                                            @click="openDeleteModal(element)" :disabled="isLoading" class="ml-5">
-                                            <XMarkIcon class="w-4 h-4" />
-                                        </RoundedButton>
+                    <div class="flex items-center mt-3">
+                        <div class="w-5/6">
+                            <VueDraggable v-model="mutableWaypoints" handle=".drag-handle" item-key="index"
+                                @change="handleDraggableChange">
+                                <template v-slot:item="{ element, index }">
+                                    <div>
+                                        <div class=" flex items-center h-12 ">
+                                            <EllipsisVerticalIcon
+                                                v-if="!returnToStartingWaypoint && index > 0 || (returnToStartingWaypoint && index > 0 && index < (mutableWaypoints.length - 1))"
+                                                class="w-5 h-5 ml-[-20px]" />
 
+                                            <LocationCard
+                                                v-if="index === 0 || (index === mutableWaypoints.length - 1 && returnToStartingWaypoint)"
+                                                :city="element.city" :country="element.country"
+                                                :countryCode="element.countryCode" />
+
+                                            <LocationCard v-else :city="element.city" :country="element.country"
+                                                :countryCode="element.countryCode" :class="{ 'drag-handle': index > 0 }" />
+
+                                            <RoundedButton
+                                                v-if="!returnToStartingWaypoint && index > 0 || (returnToStartingWaypoint && index > 0 && index < (mutableWaypoints.length - 1))"
+                                                @click="openDeleteModal(element)" :disabled="isLoading" class="ml-5">
+                                                <XMarkIcon class="w-4 h-4" />
+                                            </RoundedButton>
+
+
+                                        </div>
+
+                                        <template v-if="element.duration !== '' && index !== (mutableWaypoints.length - 1)">
+                                            <Road :duration="formatDuration(element.duration)" :distance="element.distance"
+                                                :price="Math.ceil((element.distance / 100) * vehicleConsumption * PRICE_GASOLINE)" />
+                                        </template>
 
                                     </div>
-
-                                    <template v-if="element.duration !== '' && index !== (mutableWaypoints.length - 1)">
-                                        <Road :duration="formatDuration(element.duration)" :distance="element.distance"
-                                            :price="Math.ceil((element.distance / 100) * vehicleConsumption * PRICE_GASOLINE)" />
-                                    </template>
-
+                                </template>
+                            </VueDraggable>
+                        </div>
+                        <div class="w-1/6 flex items-center flex-col space-between h-full sm:ml-4 md:ml-12">
+                            <template v-for="(waypoint, index ) in  mutableWaypoints ">
+                                <div class="rounded-full bg-red-custom h-4 w-4 text-red-custom shadow-lg ring-[1px] ring-red-custom"
+                                    v-if="index === 0 || index === mutableWaypoints.length - 1">
                                 </div>
+                                <div class="rounded-full bg-beige-custom p-0.5 text-red-custom shadow-lg ring-[1px] ring-red-custom"
+                                    v-else>
+                                    <p class="h-3 flex items-center justify-center text-sm ">{{ index + 1 }}
+                                    </p>
+                                </div>
+                                <div v-if="index !== mutableWaypoints.length - 1"
+                                    class="border-l-2 border-dashed h-[56px] border-red-custom animate-opacity"
+                                    :style="`animation-delay: ${index * 0.5}s`"></div>
                             </template>
-                        </VueDraggable>
-                    </div>
-                    <div class="w-1/6 flex items-center flex-col space-between h-full sm:ml-4 md:ml-12">
-                        <template v-for="(waypoint, index ) in  mutableWaypoints ">
-                            <div class="rounded-full bg-red-custom h-4 w-4 text-red-custom shadow-lg ring-[1px] ring-red-custom"
-                                v-if="index === 0 || index === mutableWaypoints.length - 1">
-                            </div>
-                            <div class="rounded-full bg-beige-custom p-0.5 text-red-custom shadow-lg ring-[1px] ring-red-custom"
-                                v-else>
-                                <p class="h-3 flex items-center justify-center text-sm ">{{ index + 1 }}
-                                </p>
-                            </div>
-                            <div v-if="index !== mutableWaypoints.length - 1"
-                                class="border-l-2 border-dashed h-[56px] border-red-custom animate-opacity"
-                                :style="`animation-delay: ${index * 0.5}s`"></div>
-                        </template>
-                    </div>
-                </div>
-
-                <div v-if="mutableWaypoints.length > 2">
-                    <div class="relative mt-3">
-                        <div class="absolute inset-0 flex items-center" aria-hidden="true">
-                            <div class="w-full border-t border-red-custom" />
-                        </div>
-                        <div class="relative flex justify-center">
-                            <span class="bg-beige-custom rounded-full px-3 font-semibold text-red-custom">Total</span>
                         </div>
                     </div>
-                    <div class="flex justify-center">
-                        <Road :duration="formatDuration(totalDuration)" :distance="totalDistance" :price="totalPrice">
-                        </Road>
+
+                    <div v-if="mutableWaypoints.length > 2">
+                        <div class="relative mt-3">
+                            <div class="absolute inset-0 flex items-center" aria-hidden="true">
+                                <div class="w-full border-t border-red-custom" />
+                            </div>
+                            <div class="relative flex justify-center">
+                                <span class="bg-beige-custom rounded-full px-3 font-semibold text-red-custom">Total</span>
+                            </div>
+                        </div>
+                        <div class="flex justify-center">
+                            <Road :duration="formatDuration(totalDuration)" :distance="totalDistance" :price="totalPrice">
+                            </Road>
+                        </div>
                     </div>
-                </div>
-                <div v-if="mutableWaypoints.length > 2" class="mb-32 mt-6 text-center">
-                    <MainButton @click="handleSave">
-                        Sauvegarder</MainButton>
-                </div>
+                    <div v-if="mutableWaypoints.length > 2" class="mb-32 mt-6 text-center">
+                        <MainButton @click="handleSave">
+                            Sauvegarder</MainButton>
+                    </div>
 
-                <DeleteModal :show="showDeleteModal" :cancel="handleCancel" :deleted="handleDelete">
-                    Veux-tu supprimer <span class="font-bold">{{ deleteLocation.city }}, {{ deleteLocation.country
-                    }}</span> de ton RoadTrip ?
-                </DeleteModal>
+                    <DeleteModal :show="showDeleteModal" :cancel="handleCancel" :deleted="handleDelete">
+                        Veux-tu supprimer <span class="font-bold">{{ deleteLocation.city }}, {{ deleteLocation.country
+                        }}</span> de ton RoadTrip ?
+                    </DeleteModal>
 
-            </section>
+                </section>
 
+            </div>
         </div>
     </div>
 </template>
