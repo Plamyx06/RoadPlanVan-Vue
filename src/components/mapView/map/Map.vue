@@ -1,12 +1,7 @@
 <template>
-  <div
-    id="map"
-    :class="['map-container', { 'map-full': !isFullSize, 'map-container-full': isFullSize }]"
-  ></div>
-  <div
-    v-if="isLoading"
-    class="absolute top-0 w-full h-[45vh] bg-gray-500 bg-opacity-40 flex justify-center items-center lg:h-full"
-  >
+  <div id="map" :class="['map-container', { 'map-full': !isFullSize, 'map-container-full': isFullSize }]"></div>
+  <div v-if="isLoading"
+    class="absolute top-0 w-full h-[45vh] bg-gray-500 bg-opacity-40 flex justify-center items-center lg:h-full">
     <Spinner class="w-20 h-20 lg:w-40 lg:h-40" />
   </div>
 </template>
@@ -184,35 +179,41 @@ async function handleGeocoderOrigin() {
 }
 
 async function addWaypointFromSearch() {
-  geocoder.clear()
-  const geocoderInputs = document.querySelectorAll('.mapboxgl-ctrl-geocoder--input')
-  geocoderInputs[1].blur()
-  const haveWaypoint = await checkLastSearchValue(lastSearchedCoords.value)
+  geocoder.clear();
+  const geocoderInputs = document.querySelectorAll('.mapboxgl-ctrl-geocoder--input');
+  geocoderInputs[1].blur();
+
+  console.log("Dernières coordonnées recherchées :", lastSearchedCoords.value);
+
+  const haveWaypoint = await checkLastSearchValue(lastSearchedCoords.value);
+  console.log("Waypoint valide trouvé :", haveWaypoint);
 
   if (lastSearchedCoords.value && haveWaypoint) {
-    const waypointExists = waypoints.value.some(
-      (waypoint) =>
-        waypoint.lat === lastSearchedCoords.value.lat &&
-        waypoint.lng === lastSearchedCoords.value.lng
-    )
+    const waypointExists = waypoints.value.some(waypoint =>
+      waypoint.lat === lastSearchedCoords.value.lat &&
+      waypoint.lng === lastSearchedCoords.value.lng);
+
+    console.log("Waypoint existe déjà :", waypointExists);
 
     if (!waypointExists) {
       if (waypoints.value.length === 1) {
-        waypoints.value.push(lastSearchedCoords.value)
+        waypoints.value.push(lastSearchedCoords.value);
       } else {
-        await addWaypoint(lastSearchedCoords.value)
+        await addWaypoint(lastSearchedCoords.value);
       }
-      await getRoad(waypoints.value)
+      await getRoad(waypoints.value);
     } else {
-      mapEmitter.emit('waypoint-exist')
+      mapEmitter.emit('waypoint-exist');
     }
-  } else {
-    mapEmitter.emit('no-waypoint')
+  } else if (lastSearchedCoords.value.lengh === 0) {
+    mapEmitter.emit('no-waypoint');
   }
-  lastSearchedCoords.value = []
-  localStorage.setItem('itinerary-waypoints', JSON.stringify(waypoints.value))
-  mapEmitter.emit('updated-waypoints-storage')
+
+  lastSearchedCoords.value = [];
+  localStorage.setItem('itinerary-waypoints', JSON.stringify(waypoints.value));
+  mapEmitter.emit('updated-waypoints-storage');
 }
+
 
 async function addWaypoint(arrLngLat) {
   if (returnToStartingWaypoint.value) {
@@ -283,7 +284,6 @@ function handleResetRoadTrip() {
     map.removeLayer('point-end')
     map.removeSource('point-label-end')
   }
-  console.log('getStyle', map.getStyle())
   waypoints.value = []
   localStorage.removeItem('itinerary-waypoints')
   mapEmitter.emit('updated-waypoints-storage')
