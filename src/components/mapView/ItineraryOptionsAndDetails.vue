@@ -1,11 +1,12 @@
 <script setup>
-import { defineProps, ref, watchEffect, computed } from "vue";
+import { ref, computed, onMounted } from "vue";
 import VanRadioGroup from "@/components/mapView/VanRadioGroup.vue";
-import DatePicker from '@/components/mapView/DatePicker.vue';
+
 import ToggleButton from '@/components/button/ToggleButton.vue';
 import MainButton from '@/components/button/MainButton.vue';
 import DividerWithMainButton from "@/components/button/DividerWithMainButton.vue";
 import { ChevronLeftIcon } from '@heroicons/vue/20/solid';
+import ContinueItinerayModal from '@/components/mapView/modal/ContinueItineraryModal.vue'
 import VueDraggable from 'vuedraggable';
 import { PlusIcon, EllipsisVerticalIcon, XMarkIcon, MapPinIcon, ArrowTrendingUpIcon, Cog8ToothIcon } from '@heroicons/vue/24/outline'
 import RoundedButton from '@/components/button/RoundedButton.vue';
@@ -15,12 +16,13 @@ import Road from '@/components/mapView/RoadInformation.vue';
 import ErrorAlert from '@/components/mapView/ErrorAlert.vue';
 import mapEmitter from "@/components/mapView/mapEvent.js";
 
-const props = defineProps(['waypoints']);
-const mutableWaypoints = ref(props.waypoints);
+
+const clonedWaypoints = ref(JSON.parse(localStorage.getItem('itinerary-waypoints')) || []);
 const showComponent = ref(true)
 const showStarterOptionSection = ref(true)
 const showDepartureSection = ref(false)
 const showItinerarySection = ref(false)
+const showContinueItinerayModal = ref(false)
 const returnToStartingWaypoint = ref(true);
 const vehicleConsumption = ref(8)
 const noWaypointOrigin = ref(false);
@@ -30,6 +32,7 @@ const isLoading = ref(false);
 const showDeleteModal = ref(false);
 const deleteLocation = ref({});
 const tripName = ref('')
+
 
 // Constante
 const PRICE_GASOLINE = 1.9;
@@ -41,7 +44,17 @@ mapEmitter.on("have-waypoint-origin", haveWaypointOrigin);
 mapEmitter.on('no-waypoint', () => showErrorAlert(noWaypoint));
 mapEmitter.on('waypoint-exist', () => showErrorAlert(waypointExist));
 mapEmitter.on('is-loading', (value) => isLoading.value = value);
+mapEmitter.on('updated-waypoints-storage', updatedClonedWaypoints)
 
+
+onMounted(() => {
+    const storedWaypoints = JSON.parse(localStorage.getItem('itinerary-waypoints'))
+    if (storedWaypoints !== null) {
+        showStarterOptionSection.value = false
+        clonedWaypoints.value = storedWaypoints
+        showItinerarySection.value = true
+    }
+})
 
 // Header
 function handleCloseComponent() {
@@ -55,15 +68,61 @@ function handleOpenComponent() {
 
 //Section 1 (StarterOption)
 function goToNextSection() {
+    if (clonedWaypoints.value.length === 0) {
+        showStarterOptionSection.value = false
+        showDepartureSection.value = true
+        mapEmitter.emit('return-to-starting-waypoint', returnToStartingWaypoint.value);
+    } else {
+        showContinueItinerayModal.value = true
+    }
     const itineraryOptions = {
         tripName: tripName.value,
         returnToStartingWaypoint: returnToStartingWaypoint.value,
         vehicleConsumption: vehicleConsumption.value
     };
+
     localStorage.setItem('itinerary-options', JSON.stringify(itineraryOptions));
+    mapEmitter.emit('return-to-starting-waypoint', returnToStartingWaypoint.value);
+}
+
+function handleContinueRoadTrip() {
+    const startPointLonLat = [clonedWaypoints.value[0].lon, clonedWaypoints.value[0].lat]
+    const endPointLonLat = [clonedWaypoints.value[clonedWaypoints.value.length - 1].lon, clonedWaypoints.value[clonedWaypoints.value.length - 1].lat]
+    const isSameWaypoints = startPointLonLat[0] === endPointLonLat[0] && startPointLonLat[1] === endPointLonLat[1]
+    console.log(isSameWaypoints)
+    if (isSameWaypoints) {
+        if (!returnToStartingWaypoint.value) {
+            mapEmitter.emit('delete-end-waypoints')
+        }
+        else if (returnToStartingWaypoint.value && clonedWaypoints.value.length === 1) {
+            console.log('je suis passe')
+            mapEmitter.emit('add-end-waypoints')
+        }
+    } else if (!isSameWaypoints) {
+        if (returnToStartingWaypoint.value) {
+
+            mapEmitter.emit('add-end-waypoints')
+        }
+    }
+
+
+    console.log("returnStart", returnToStartingWaypoint.value)
+    showContinueItinerayModal.value = false
+    showStarterOptionSection.value = false
+    showItinerarySection.value = true
+}
+function handleResetRoadTrip() {
+    mapEmitter.emit('reset-roadtrip')
+    clonedWaypoints.value = []
+    showContinueItinerayModal.value = false
     showStarterOptionSection.value = false
     showDepartureSection.value = true
-    mapEmitter.emit('return-to-starting-waypoint', returnToStartingWaypoint.value);
+
+}
+function loadRoadTripStorage() {
+    showContinueItinerayModal.value = true
+    showItinerarySection.value = true
+
 }
 
 //Section 2 (DepartureSection)
@@ -72,8 +131,13 @@ function goToStarterSection() {
     showDepartureSection.value = false
     showItinerarySection.value = false
 }
+
 function goToItinerarySection() {
-    mapEmitter.emit('updated-waypoint-origin');
+    mapEmitter.emit('add-waypoint-origin');
+}
+
+function updatedClonedWaypoints() {
+    clonedWaypoints.value = JSON.parse(localStorage.getItem(('itinerary-waypoints')))
 }
 
 function haveWaypointOrigin() {
@@ -99,9 +163,7 @@ function showErrorAlert(errorAlertRef) {
 
 
 function addNewWaypoint() {
-    mapEmitter.emit('add-point');
-    mutableWaypoints.value = props.waypoints;
-
+    mapEmitter.emit('add-point')
 }
 
 function openDeleteModal(element) {
@@ -113,9 +175,9 @@ function handleCancel() {
 }
 function handleDelete() {
     const idToDelete = deleteLocation.value.id;
-    const index = mutableWaypoints.value.findIndex(waypoint => waypoint.id === idToDelete);
-    mutableWaypoints.value.splice(index, 1);
-    mapEmitter.emit('get-road-delete', mutableWaypoints.value);
+    const index = clonedWaypoints.value.findIndex(waypoint => waypoint.id === idToDelete);
+    clonedWaypoints.value.splice(index, 1);
+    mapEmitter.emit('get-road-delete', clonedWaypoints.value);
     showDeleteModal.value = false;
 }
 
@@ -127,36 +189,44 @@ function handleSave() {
 // Draggable Handlers
 function handleDraggableChange() {
     const waypointsEquality = returnToStartingWaypoint.value ? checkStartEndWaypointEquality() : checkStartWaypointEquality();
-
     if (waypointsEquality) {
-        mapEmitter.emit('get-road-draggable', mutableWaypoints.value);
+        console.log("clonedValue", clonedWaypoints.value)
+        mapEmitter.emit('get-road-draggable', clonedWaypoints.value);
     } else {
-        mutableWaypoints.value = props.waypoints;
+        clonedWaypoints.value = JSON.parse(localStorage.getItem('itinerary-waypoints'))
     }
 }
 
 function checkStartWaypointEquality() {
-    const isStartPointSame = props.waypoints[0] === mutableWaypoints.value[0];
+    const waypointsCopy = JSON.parse(localStorage.getItem('itinerary-waypoints'))
+    const isStartPointSame = waypointsCopy[0].id === clonedWaypoints.value[0].id;
     return isStartPointSame;
 }
 
 function checkStartEndWaypointEquality() {
-    const isStartPointSame = props.waypoints[0] === mutableWaypoints.value[0];
-    const isEndPointSame = props.waypoints[props.waypoints.length - 1] === mutableWaypoints.value[mutableWaypoints.value.length - 1];
+    const waypointsCopy = JSON.parse(localStorage.getItem('itinerary-waypoints'))
+    const idStartPoint = clonedWaypoints.value[0].id
+    const idEndPoint = clonedWaypoints.value[clonedWaypoints.value.length - 1].id
+
+    const isStartPointSame = waypointsCopy[0].id === idStartPoint;
+    const isEndPointSame = waypointsCopy[waypointsCopy.length - 1].id === idEndPoint;
+
     return isStartPointSame && isEndPointSame;
 }
 
 // Calculate Price Duration
-const totalDuration = computed(() => calculateTotal(mutableWaypoints.value, 'duration'));
-const totalDistance = computed(() => calculateTotal(mutableWaypoints.value, 'distance'));
+const totalDuration = computed(() => calculateTotal(clonedWaypoints.value, 'duration'));
+const totalDistance = computed(() => calculateTotal(clonedWaypoints.value, 'distance'));
 const totalPrice = computed(() => calculatePrice(totalDistance.value, vehicleConsumption.value, PRICE_GASOLINE));
 
 function calculateTotal(waypoints, key) {
     return waypoints.reduce((total, waypoint) => total + parseInt(waypoint[key] || 0), 0);
 }
+
 function calculatePrice(distance, consumption, priceGasoline) {
     return Math.ceil((distance / 100) * consumption * priceGasoline);
 }
+
 function formatDuration(durationInSeconds) {
     const hours = Math.floor(durationInSeconds / 3600);
     const minutes = Math.floor((durationInSeconds % 3600) / 60);
@@ -164,9 +234,8 @@ function formatDuration(durationInSeconds) {
     return `${hours}h${formattedMinutes}`;
 }
 
-watchEffect(() => {
-    mutableWaypoints.value = props.waypoints;
-});
+
+
 
 </script>
 
@@ -189,9 +258,9 @@ watchEffect(() => {
     </div>
     <div :class="{ 'hidden': !showComponent }">
         <div
-            class="fixed mt-[45vh] h-[5vh] w-full bg-red-custom text-beige-custom px-3 lg:max-w-lg lg:w-4/12 lg:mt-[6vh]  lg:h-[5vh] lg:ml-5 lg:drop-shadow-lg lg:rounded-t-lg">
+            class="fixed mt-[45vh] h-[5vh] w-full bg-red-custom text-beige-custom px-1 lg:max-w-lg lg:w-4/12 lg:mt-[6vh]  lg:h-[5vh] lg:ml-5 lg:drop-shadow-lg lg:rounded-t-lg">
 
-            <div class="flex items-center justify-between">
+            <div class="flex items-center justify-between h-full">
                 <div v-if="showDepartureSection">
                     <RoundedButton @click="goToStarterSection">
                         <ChevronLeftIcon class="h-8 w-8" aria-hidden="true" />
@@ -204,14 +273,15 @@ watchEffect(() => {
                 </div>
                 <div v-if="showStarterOptionSection" class="h-8 w-8">
                 </div>
-                <div>
-                    <h1 v-if="showStarterOptionSection" class="text-center text-xl font-bold flex justify-center w-full">
+                <div class="w-3/4">
+                    <h1 v-if="showStarterOptionSection"
+                        class="text-center text-xl font-bold flex justify-center w-full truncate">
                         Options du
                         roadtrip
                     </h1>
-                    <h1 v-else-if='showDepartureSection' class="text-center text-xl font-bold">Créer ton itinéraire
+                    <h1 v-else-if='showDepartureSection' class="text-center text-xl font-bold truncate">Créer ton itinéraire
                     </h1>
-                    <h1 v-else='showItinerarySection' class="text-center text-xl font-bold capitalize">{{ tripName ||
+                    <h1 v-else='showItinerarySection' class="text-center text-xl font-bold truncate">{{ tripName ||
                         'Roadtrip' }}</h1>
                 </div>
                 <div>
@@ -243,6 +313,10 @@ watchEffect(() => {
                         <MainButton @click="goToNextSection">Suivant</MainButton>
                     </div>
                 </section>
+                <ContinueItinerayModal :show="showContinueItinerayModal" :continued="handleContinueRoadTrip"
+                    :reset="handleResetRoadTrip">
+                    Souhaites tu reprendre le roadTrip que tu as commencé ?
+                </ContinueItinerayModal>
 
                 <section :class="{ 'hidden': !showDepartureSection }">
 
@@ -275,17 +349,17 @@ watchEffect(() => {
 
                     <div class="flex items-center mt-3">
                         <div class="w-5/6">
-                            <VueDraggable v-model="mutableWaypoints" handle=".drag-handle" item-key="index"
+                            <VueDraggable v-model="clonedWaypoints" handle=".drag-handle" item-key="index"
                                 @change="handleDraggableChange">
                                 <template v-slot:item="{ element, index }">
                                     <div>
                                         <div class=" flex items-center h-12 ">
                                             <EllipsisVerticalIcon
-                                                v-if="!returnToStartingWaypoint && index > 0 || (returnToStartingWaypoint && index > 0 && index < (mutableWaypoints.length - 1))"
+                                                v-if="!returnToStartingWaypoint && index > 0 || (returnToStartingWaypoint && index > 0 && index < (clonedWaypoints.length - 1))"
                                                 class="w-5 h-5 ml-[-20px]" />
 
                                             <LocationCard
-                                                v-if="index === 0 || (index === mutableWaypoints.length - 1 && returnToStartingWaypoint)"
+                                                v-if="index === 0 || (index === clonedWaypoints.length - 1 && returnToStartingWaypoint)"
                                                 :city="element.city" :country="element.country"
                                                 :countryCode="element.countryCode" />
 
@@ -293,7 +367,7 @@ watchEffect(() => {
                                                 :countryCode="element.countryCode" :class="{ 'drag-handle': index > 0 }" />
 
                                             <RoundedButton
-                                                v-if="!returnToStartingWaypoint && index > 0 || (returnToStartingWaypoint && index > 0 && index < (mutableWaypoints.length - 1))"
+                                                v-if="!returnToStartingWaypoint && index > 0 || (returnToStartingWaypoint && index > 0 && index < (clonedWaypoints.length - 1))"
                                                 @click="openDeleteModal(element)" :disabled="isLoading" class="ml-5">
                                                 <XMarkIcon class="w-4 h-4" />
                                             </RoundedButton>
@@ -301,7 +375,7 @@ watchEffect(() => {
 
                                         </div>
 
-                                        <template v-if="element.duration !== '' && index !== (mutableWaypoints.length - 1)">
+                                        <template v-if="element.duration !== '' && index !== (clonedWaypoints.length - 1)">
                                             <Road :duration="formatDuration(element.duration)" :distance="element.distance"
                                                 :price="Math.ceil((element.distance / 100) * vehicleConsumption * PRICE_GASOLINE)" />
                                         </template>
@@ -311,23 +385,23 @@ watchEffect(() => {
                             </VueDraggable>
                         </div>
                         <div class="w-1/6 flex items-center flex-col space-between h-full sm:ml-4 md:ml-12">
-                            <template v-for="(waypoint, index ) in  mutableWaypoints ">
+                            <template v-for="(waypoint, index ) in  clonedWaypoints ">
                                 <div class="rounded-full bg-red-custom h-4 w-4 text-red-custom shadow-lg ring-[1px] ring-red-custom"
-                                    v-if="index === 0 || index === mutableWaypoints.length - 1">
+                                    v-if="index === 0 || index === clonedWaypoints.length - 1">
                                 </div>
                                 <div class="rounded-full bg-beige-custom p-0.5 text-red-custom shadow-lg ring-[1px] ring-red-custom"
                                     v-else>
                                     <p class="h-3 flex items-center justify-center text-sm ">{{ index + 1 }}
                                     </p>
                                 </div>
-                                <div v-if="index !== mutableWaypoints.length - 1"
+                                <div v-if="index !== clonedWaypoints.length - 1"
                                     class="border-l-2 border-dashed h-[56px] border-red-custom animate-opacity"
                                     :style="`animation-delay: ${index * 0.5}s`"></div>
                             </template>
                         </div>
                     </div>
 
-                    <div v-if="mutableWaypoints.length > 2">
+                    <div v-if="clonedWaypoints.length > 2">
                         <div class="relative mt-3">
                             <div class="absolute inset-0 flex items-center" aria-hidden="true">
                                 <div class="w-full border-t border-red-custom" />
@@ -341,7 +415,7 @@ watchEffect(() => {
                             </Road>
                         </div>
                     </div>
-                    <div v-if="mutableWaypoints.length > 2" class="mb-32 mt-6 text-center">
+                    <div v-if="clonedWaypoints.length > 2" class="mb-32 mt-6 text-center">
                         <MainButton @click="handleSave">
                             Sauvegarder</MainButton>
                     </div>

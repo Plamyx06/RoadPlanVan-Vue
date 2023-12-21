@@ -7,12 +7,13 @@
 </template>
 
 <script setup>
-import { ref, onMounted, defineEmits } from 'vue'
+import { ref, onMounted } from 'vue'
 import mapboxgl from 'mapbox-gl'
 import MapboxLanguage from '@mapbox/mapbox-gl-language'
 import MapboxGeocoder from '@mapbox/mapbox-gl-geocoder'
 import Spinner from '@/components/mapView/Spinner.vue'
 import mapEmitter from '@/components/mapView/mapEvent.js'
+import cuid from 'cuid'
 
 import {
   insertToMinimizeDistance,
@@ -37,8 +38,7 @@ import '@mapbox/mapbox-gl-geocoder/dist/mapbox-gl-geocoder.css'
 import '@/components/mapView/map/style/mapbox-gl-geocoder-custom.css'
 import '@/components/mapView/map/style/mapbox-gl-directions-custom.css'
 
-const emit = defineEmits(['update-waypoints'])
-const props = defineProps({ isFullSize: Boolean })
+
 const lastSearchedCoords = ref([])
 const waypoints = ref([])
 const returnToStartingWaypoint = ref(true)
@@ -48,25 +48,35 @@ const isFullSize = ref(false)
 let map
 let geocoderOrigin
 let geocoder
+// Marker Style
+const geojsonMarkerOrigin = getGeojsonMarkerOrigin(waypoints)
+const markerCircleStyleOrigin = getMarkerCircleStyleOrigin(geojsonMarkerOrigin)
+const markerTextStyleOrigin = getMarkerTextStyleOrigin(geojsonMarkerOrigin)
 
 onMounted(() => {
   initializeMap()
   setupGeocoder()
   setupGeocoderOrigin()
+  const storedWaypoints = JSON.parse(localStorage.getItem('itinerary-waypoints'))
+  if (storedWaypoints !== null) {
+    waypoints.value = storedWaypoints
+    getRoad(waypoints.value)
+  }
 })
 
 // Emitter Event Handlers
 mapEmitter.on('return-to-starting-waypoint', (value) => (returnToStartingWaypoint.value = value))
 mapEmitter.on('resize-map', () => handleResize(map, isFullSize))
-mapEmitter.on('updated-waypoint-origin', async () => await handleGeocoderOrigin())
+mapEmitter.on('add-waypoint-origin', async () => await handleGeocoderOrigin())
 mapEmitter.on('get-road-draggable', handleGetRoadAfterDraggable)
 mapEmitter.on('get-road-delete', handleGetRoadAfterDelete)
 mapEmitter.on('add-point', async () => await addWaypointFromSearch())
+mapEmitter.on('reset-roadtrip', handleResetRoadTrip)
+mapEmitter.on('delete-end-waypoints', handleDeleteEndPoint)
+mapEmitter.on('add-end-waypoints', async () => await handleAddEndWaypoints())
 
-// Marker Style
-const geojsonMarkerOrigin = getGeojsonMarkerOrigin(waypoints)
-const markerCircleStyleOrigin = getMarkerCircleStyleOrigin(geojsonMarkerOrigin)
-const markerTextStyleOrigin = getMarkerTextStyleOrigin(geojsonMarkerOrigin)
+
+
 
 function initializeMap() {
   mapboxgl.accessToken = import.meta.env.VITE_APP_API_KEY
@@ -80,6 +90,7 @@ function initializeMap() {
   })
   map.addControl(new MapboxLanguage({ defaultLanguage: 'fr' }))
 }
+
 
 //GEOCODEUR
 function setupGeocoder() {
@@ -111,6 +122,7 @@ function setupGeocoder() {
   })
   document.getElementById('geocoder').appendChild(geocoder.onAdd(map))
 }
+
 function setupGeocoderOrigin() {
   geocoderOrigin = new MapboxGeocoder({
     accessToken: mapboxgl.accessToken,
@@ -139,19 +151,18 @@ function setupGeocoderOrigin() {
     }
     const geocoderInput = document.querySelector('.mapboxgl-ctrl-geocoder--input')
     geocoderInput.blur()
-    console.log('geocodeurOn', lastSearchedCoords.value)
+
   })
 }
+
 async function handleGeocoderOrigin() {
   const haveWaypoint = await checkLastSearchValue(lastSearchedCoords.value)
-
   if (!haveWaypoint) {
     mapEmitter.emit('no-waypoint-origin')
   } else if (haveWaypoint) {
     mapEmitter.emit('have-waypoint-origin')
     waypoints.value = lastSearchedCoords.value
     geocoderOrigin.clear()
-    emit('update-waypoints', waypoints.value)
     const lastCoordLat = waypoints.value[0].lat
     const lastCoordLon = waypoints.value[0].lon
     const center = [lastCoordLon, lastCoordLat]
@@ -164,12 +175,15 @@ async function handleGeocoderOrigin() {
       map.addLayer(markerTextStyleOrigin)
     }
     if (returnToStartingWaypoint.value) {
-      getRoad(waypoints.value)
+      await getRoad(waypoints.value)
     }
     lastSearchedCoords.value = []
-    console.log('haveWaypoint', waypoints.value)
+    console.log(waypoints.value)
+    localStorage.setItem('itinerary-waypoints', JSON.stringify(waypoints.value))
+    mapEmitter.emit('updated-waypoints-storage')
   }
 }
+
 async function addWaypointFromSearch() {
   geocoder.clear()
   const geocoderInputs = document.querySelectorAll('.mapboxgl-ctrl-geocoder--input')
@@ -190,6 +204,7 @@ async function addWaypointFromSearch() {
         await addWaypoint(lastSearchedCoords.value)
       }
       await getRoad(waypoints.value)
+
     } else {
       mapEmitter.emit('waypoint-exist')
     }
@@ -197,7 +212,10 @@ async function addWaypointFromSearch() {
     mapEmitter.emit('no-waypoint')
   }
   lastSearchedCoords.value = []
+  localStorage.setItem('itinerary-waypoints', JSON.stringify(waypoints.value))
+  mapEmitter.emit('updated-waypoints-storage')
 }
+
 async function addWaypoint(arrLngLat) {
   if (returnToStartingWaypoint.value) {
     insertToMinimizeDistanceLoop(arrLngLat, waypoints.value)
@@ -207,12 +225,86 @@ async function addWaypoint(arrLngLat) {
   }
 }
 
-function handleGetRoadAfterDraggable(newWaypoints) {
-  waypoints.value = newWaypoints
-  console.log('newWaypoint', newWaypoints)
-  emit('update-waypoints', waypoints.value)
-  getRoad(newWaypoints)
+function handleDeleteEndPoint() {
+  console.log(map.getStyle().layers)
+  waypoints.value.pop()
+  if (map.getLayer('point-1')) {
+    map.removeLayer('point-1');
+    map.removeSource('point-1');
+    map.removeLayer('point-label-1');
+    map.removeSource('point-label-1');
+  }
+  console.log("length", waypoints.value.length)
+  if (waypoints.value.length > 1) {
+    getRoad(waypoints.value)
+  }
+
+  localStorage.setItem('itinerary-waypoints', JSON.stringify(waypoints.value))
+  mapEmitter.emit('updated-waypoints-storage')
 }
+
+async function handleAddEndWaypoints() {
+  if (waypoints.value.length > 0) {
+    const startPoint = { ...waypoints.value[0] };
+
+
+    startPoint.id = cuid();
+
+
+    waypoints.value.push(startPoint);
+    console.log("waypoints", waypoints.value)
+    await getRoad(waypoints.value);
+
+    localStorage.setItem('itinerary-waypoints', JSON.stringify(waypoints.value));
+    mapEmitter.emit('updated-waypoints-storage');
+  }
+  else {
+    console.error('Aucun waypoint disponible pour être ajouté');
+  }
+
+}
+
+function handleResetRoadTrip() {
+  for (let index = 0; index < waypoints.value.length; index++) {
+    const pointId = `point-${index}`;
+    const labelId = `point-label-${index}`;
+    if (map.getLayer(pointId)) {
+
+      map.removeLayer(pointId);
+      map.removeSource(pointId);
+    }
+    if (map.getLayer(labelId)) {
+      map.removeLayer(labelId);
+      map.removeSource(labelId);
+    }
+  }
+  const routeId = 'route';
+  if (map.getLayer(routeId)) {
+    map.removeLayer(routeId);
+    map.removeSource(routeId);
+  }
+  if (map.getLayer('point-start')) {
+    map.removeLayer('point-start');
+  }
+  if (map.getLayer('point-end')) {
+    map.removeLayer('point-end');
+    map.removeSource('point-label-end');
+  }
+  console.log('getStyle', map.getStyle())
+  waypoints.value = []
+  localStorage.removeItem('itinerary-waypoints')
+  mapEmitter.emit('updated-waypoints-storage')
+
+}
+
+async function handleGetRoadAfterDraggable(newWaypoints) {
+  waypoints.value = newWaypoints
+  await getRoad(newWaypoints)
+  console.log('waypoint.value', waypoints.value)
+  localStorage.setItem('itinerary-waypoints', JSON.stringify(newWaypoints))
+  mapEmitter.emit('updated-waypoints-storage')
+}
+
 function handleGetRoadAfterDelete(newWaypoints) {
   waypoints.value = newWaypoints
   const ArrPointId = getPointsIdsFromMap(map)
@@ -237,6 +329,8 @@ function handleGetRoadAfterDelete(newWaypoints) {
     map.removeSource(`point-label-1`)
     console.log(getPointsIdsFromMap(map))
   }
+  localStorage.setItem('itinerary-waypoints', JSON.stringify(waypoints.value))
+  mapEmitter.emit('updated-waypoints-storage')
 }
 
 // GET ROAD
@@ -251,15 +345,14 @@ async function getRoad(waypoints) {
 }
 async function fetchRoad(waypoints) {
   const coordinates = waypoints.map((point) => `${point.lon},${point.lat}`).join(';')
-  // GET: https://api.mapbox.com/directions/v5/mapbox/driving/7.2618439%2C43.7100815%3B9.1885578%2C45.4639447%3B16.439966%2C43.511638%3B2.3483915%2C48.8534951?alternatives=true&geometries=geojson&language=en&overview=full&steps=true&access_token=pk.eyJ1IjoieHowNiIsImEiOiJjbGpmdnh5dW8wNWJ6M2V0Z3pkYWJjOG5kIn0.hYRGQslF5gcVLyleu7Zdyg
   const query = await fetch(
     `https://api.mapbox.com/directions/v5/mapbox/driving/${coordinates}?alternatives=true&geometries=geojson&language=en&overview=full&&access_token=${mapboxgl.accessToken}`,
     { method: 'GET' }
   )
-  console.log('query', query)
+
   try {
     const json = await query.json()
-    console.log('response', json)
+
     return json.routes[0]
   } catch (error) {
     console.error('Error fetching route data:', error)

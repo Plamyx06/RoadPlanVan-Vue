@@ -1,5 +1,5 @@
 <script setup>
-import { ref, markRaw, defineEmits } from 'vue'
+import { ref, markRaw, defineEmits, onMounted } from 'vue'
 import { RadioGroup, RadioGroupDescription, RadioGroupLabel, RadioGroupOption } from '@headlessui/vue'
 import { CheckCircleIcon } from '@heroicons/vue/20/solid'
 import Car from '@/components/mapView/icon/CarIcon.vue'
@@ -14,6 +14,21 @@ const vehicles = [
     { svg: markRaw(CampingCar), consumption: 12 },
 ]
 const selectedVehicle = ref(vehicles[1])
+
+onMounted(() => {
+    const savedState = JSON.parse(localStorage.getItem('itinerary-options'))
+    console.log(savedState)
+    if (savedState !== null) {
+        const savedConsumption = savedState.vehicleConsumption
+        const foundVehicle = vehicles.find(vehicle => vehicle.consumption === savedConsumption)
+        if (foundVehicle) {
+            selectedVehicle.value = foundVehicle
+        }
+    } else {
+        selectedVehicle.value = vehicles[1]
+    }
+})
+
 
 function updateVehicle(vehicle) {
     selectedVehicle.value = vehicle

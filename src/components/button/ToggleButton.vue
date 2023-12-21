@@ -1,12 +1,23 @@
 <script setup>
-import { ref, defineEmits, defineProps } from 'vue'
+import { ref, defineEmits, defineProps, onMounted } from 'vue'
 import { Switch, SwitchDescription, SwitchGroup } from '@headlessui/vue'
 
 const enabled = ref(true)
+
 const props = defineProps({
     label: String
 })
+
 const emit = defineEmits(["update-enabled"])
+
+onMounted(() => {
+    const savedState = JSON.parse(localStorage.getItem('itinerary-options'))
+    if (savedState !== null) {
+        enabled.value = savedState.returnToStartingWaypoint
+    } else {
+        enabled.value = true
+    }
+})
 
 function updateEnabled(value) {
     enabled.value = value;

@@ -1,5 +1,5 @@
 <script setup>
-import { defineComponent, h } from 'vue'
+import { defineComponent, h, ref } from 'vue'
 import { Disclosure, DisclosureButton, DisclosurePanel } from '@headlessui/vue'
 import { MinusSmallIcon, PlusSmallIcon, UserCircleIcon } from '@heroicons/vue/24/outline'
 import {
@@ -12,10 +12,32 @@ import Logo from '@/components/Logo.vue'
 import DividerWithMainButton from '@/components/button/DividerWithMainButton.vue'
 import MainButton from '@/components/button/MainButton.vue'
 import InterrogationAndMapPin from '@/components/InterrogationAndMapPin.vue'
-import { RouterLink } from 'vue-router'
+import { RouterLink, useRouter } from 'vue-router'
 import MenuUser from '@/components/mapView/dropDownMenu/UserMenu.vue'
+import ContinueItinerayModal from '@/components/mapView/modal/ContinueItineraryModal.vue'
+import mapEmitter from "@/components/mapView/mapEvent.js";
 
+const showContinueItinerayModal = ref(false)
+const router = useRouter()
 
+function handleStart() {
+    const itineraryWaypoints = JSON.parse(localStorage.getItem('itinerary-waypoints'))
+    if (itineraryWaypoints === null) {
+        router.push('/map')
+    } else {
+        showContinueItinerayModal.value = true
+    }
+}
+function handleContinueRoadTrip() {
+    router.push('/map')
+    showContinueItinerayModal.value = false
+    mapEmitter.emit('load-roadtrip-storage')
+}
+function handleResetRoadTrip() {
+    mapEmitter.emit('reset-roadtrip')
+    showContinueItinerayModal.value = false
+    router.push('/map')
+}
 const features = [
     {
         name: 'Estime ton budget',
@@ -174,15 +196,18 @@ const navigation = [
                             </p>
                         </div>
                         <div class="mt-10 flex justify-center items-center  gap-x-6">
-                            <RouterLink to="/map">
-                                <MainButton>
-                                    Je commence
-                                </MainButton>
-                            </RouterLink>
+                            <MainButton @click="handleStart">
+                                Je commence
+                            </MainButton>
+
                         </div>
                     </div>
                 </div>
             </div>
+            <ContinueItinerayModal :show="showContinueItinerayModal" :continued="handleContinueRoadTrip"
+                :reset="handleResetRoadTrip">
+                Souhaites tu reprendre le roadTrip que tu as commencé ?
+            </ContinueItinerayModal>
 
             <div class="mt-20 sm:mt-20 bg-beige-custom px-3 lg:px-8 ">
                 <div class="mx-auto max-w-7xl px-6 lg:px-8 ">
