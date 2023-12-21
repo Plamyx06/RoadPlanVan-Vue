@@ -1,15 +1,16 @@
 <script setup>
-import { defineProps } from 'vue';
+import { defineProps } from 'vue'
 
 const props = defineProps({
   colorSvg: String
 })
 </script>
 
-
 <template>
   <svg xmlns="http://www.w3.org/2000/svg" version="1.1" viewBox="0.00 0.00 512.00 512.00">
-    <path :fill="colorSvg" d="
+    <path
+      :fill="colorSvg"
+      d="
   M 75.76 0.00
   L 251.52 0.00
   C 282.72 2.35 305.84 26.44 305.82 57.75
@@ -65,6 +66,7 @@ const props = defineProps({
   A 28.34 28.34 0.0 0 0 391.22 170.67
   A 28.34 28.34 0.0 0 0 419.56 199.01
   A 28.34 28.34 0.0 0 0 447.90 170.67
-  Z" />
+  Z"
+    />
   </svg>
 </template>
