@@ -182,18 +182,12 @@ async function addWaypointFromSearch() {
   geocoder.clear();
   const geocoderInputs = document.querySelectorAll('.mapboxgl-ctrl-geocoder--input');
   geocoderInputs[1].blur();
-
-  console.log("Dernières coordonnées recherchées :", lastSearchedCoords.value);
-
   const haveWaypoint = await checkLastSearchValue(lastSearchedCoords.value);
-  console.log("Waypoint valide trouvé :", haveWaypoint);
-
+  console.log('waypoint-before', waypoints.value)
   if (lastSearchedCoords.value && haveWaypoint) {
     const waypointExists = waypoints.value.some(waypoint =>
       waypoint.lat === lastSearchedCoords.value.lat &&
       waypoint.lng === lastSearchedCoords.value.lng);
-
-    console.log("Waypoint existe déjà :", waypointExists);
 
     if (!waypointExists) {
       if (waypoints.value.length === 1) {
@@ -202,6 +196,8 @@ async function addWaypointFromSearch() {
         await addWaypoint(lastSearchedCoords.value);
       }
       await getRoad(waypoints.value);
+      localStorage.setItem('itinerary-waypoints', JSON.stringify(waypoints.value));
+      mapEmitter.emit('updated-waypoints-storage');
     } else {
       mapEmitter.emit('waypoint-exist');
     }
@@ -209,23 +205,22 @@ async function addWaypointFromSearch() {
     mapEmitter.emit('no-waypoint');
   }
 
-  lastSearchedCoords.value = [];
-  localStorage.setItem('itinerary-waypoints', JSON.stringify(waypoints.value));
-  mapEmitter.emit('updated-waypoints-storage');
 }
 
 
-async function addWaypoint(arrLngLat) {
+async function addWaypoint(lastCoord) {
   if (returnToStartingWaypoint.value) {
-    insertToMinimizeDistanceLoop(arrLngLat, waypoints.value)
+    const endPoint = waypoints.value.pop()
+    waypoints.value.push(lastCoord)
+    waypoints.value.push(endPoint)
   } else {
-    insertToMinimizeDistance(arrLngLat, waypoints.value)
+    insertToMinimizeDistance(lastCoord, waypoints.value)
     sortWaypointsByNearestNeighbor(waypoints.value)
   }
 }
 
 function handleDeleteEndPoint() {
-  console.log(map.getStyle().layers)
+
   waypoints.value.pop()
   if (map.getLayer('point-1')) {
     map.removeLayer('point-1')
@@ -260,6 +255,8 @@ async function handleAddEndWaypoints() {
 }
 
 function handleResetRoadTrip() {
+  localStorage.removeItem('itinerary-waypoints')
+  mapEmitter.emit('updated-waypoints-storage')
   for (let index = 0; index < waypoints.value.length; index++) {
     const pointId = `point-${index}`
     const labelId = `point-label-${index}`
@@ -285,8 +282,6 @@ function handleResetRoadTrip() {
     map.removeSource('point-label-end')
   }
   waypoints.value = []
-  localStorage.removeItem('itinerary-waypoints')
-  mapEmitter.emit('updated-waypoints-storage')
 }
 
 async function handleGetRoadAfterDraggable(newWaypoints) {
@@ -324,12 +319,65 @@ function handleGetRoadAfterDelete(newWaypoints) {
   localStorage.setItem('itinerary-waypoints', JSON.stringify(waypoints.value))
   mapEmitter.emit('updated-waypoints-storage')
 }
+// OPTIMIZATION V1 
+mapEmitter.on('sort-waypoints', async () => await getOptimizedTrip(waypoints.value))
+
+
+async function getOptimizedTrip(waypoints) {
+
+  waypoints = await fetchOptimizedRoute(waypoints)
+  await getRoad(waypoints)
+  console.log('waypointsvalue final', waypoints)
+  localStorage.setItem('itinerary-waypoints', JSON.stringify(waypoints));
+  mapEmitter.emit('updated-waypoints-storage');
+}
+async function fetchOptimizedRoute(waypoints) {
+  const clonedWaypoints = [...waypoints]
+  const lastCity = clonedWaypoints.pop()
+  console.log("waypoint", clonedWaypoints)
+  const coordinates = clonedWaypoints.map((point) => `${point.lon},${point.lat}`).join(';')
+  const query = await fetch(
+    `https://api.mapbox.com/optimized-trips/v1/mapbox/driving/${coordinates}?roundtrip=true&access_token=${mapboxgl.accessToken}`,
+    { method: 'GET' }
+  )
+
+  try {
+    const json = await query.json()
+    if (json.code !== 'Ok') {
+      console.error('Error fetching route data:', json.message)
+      return null
+    }
+    const waypointsWithIndex = json.waypoints
+    console.log("json", waypointsWithIndex)
+    for (let i = 0; i < clonedWaypoints.length; i++) {
+      const waypointWithIndex = waypointsWithIndex[i].waypoint_index;
+      clonedWaypoints[i].waypointIndex = waypointWithIndex;
+    }
+    clonedWaypoints.sort((a, b) => a.waypointIndex - b.waypointIndex);
+    clonedWaypoints.push(lastCity)
+    console.log("clonedWaypoints final", clonedWaypoints)
+    return clonedWaypoints
+  } catch (error) {
+    console.error('Error fetching route data:', error)
+    return null
+  }
+}
 
 // GET ROAD
 async function getRoad(waypoints) {
   isLoading.value = true
   mapEmitter.emit('is-loading', isLoading.value)
   const road = await fetchRoad(waypoints)
+  if (road === undefined) {
+    const idToRemove = lastSearchedCoords.value.id;
+    waypoints = waypoints.filter(waypoint => waypoint.id !== idToRemove);
+    isLoading.value = false
+    console.log("waypoints.value", waypoints)
+    mapEmitter.emit('no-road-for-waypoints')
+    mapEmitter.emit('is-loading', isLoading.value)
+    return
+  }
+  console.log('waypoint.value road', waypoints.value)
   createAndUpdateRoad(road, waypoints)
   addLegDurationDistance(road.legs, waypoints)
   isLoading.value = false

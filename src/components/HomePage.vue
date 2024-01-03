@@ -23,7 +23,10 @@ const showContinueItinerayModal = ref(false)
 const router = useRouter()
 
 function handleStart() {
+
+    console.log('stored', localStorage)
     const itineraryWaypoints = JSON.parse(localStorage.getItem('itinerary-waypoints'))
+
     if (itineraryWaypoints === null) {
         router.push('/map')
         localStorage.removeItem('itinerary-options')
@@ -43,9 +46,12 @@ function handleContinueRoadTrip() {
     mapEmitter.emit('load-roadtrip-storage')
 }
 function handleResetRoadTrip() {
-    mapEmitter.emit('reset-roadtrip')
+    console.log('je suis censé')
+    //  mapEmitter.emit('reset-roadtrip')
     localStorage.removeItem('itinerary-options')
+    localStorage.removeItem('itinerary-waypoints')
     showContinueItinerayModal.value = false
+    console.log('itinerary', localStorage)
     router.push('/map')
 }
 const features = [

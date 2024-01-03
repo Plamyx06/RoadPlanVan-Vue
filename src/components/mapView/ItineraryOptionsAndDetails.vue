@@ -22,6 +22,7 @@ import DeleteModal from '@/components/mapView/modal/DeleteModal.vue'
 import Road from '@/components/mapView/RoadInformation.vue'
 import ErrorAlert from '@/components/mapView/ErrorAlert.vue'
 import mapEmitter from '@/components/mapView/mapEvent.js'
+import RegisterModal from '@/components/mapView/modal/RegisterModal.vue'
 
 const clonedWaypoints = ref(JSON.parse(localStorage.getItem('itinerary-waypoints')) || [])
 const showComponent = ref(true)
@@ -29,11 +30,13 @@ const showStarterOptionSection = ref(true)
 const showDepartureSection = ref(false)
 const showItinerarySection = ref(false)
 const showContinueItinerayModal = ref(false)
+const showRegisterModal = ref(false)
 const returnToStartingWaypoint = ref(true)
 const vehicleConsumption = ref(8)
 const noWaypointOrigin = ref(false)
 const noWaypoint = ref(false)
 const waypointExist = ref(false)
+const noRoadwaypoint = ref(false)
 const isLoading = ref(false)
 const showDeleteModal = ref(false)
 const deleteLocation = ref({})
@@ -42,12 +45,14 @@ const tripName = ref('')
 // Constante
 const PRICE_GASOLINE = 1.9
 const ERROR_ALERT_TIMEOUT = 3000
+const LIMIT_WAYPOINTS = 11
 
 // Emitter Event Handlers
 mapEmitter.on('no-waypoint-origin', () => showErrorAlert(noWaypointOrigin))
 mapEmitter.on('have-waypoint-origin', haveWaypointOrigin)
 mapEmitter.on('no-waypoint', () => showErrorAlert(noWaypoint))
 mapEmitter.on('waypoint-exist', () => showErrorAlert(waypointExist))
+mapEmitter.on('no-road-for-waypoints', () => showErrorAlert(noRoadwaypoint))
 mapEmitter.on('is-loading', (value) => (isLoading.value = value))
 mapEmitter.on('updated-waypoints-storage', updatedClonedWaypoints)
 
@@ -97,12 +102,11 @@ function handleContinueRoadTrip() {
     ]
     const isSameWaypoints =
         startPointLonLat[0] === endPointLonLat[0] && startPointLonLat[1] === endPointLonLat[1]
-    console.log(isSameWaypoints)
+
     if (isSameWaypoints) {
         if (!returnToStartingWaypoint.value) {
             mapEmitter.emit('delete-end-waypoints')
         } else if (returnToStartingWaypoint.value && clonedWaypoints.value.length === 1) {
-            console.log('je suis passe')
             mapEmitter.emit('add-end-waypoints')
         }
     } else if (!isSameWaypoints) {
@@ -111,7 +115,7 @@ function handleContinueRoadTrip() {
         }
     }
 
-    console.log('returnStart', returnToStartingWaypoint.value)
+
     showContinueItinerayModal.value = false
     showStarterOptionSection.value = false
     showItinerarySection.value = true
@@ -158,9 +162,16 @@ function showErrorAlert(errorAlertRef) {
 }
 
 //SECTION 3
+function handleCloseRegisterModal() {
+    showRegisterModal.value = false
+}
 
 function addNewWaypoint() {
-    mapEmitter.emit('add-point')
+    if (clonedWaypoints.value.length === LIMIT_WAYPOINTS) {
+        showRegisterModal.value = true
+    } else {
+        mapEmitter.emit('add-point')
+    }
 }
 
 function openDeleteModal(element) {
@@ -188,7 +199,7 @@ function handleDraggableChange() {
         ? checkStartEndWaypointEquality()
         : checkStartWaypointEquality()
     if (waypointsEquality) {
-        console.log('clonedValue', clonedWaypoints.value)
+
         mapEmitter.emit('get-road-draggable', clonedWaypoints.value)
     } else {
         clonedWaypoints.value = JSON.parse(localStorage.getItem('itinerary-waypoints'))
@@ -210,6 +221,10 @@ function checkStartEndWaypointEquality() {
     const isEndPointSame = waypointsCopy[waypointsCopy.length - 1].id === idEndPoint
 
     return isStartPointSame && isEndPointSame
+}
+
+function handleSortWaypoints() {
+    mapEmitter.emit('sort-waypoints')
 }
 
 // Calculate Price Duration
@@ -252,7 +267,7 @@ function formatDuration(durationInSeconds) {
     <div :class="{ hidden: !showComponent }">
         <div
             class="fixed mt-[45vh] h-[5vh] w-full bg-red-custom text-beige-custom px-1 lg:max-w-lg lg:w-4/12 lg:mt-[6vh] lg:h-[5vh] lg:ml-5 lg:drop-shadow-lg lg:rounded-t-lg">
-            <div class="flex items-center justify-between h-full">
+            <div class="flex items-center justify-between h-full overflow-hidden">
                 <div v-if="showDepartureSection">
                     <RoundedButton @click="goToStarterSection">
                         <ChevronLeftIcon class="h-8 w-8" aria-hidden="true" />
@@ -324,6 +339,7 @@ function formatDuration(durationInSeconds) {
                     <div>
                         <ErrorAlert v-if="noWaypoint" text="Aucune destination !" />
                         <ErrorAlert v-if="waypointExist" text="Cet destination a déjà été ajouté" />
+                        <ErrorAlert v-if="noRoadwaypoint" text="Oups.. Aucun itinéraire n'a été trouvé pour ce lieu" />
                     </div>
                     <div class="text-center mt-2">
                         <DividerWithMainButton @click="addNewWaypoint">
@@ -349,7 +365,8 @@ function formatDuration(durationInSeconds) {
 
                                             <LocationCard v-if="index === 0 ||
                                                 (index === clonedWaypoints.length - 1 && returnToStartingWaypoint)
-                                                " :city="element.city" :country="element.country" :countryCode="element.countryCode" />
+                                                " :city="element.city" :country="element.country"
+                                                :countryCode="element.countryCode" />
 
                                             <LocationCard v-else :city="element.city" :country="element.country"
                                                 :countryCode="element.countryCode" :class="{ 'drag-handle': index > 0 }" />
@@ -401,15 +418,28 @@ function formatDuration(durationInSeconds) {
                             </Road>
                         </div>
                     </div>
-                    <div v-if="clonedWaypoints.length > 2" class="mb-32 mt-6 text-center">
-                        <MainButton @click="handleSave"> Sauvegarder</MainButton>
+                    <div :class="returnToStartingWaypoint ? 'justify-between' : 'justify-center'"
+                        class="mb-32 mt-6 flex px-3">
+                        <MainButton v-if="clonedWaypoints.length > 2 && returnToStartingWaypoint"
+                            @click="handleSortWaypoints">
+                            Réorganiser
+                        </MainButton>
+                        <MainButton v-if="clonedWaypoints.length > 2" @click="handleSave">
+                            Sauvegarder
+                        </MainButton>
                     </div>
+
+
+
+
+
 
                     <DeleteModal :show="showDeleteModal" :cancel="handleCancel" :deleted="handleDelete">
                         Veux-tu supprimer
                         <span class="font-bold">{{ deleteLocation.city }}, {{ deleteLocation.country }}</span>
                         de ton RoadTrip ?
                     </DeleteModal>
+                    <RegisterModal v-show="showRegisterModal" @close="handleCloseRegisterModal" />
                 </section>
             </div>
         </div>
