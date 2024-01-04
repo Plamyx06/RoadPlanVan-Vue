@@ -1,40 +1,5 @@
 import * as turf from '@turf/turf'
 
-export function insertToMinimizeDistanceLoop(newWaypoint, waypoints) {
-  let minimalAddedDistance = Infinity
-  let optimalInsertPosition = 1
-
-  for (let i = 0; i < waypoints.length; i++) {
-    const distanceBeforeInsert = turf.distance(
-      turf.point([waypoints[i].lon, waypoints[i].lat]),
-      turf.point([
-        waypoints[(i + 1) % waypoints.length].lon,
-        waypoints[(i + 1) % waypoints.length].lat
-      ])
-    )
-    const distanceAfterInsert =
-      turf.distance(
-        turf.point([waypoints[i].lon, waypoints[i].lat]),
-        turf.point([newWaypoint.lon, newWaypoint.lat])
-      ) +
-      turf.distance(
-        turf.point([newWaypoint.lon, newWaypoint.lat]),
-        turf.point([
-          waypoints[(i + 1) % waypoints.length].lon,
-          waypoints[(i + 1) % waypoints.length].lat
-        ])
-      )
-
-    const addedDistance = distanceAfterInsert - distanceBeforeInsert
-
-    if (addedDistance < minimalAddedDistance) {
-      minimalAddedDistance = addedDistance
-      optimalInsertPosition = i + 1
-    }
-  }
-
-  waypoints.splice(optimalInsertPosition, 0, newWaypoint)
-}
 export function insertToMinimizeDistance(newWaypoint, waypoints) {
   let minimalAddedDistance = Infinity
   let optimalInsertPosition = 1

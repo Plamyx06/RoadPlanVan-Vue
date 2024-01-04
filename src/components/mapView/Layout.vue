@@ -24,10 +24,13 @@ function handleUserButton() {
 </script>
 
 <template>
-  <div class="absolute z-10 bg-white max-h-[20px] h-full w-full blur-2xl"></div>
-  <div class="w-full absolute z-10 flex justify-between items-center px-3 py-1">
-    <button type="button" @click="handleHomeButton"
-      class="flex justify-center w-full rounded-full max-w-[200px] max-h-[200px] sm:max-w-[250px] sm:max-h-[250px]">
+  <div class="absolute z-20 bg-white max-h-[20px] h-full w-full blur-2xl"></div>
+  <div class="w-full absolute z-20 flex justify-between items-center px-3 py-1">
+    <button
+      type="button"
+      @click="handleHomeButton"
+      class="flex justify-center w-full rounded-full max-w-[200px] max-h-[200px] sm:max-w-[250px] sm:max-h-[250px]"
+    >
       <Logo class="w-full" />
     </button>
 

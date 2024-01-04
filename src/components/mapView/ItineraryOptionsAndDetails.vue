@@ -55,6 +55,13 @@ mapEmitter.on('waypoint-exist', () => showErrorAlert(waypointExist))
 mapEmitter.on('no-road-for-waypoints', () => showErrorAlert(noRoadwaypoint))
 mapEmitter.on('is-loading', (value) => (isLoading.value = value))
 mapEmitter.on('updated-waypoints-storage', updatedClonedWaypoints)
+mapEmitter.on('delete-last-coord', deleteLastCoord)
+
+function deleteLastCoord(idToRemove) {
+    console.log('id', idToRemove)
+    const waypointsFilter = clonedWaypoints.filter((waypoint) => waypoint.id !== idToRemove)
+    clonedWaypoints.value = waypointsFilter
+}
 
 onMounted(() => {
     const storedWaypoints = JSON.parse(localStorage.getItem('itinerary-waypoints'))
@@ -115,7 +122,6 @@ function handleContinueRoadTrip() {
         }
     }
 
-
     showContinueItinerayModal.value = false
     showStarterOptionSection.value = false
     showItinerarySection.value = true
@@ -141,6 +147,7 @@ function goToItinerarySection() {
 
 function updatedClonedWaypoints() {
     clonedWaypoints.value = JSON.parse(localStorage.getItem('itinerary-waypoints'))
+    console.log('cloned', clonedWaypoints.value)
 }
 
 function haveWaypointOrigin() {
@@ -199,7 +206,6 @@ function handleDraggableChange() {
         ? checkStartEndWaypointEquality()
         : checkStartWaypointEquality()
     if (waypointsEquality) {
-
         mapEmitter.emit('get-road-draggable', clonedWaypoints.value)
     } else {
         clonedWaypoints.value = JSON.parse(localStorage.getItem('itinerary-waypoints'))
@@ -252,7 +258,7 @@ function formatDuration(durationInSeconds) {
 
 <template>
     <div v-if="!showComponent">
-        <div class="absolute mt-[45vh] left-0 overflow-hidden lg:mt-[5vh] lg:w-4/12">
+        <div class="absolute z-10 mt-[45vh] left-0 overflow-hidden lg:mt-[5vh] lg:w-4/12">
             <button
                 class="justify-center bg-red-custom text-beige-custom rounded-r-full pl-3 pr-3 h-[5vh] text-sm font-semibold shadow-sm hover:bg-red-custom focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-red-custom"
                 @click="handleOpenComponent" type="button">
@@ -299,7 +305,7 @@ function formatDuration(durationInSeconds) {
             </div>
         </div>
         <div v
-            class="fixed mt-[50vh] h-[50vh] w-screen overflow-y-auto bg-beige-custom text-red-custom px-5 lg:max-w-lg lg:w-4/12 lg:mt-[11vh] lg:h-[85vh] lg:ml-5 lg:drop-shadow-lg lg:rounded-b-lg">
+            class="absolute z-10 mt-[50vh] h-[50vh] w-screen overflow-y-auto bg-beige-custom text-red-custom px-5 lg:max-w-lg lg:w-4/12 lg:mt-[11vh] lg:h-[85vh] lg:ml-5 lg:drop-shadow-lg lg:rounded-b-lg">
             <div class="sm:max-w-lg sm:mx-auto">
                 <section v-if="showStarterOptionSection">
                     <VanRadioGroup @vehicle-consumption="UpdatedVehicleConsumption" class="mt-5" />
@@ -342,7 +348,7 @@ function formatDuration(durationInSeconds) {
                         <ErrorAlert v-if="noRoadwaypoint" text="Oups.. Aucun itinéraire n'a été trouvé pour ce lieu" />
                     </div>
                     <div class="text-center mt-2">
-                        <DividerWithMainButton @click="addNewWaypoint">
+                        <DividerWithMainButton @click="addNewWaypoint" :disabled="isLoading">
                             <div class="flex justify-center items-center">
                                 <PlusIcon class="text-beige-custom h-5 w-5 pr-1" />
                                 Ajouter
@@ -398,7 +404,7 @@ function formatDuration(durationInSeconds) {
                                     <p class="h-3 flex items-center justify-center text-sm">{{ index + 1 }}</p>
                                 </div>
                                 <div v-if="index !== clonedWaypoints.length - 1"
-                                    class="border-l-2 border-dashed h-[56px] border-red-custom animate-opacity"
+                                    class="border-l-2 border-dashed h-[60px] border-red-custom animate-opacity"
                                     :style="`animation-delay: ${index * 0.5}s`"></div>
                             </template>
                         </div>
@@ -428,11 +434,6 @@ function formatDuration(durationInSeconds) {
                             Sauvegarder
                         </MainButton>
                     </div>
-
-
-
-
-
 
                     <DeleteModal :show="showDeleteModal" :cancel="handleCancel" :deleted="handleDelete">
                         Veux-tu supprimer
