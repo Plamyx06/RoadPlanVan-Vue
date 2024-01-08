@@ -55,13 +55,21 @@ mapEmitter.on('waypoint-exist', () => showErrorAlert(waypointExist))
 mapEmitter.on('no-road-for-waypoints', () => showErrorAlert(noRoadwaypoint))
 mapEmitter.on('is-loading', (value) => (isLoading.value = value))
 mapEmitter.on('updated-waypoints-storage', updatedClonedWaypoints)
-mapEmitter.on('delete-last-coord', deleteLastCoord)
+mapEmitter.on('delete-last-coord', (idToRemove) => deleteLastCoord(idToRemove))
 
 function deleteLastCoord(idToRemove) {
-    console.log('id', idToRemove)
-    const waypointsFilter = clonedWaypoints.filter((waypoint) => waypoint.id !== idToRemove)
-    clonedWaypoints.value = waypointsFilter
+    console.log('id on itinerary', idToRemove);
+    console.log('clonedWaypoints', clonedWaypoints.value);
+
+    // Filtrer le tableau en supprimant l'élément avec l'id spécifié
+    const waypointsFilter = clonedWaypoints.value.filter((waypoint) => waypoint.id !== idToRemove);
+
+    // Mettre à jour la référence de clonedWaypoints avec le nouveau tableau filtré
+    // Cette opération devrait être réactive et mettre à jour l'interface utilisateur en conséquence
+    clonedWaypoints.value = [...waypointsFilter];
 }
+
+
 
 onMounted(() => {
     const storedWaypoints = JSON.parse(localStorage.getItem('itinerary-waypoints'))
@@ -147,7 +155,6 @@ function goToItinerarySection() {
 
 function updatedClonedWaypoints() {
     clonedWaypoints.value = JSON.parse(localStorage.getItem('itinerary-waypoints'))
-    console.log('cloned', clonedWaypoints.value)
 }
 
 function haveWaypointOrigin() {

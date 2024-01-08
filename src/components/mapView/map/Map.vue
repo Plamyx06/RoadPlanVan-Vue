@@ -182,8 +182,13 @@ async function addWaypointFromSearch() {
       } else {
         await addWaypoint(lastSearchedCoords.value)
       }
-      await getRoad(waypoints.value)
-      localStorageSetItem('itinerary-waypoints', waypoints.value)
+      const result = await getRoad(waypoints.value)
+      if (result === true) {
+        localStorageSetItem('itinerary-waypoints', waypoints.value)
+      } else {
+        console.log('blue', result)
+        localStorageSetItem('itinerary-waypoints', result)
+      }
     } else {
       mapEmitter.emit('waypoint-exist')
     }
@@ -329,17 +334,14 @@ async function getRoad(waypoints) {
   if (road === undefined) {
     const idToRemove = lastSearchedCoords.value.id
     const waypointsFilter = waypoints.filter((waypoint) => waypoint.id !== idToRemove)
-    waypoints = waypointsFilter
     mapEmitter.emit('no-road-for-waypoints')
-    console.log('waypointsfilter', waypointsFilter)
-    localStorageSetItem('itinerary-waypoints', waypointsFilter)
-    mapEmitter.emit('delete-last-coord', idToRemove)
     updateLoadingValue(false)
-    return
+    return waypointsFilter
   }
   createAndUpdateRoad(road, waypoints)
   addLegDurationDistance(road.legs, waypoints)
   updateLoadingValue(false)
+  return true
 }
 async function fetchRoad(waypoints) {
   const coordinates = waypoints.map((point) => `${point.lon},${point.lat}`).join(';')
