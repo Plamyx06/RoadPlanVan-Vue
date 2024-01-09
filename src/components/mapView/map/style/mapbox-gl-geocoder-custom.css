@@ -49,15 +49,14 @@
   width: 23px;
   height: 23px;
   bottom: 3px;
-  top: 3px;
-  background: transparent;
+  top: 8px;
+
 }
 
-.mapboxgl-ctrl-geocoder .mapboxgl-ctrl-geocoder--pin-right > * {
+.mapboxgl-ctrl-geocoder .mapboxgl-ctrl-geocoder--pin-right>* {
   position: absolute;
   right: 8px;
-  top: 0px;
-  display: none;
+  top: 4px;
   background: transparent;
 }
 
@@ -87,5 +86,9 @@
     height: 20px;
     margin-top: 12px;
     margin-right: 0;
+  }
+
+  .mapboxgl-ctrl-geocoder .mapboxgl-ctrl-geocoder--pin-right>* {
+    top: 0px;
   }
 }

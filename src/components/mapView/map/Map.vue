@@ -62,7 +62,7 @@ mapEmitter.on('get-road-draggable', handleGetRoadAfterDraggable)
 mapEmitter.on('get-road-delete', handleGetRoadAfterDelete)
 mapEmitter.on('add-point', async () => await addWaypointFromSearch())
 mapEmitter.on('reset-roadtrip', handleResetRoadTrip)
-mapEmitter.on('delete-end-waypoints', handleDeleteEndPoint)
+mapEmitter.on('delete-end-waypoints', async () => await handleDeleteEndPoint())
 mapEmitter.on('add-end-waypoints', async () => await handleAddEndWaypoints())
 mapEmitter.on('sort-waypoints', async () => await getOptimizedTrip(waypoints.value))
 
@@ -170,6 +170,7 @@ async function addWaypointFromSearch() {
   const geocoderInputs = document.querySelectorAll('.mapboxgl-ctrl-geocoder--input')
   geocoderInputs[1].blur()
   const haveWaypoint = await checkLastSearchValue(lastSearchedCoords.value)
+  console.log('haveWaypoints 1', haveWaypoint)
   if (lastSearchedCoords.value && haveWaypoint) {
     const waypointExists = waypoints.value.some(
       (waypoint) =>
@@ -192,9 +193,10 @@ async function addWaypointFromSearch() {
     } else {
       mapEmitter.emit('waypoint-exist')
     }
-  } else if (lastSearchedCoords.value.lengh === 0) {
+  } else if (!haveWaypoint) {
     mapEmitter.emit('no-waypoint')
   }
+  lastSearchedCoords.value = []
 }
 async function addWaypoint(lastCoord) {
   if (returnToStartingWaypoint.value) {
@@ -205,8 +207,9 @@ async function addWaypoint(lastCoord) {
     insertToMinimizeDistance(lastCoord, waypoints.value)
     sortWaypointsByNearestNeighbor(waypoints.value)
   }
+
 }
-function handleDeleteEndPoint() {
+async function handleDeleteEndPoint() {
   waypoints.value.pop()
   if (map.getLayer('point-1')) {
     map.removeLayer('point-1')
@@ -214,9 +217,8 @@ function handleDeleteEndPoint() {
     map.removeLayer('point-label-1')
     map.removeSource('point-label-1')
   }
-
   if (waypoints.value.length > 1) {
-    getRoad(waypoints.value)
+    await getRoad(waypoints.value)
   }
   localStorageSetItem('itinerary-waypoints', waypoints.value)
 }
@@ -464,6 +466,7 @@ function createAndUpdateRoad(road, waypoints) {
 function localStorageSetItem(storageKey, data) {
   try {
     localStorage.setItem(storageKey, JSON.stringify(data))
+    waypoints.value = data
     mapEmitter.emit('updated-waypoints-storage')
   } catch (error) {
     console.error(error)
@@ -478,10 +481,14 @@ function updateLoadingValue(isLoadingValue) {
 <template>
   <div id="map" :class="['map-container', { 'map-full': !isFullSize, 'map-container-full': isFullSize }]"></div>
   <div v-if="isLoading"
-    class="absolute top-0 w-full h-[45vh] bg-gray-500 bg-opacity-40 flex justify-center items-center lg:h-full">
-    <Spinner class="w-20 h-20 lg:w-40 lg:h-40" />
+    class="absolute top-0 w-full h-[45vh] bg-gray-400 bg-opacity-40 flex justify-center items-center lg:h-full">
+    <div class="flex flex-col items-center">
+      <Spinner class="w-20 h-20 lg:w-40 lg:h-40" />
+      <p class="mt-4 text-xl font-bold text-gray-500 lg:text-4xl">Calcul l'itinéraire en cours...</p>
+    </div>
   </div>
 </template>
+
 
 <style scoped>
 .map-container {

@@ -15,7 +15,7 @@ function updateLoadingStatus(value) {
 </script>
 
 <template>
-  <div class="flex justify-end items-center my-1.5 text-xs">
+  <div class="flex justify-end items-center my-1.5">
     <div class="flex items-center">
       <TruckIcon class="w-4 h-4 text-red-custom" />
       <Spinner v-if="isLoading" class="w-4 h-4" />

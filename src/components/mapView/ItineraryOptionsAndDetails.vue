@@ -1,7 +1,6 @@
 <script setup>
 import { ref, computed, onMounted } from 'vue'
 import VanRadioGroup from '@/components/mapView/VanRadioGroup.vue'
-
 import ToggleButton from '@/components/button/ToggleButton.vue'
 import MainButton from '@/components/button/MainButton.vue'
 import DividerWithMainButton from '@/components/button/DividerWithMainButton.vue'
@@ -19,10 +18,11 @@ import {
 import RoundedButton from '@/components/button/RoundedButton.vue'
 import LocationCard from '@/components/mapView/cards/LocationCard.vue'
 import DeleteModal from '@/components/mapView/modal/DeleteModal.vue'
-import Road from '@/components/mapView/RoadInformation.vue'
+import RoadInformation from '@/components/mapView/RoadInformation.vue'
 import ErrorAlert from '@/components/mapView/ErrorAlert.vue'
 import mapEmitter from '@/components/mapView/mapEvent.js'
 import RegisterModal from '@/components/mapView/modal/RegisterModal.vue'
+
 
 const clonedWaypoints = ref(JSON.parse(localStorage.getItem('itinerary-waypoints')) || [])
 const showComponent = ref(true)
@@ -32,7 +32,7 @@ const showItinerarySection = ref(false)
 const showContinueItinerayModal = ref(false)
 const showRegisterModal = ref(false)
 const returnToStartingWaypoint = ref(true)
-const vehicleConsumption = ref(8)
+const vehicleConsumption = ref(10)
 const noWaypointOrigin = ref(false)
 const noWaypoint = ref(false)
 const waypointExist = ref(false)
@@ -55,27 +55,13 @@ mapEmitter.on('waypoint-exist', () => showErrorAlert(waypointExist))
 mapEmitter.on('no-road-for-waypoints', () => showErrorAlert(noRoadwaypoint))
 mapEmitter.on('is-loading', (value) => (isLoading.value = value))
 mapEmitter.on('updated-waypoints-storage', updatedClonedWaypoints)
-mapEmitter.on('delete-last-coord', (idToRemove) => deleteLastCoord(idToRemove))
-
-function deleteLastCoord(idToRemove) {
-    console.log('id on itinerary', idToRemove);
-    console.log('clonedWaypoints', clonedWaypoints.value);
-
-    // Filtrer le tableau en supprimant l'élément avec l'id spécifié
-    const waypointsFilter = clonedWaypoints.value.filter((waypoint) => waypoint.id !== idToRemove);
-
-    // Mettre à jour la référence de clonedWaypoints avec le nouveau tableau filtré
-    // Cette opération devrait être réactive et mettre à jour l'interface utilisateur en conséquence
-    clonedWaypoints.value = [...waypointsFilter];
-}
-
 
 
 onMounted(() => {
     const storedWaypoints = JSON.parse(localStorage.getItem('itinerary-waypoints'))
     if (storedWaypoints !== null) {
         showStarterOptionSection.value = false
-        clonedWaypoints.value = storedWaypoints
+        clonedWaypoints.value = [...storedWaypoints]
         showItinerarySection.value = true
     }
 })
@@ -104,6 +90,7 @@ function goToNextSection() {
         returnToStartingWaypoint: returnToStartingWaypoint.value,
         vehicleConsumption: vehicleConsumption.value
     }
+    console.log('itineraryOptions', itineraryOptions)
 
     localStorage.setItem('itinerary-options', JSON.stringify(itineraryOptions))
     mapEmitter.emit('return-to-starting-waypoint', returnToStartingWaypoint.value)
@@ -154,16 +141,18 @@ function goToItinerarySection() {
 }
 
 function updatedClonedWaypoints() {
-    clonedWaypoints.value = JSON.parse(localStorage.getItem('itinerary-waypoints'))
+    const storedWaypoints = JSON.parse(localStorage.getItem('itinerary-waypoints'))
+    clonedWaypoints.value = [...storedWaypoints]
 }
-
 function haveWaypointOrigin() {
     showDepartureSection.value = false
     showItinerarySection.value = true
 }
+
 function UpdatedVehicleConsumption(consumption) {
     vehicleConsumption.value = consumption
 }
+
 function enableReturnStart(value) {
     returnToStartingWaypoint.value = value
 }
@@ -192,20 +181,19 @@ function openDeleteModal(element) {
     deleteLocation.value = element
     showDeleteModal.value = true
 }
+
 function handleCancel() {
     showDeleteModal.value = false
 }
+
 function handleDelete() {
-    const idToDelete = deleteLocation.value.id
-    const index = clonedWaypoints.value.findIndex((waypoint) => waypoint.id === idToDelete)
-    clonedWaypoints.value.splice(index, 1)
-    mapEmitter.emit('get-road-delete', clonedWaypoints.value)
-    showDeleteModal.value = false
+    const idToDelete = deleteLocation.value.id;
+    const newWaypoints = clonedWaypoints.value.filter((waypoint) => waypoint.id !== idToDelete);
+    clonedWaypoints.value = [...newWaypoints];
+    mapEmitter.emit('get-road-delete', clonedWaypoints.value);
+    showDeleteModal.value = false;
 }
 
-function handleSave() {
-    mapEmitter.emit('open-save-modal')
-}
 
 // Draggable Handlers
 function handleDraggableChange() {
@@ -295,7 +283,7 @@ function formatDuration(durationInSeconds) {
                 <div class="w-3/4">
                     <h1 v-if="showStarterOptionSection"
                         class="text-center text-xl font-bold flex justify-center w-full truncate">
-                        Options du roadtrip
+                        Options du road trip
                     </h1>
                     <h1 v-else-if="showDepartureSection" class="text-center text-xl font-bold truncate">
                         Créer ton itinéraire
@@ -322,17 +310,17 @@ function formatDuration(durationInSeconds) {
                         <div class="mt-4 mx-6">
                             <input id="tripName" v-model="tripName" @input="saveToLocalStorage"
                                 class="block w-full rounded-md py-3 text-red-custom shadow-sm border-none placeholder:text-gray-400 focus:outline-none focus:border-red-custom focus:ring-2 focus:ring-red-custom"
-                                placeholder="Nom, ex: Voyage en Slovenie" maxlength="40" />
+                                placeholder="Nom, ex : Voyage en Slovenie" maxlength="40" />
                         </div>
                     </div>
-                    <ToggleButton :label="'Retour au point de départ'" @update-enabled="enableReturnStart" />
+                    <ToggleButton :label="'Retourner au point de départ'" @update-enabled="enableReturnStart" />
                     <div class="flex justify-center mt-10 mb-32 lg:mt-16">
                         <MainButton @click="goToNextSection">Suivant</MainButton>
                     </div>
                 </section>
                 <ContinueItinerayModal :show="showContinueItinerayModal" :continued="handleContinueRoadTrip"
                     :reset="handleResetRoadTrip">
-                    Souhaites tu reprendre le roadTrip que tu as commencé ?
+                    Souhaites-tu reprendre le road trip que tu as commencé ?
                 </ContinueItinerayModal>
 
                 <section :class="{ hidden: !showDepartureSection }">
@@ -350,9 +338,9 @@ function formatDuration(durationInSeconds) {
                         <div id="geocoder" class="geocoder"></div>
                     </div>
                     <div>
-                        <ErrorAlert v-if="noWaypoint" text="Aucune destination !" />
-                        <ErrorAlert v-if="waypointExist" text="Cet destination a déjà été ajouté" />
-                        <ErrorAlert v-if="noRoadwaypoint" text="Oups.. Aucun itinéraire n'a été trouvé pour ce lieu" />
+                        <ErrorAlert v-if="noWaypoint" text="Aucune destination n'a été ajoutée !" />
+                        <ErrorAlert v-if="waypointExist" text="Cette destination a déjà été ajoutée" />
+                        <ErrorAlert v-if="noRoadwaypoint" text="Oups... Aucun itinéraire n'a été trouvé pour ce lieu" />
                     </div>
                     <div class="text-center mt-2">
                         <DividerWithMainButton @click="addNewWaypoint" :disabled="isLoading">
@@ -394,8 +382,8 @@ function formatDuration(durationInSeconds) {
                                         </div>
 
                                         <template v-if="element.duration !== '' && index !== clonedWaypoints.length - 1">
-                                            <Road :duration="formatDuration(element.duration)" :distance="element.distance"
-                                                :price="Math.ceil((element.distance / 100) * vehicleConsumption * PRICE_GASOLINE)
+                                            <RoadInformation :class="'text-xs'" :duration="formatDuration(element.duration)"
+                                                :distance="element.distance" :price="Math.ceil((element.distance / 100) * vehicleConsumption * PRICE_GASOLINE)
                                                     " />
                                         </template>
                                     </div>
@@ -427,25 +415,22 @@ function formatDuration(durationInSeconds) {
                             </div>
                         </div>
                         <div class="flex justify-center">
-                            <Road :duration="formatDuration(totalDuration)" :distance="totalDistance" :price="totalPrice">
-                            </Road>
+                            <RoadInformation :class="'text-sm'" :duration="formatDuration(totalDuration)"
+                                :distance="totalDistance" :price="totalPrice">
+                            </RoadInformation>
                         </div>
                     </div>
-                    <div :class="returnToStartingWaypoint ? 'justify-between' : 'justify-center'"
-                        class="mb-32 mt-6 flex px-3">
+                    <div class="mb-32 mt-6 flex px-3 justify-center">
                         <MainButton v-if="clonedWaypoints.length > 2 && returnToStartingWaypoint"
                             @click="handleSortWaypoints">
                             Réorganiser
                         </MainButton>
-                        <MainButton v-if="clonedWaypoints.length > 2" @click="handleSave">
-                            Sauvegarder
-                        </MainButton>
                     </div>
 
                     <DeleteModal :show="showDeleteModal" :cancel="handleCancel" :deleted="handleDelete">
-                        Veux-tu supprimer
+                        Veux-tu vraiment supprimer
                         <span class="font-bold">{{ deleteLocation.city }}, {{ deleteLocation.country }}</span>
-                        de ton RoadTrip ?
+                        de ton Road trip ?
                     </DeleteModal>
                     <RegisterModal v-show="showRegisterModal" @close="handleCloseRegisterModal" />
                 </section>
