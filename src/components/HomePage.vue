@@ -196,7 +196,7 @@ const footer = [
       </div>
       <ContinueItinerayModal :show="showContinueItinerayModal" :continued="handleContinueRoadTrip"
         :reset="handleResetRoadTrip">
-        Souhaites tu reprendre le roadTrip que tu as commencé ?
+        Souhaites tu reprendre le road trip que tu as commencé ?
       </ContinueItinerayModal>
 
       <div class="mt-20 sm:mt-20 bg-beige-custom px-3 lg:px-8">
@@ -205,7 +205,7 @@ const footer = [
             <div class="md:flex md:justify-center md:items-center">
               <div class="md:flex-1 md:mr-5 md:mb-0">
                 <p class="text-center mt-2 text-3xl font-bold tracking-tight text-red-custom sm:text-4xl">
-                  Tu prépares un long roadtrip
+                  Tu prépares un long road trip ?
                 </p>
                 <p class="mt-6 text-lg leading-8 text-black text-center">
                   Tu as une liste de villes et autres merveilles à découvrir, tant d'endroits
