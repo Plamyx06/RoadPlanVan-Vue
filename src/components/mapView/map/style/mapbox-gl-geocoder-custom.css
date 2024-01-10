@@ -50,10 +50,9 @@
   height: 23px;
   bottom: 3px;
   top: 8px;
-
 }
 
-.mapboxgl-ctrl-geocoder .mapboxgl-ctrl-geocoder--pin-right>* {
+.mapboxgl-ctrl-geocoder .mapboxgl-ctrl-geocoder--pin-right > * {
   position: absolute;
   right: 8px;
   top: 4px;
@@ -88,7 +87,7 @@
     margin-right: 0;
   }
 
-  .mapboxgl-ctrl-geocoder .mapboxgl-ctrl-geocoder--pin-right>* {
+  .mapboxgl-ctrl-geocoder .mapboxgl-ctrl-geocoder--pin-right > * {
     top: 0px;
   }
 }
