@@ -150,7 +150,7 @@ const footer = [
     <main>
       <!-- Hero section -->
       <div class="relative isolate overflow-hidden pb-16 pt-14 sm:pb-20">
-        <img src="@/assets/main-van-on-road-desert.jpg" alt=""
+        <img src="@/assets/main-van-on-road-desert.jpg" alt="van on road in desert"
           class="absolute inset-0 -z-10 h-full w-full object-cover" />
         <div class="absolute inset-x-0 -top-40 -z-10 transform-gpu overflow-hidden blur-3xl sm:-top-80"
           aria-hidden="true">
@@ -232,7 +232,8 @@ const footer = [
                 </p>
               </div>
               <div class="flex-1 md:mr-5">
-                <img src="@/assets/van-in-desert.jpg" class="w-screen h-[320px] object-cover rounded-lg mr-10" />
+                <img src="@/assets/van-in-desert.jpg" alt="van in desert"
+                  class="w-screen h-[320px] object-cover rounded-lg mr-10" />
               </div>
             </div>
           </div>
@@ -306,7 +307,7 @@ const footer = [
           <div class="-mt-8 w-full max-w-2xl xl:-mb-8 xl:w-96 xl:flex-none">
             <div class="relative aspect-[2/1] h-full md:-mx-8 xl:mx-0 xl:aspect-auto">
               <img class="absolute inset-0 h-full w-full rounded-2xl bg-gray-800 object-cover shadow-2xl"
-                src="@/assets/my-van-and-me.jpg" alt="" />
+                src="@/assets/my-van-and-me.jpg" alt="drone plan van" />
             </div>
           </div>
           <div class="w-full max-w-2xl xl:max-w-none xl:flex-auto xl:px-16 xl:py-24">
