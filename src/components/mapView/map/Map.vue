@@ -170,7 +170,6 @@ async function addWaypointFromSearch() {
   const geocoderInputs = document.querySelectorAll('.mapboxgl-ctrl-geocoder--input')
   geocoderInputs[1].blur()
   const haveWaypoint = await checkLastSearchValue(lastSearchedCoords.value)
-  console.log('haveWaypoints 1', haveWaypoint)
   if (lastSearchedCoords.value && haveWaypoint) {
     const waypointExists = waypoints.value.some(
       (waypoint) =>
@@ -187,7 +186,6 @@ async function addWaypointFromSearch() {
       if (result === true) {
         localStorageSetItem('itinerary-waypoints', waypoints.value)
       } else {
-        console.log('blue', result)
         localStorageSetItem('itinerary-waypoints', result)
       }
     } else {
@@ -478,14 +476,9 @@ function updateLoadingValue(isLoadingValue) {
 </script>
 
 <template>
-  <div
-    id="map"
-    :class="['map-container', { 'map-full': !isFullSize, 'map-container-full': isFullSize }]"
-  ></div>
-  <div
-    v-if="isLoading"
-    class="absolute top-0 w-full h-[45vh] bg-gray-400 bg-opacity-40 flex justify-center items-center lg:h-full"
-  >
+  <div id="map" :class="['map-container', { 'map-full': !isFullSize, 'map-container-full': isFullSize }]"></div>
+  <div v-if="isLoading"
+    class="absolute top-0 w-full h-[45vh] bg-gray-400 bg-opacity-40 flex justify-center items-center lg:h-full">
     <div class="flex flex-col items-center">
       <Spinner class="w-20 h-20 lg:w-40 lg:h-40" />
       <p class="mt-4 text-xl font-bold text-gray-500 lg:text-4xl">
