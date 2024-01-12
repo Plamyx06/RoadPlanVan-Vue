@@ -191,8 +191,6 @@ async function addWaypointFromSearch() {
     } else {
       mapEmitter.emit('waypoint-exist')
     }
-  } else if (!haveWaypoint) {
-    mapEmitter.emit('no-waypoint')
   }
   lastSearchedCoords.value = []
 }
