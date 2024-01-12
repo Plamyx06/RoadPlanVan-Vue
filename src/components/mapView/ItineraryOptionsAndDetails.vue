@@ -262,7 +262,7 @@ function formatDuration(durationInSeconds) {
   </div>
   <div :class="{ hidden: !showComponent }">
     <div
-      class="fixed mt-[45vh] h-[5vh] w-full bg-red-custom text-beige-custom px-1 lg:max-w-lg lg:w-4/12 lg:mt-[6vh] lg:h-[5vh] lg:ml-5 lg:drop-shadow-lg lg:rounded-t-lg">
+      class="absolute mt-[45vh] h-[5vh] w-full bg-red-custom text-beige-custom px-1 lg:max-w-lg lg:w-4/12 lg:mt-[6vh] lg:h-[5vh] lg:ml-5 lg:drop-shadow-lg lg:rounded-t-lg">
       <div class="flex items-center justify-between h-full overflow-hidden">
         <div v-if="showDepartureSection">
           <RoundedButton @click="goToStarterSection">
@@ -293,7 +293,7 @@ function formatDuration(durationInSeconds) {
         </div>
       </div>
     </div>
-    <div v
+    <div
       class="absolute z-10 mt-[50vh] h-[50vh] w-screen overflow-y-auto bg-beige-custom text-red-custom px-5 lg:max-w-lg lg:w-4/12 lg:mt-[11vh] lg:h-[85vh] lg:ml-5 lg:drop-shadow-lg lg:rounded-b-lg">
       <div class="sm:max-w-lg sm:mx-auto">
         <section v-if="showStarterOptionSection">
