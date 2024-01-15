@@ -138,7 +138,7 @@ function goToItinerarySection() {
 
 function updatedClonedWaypoints() {
   const storedWaypoints = JSON.parse(localStorage.getItem('itinerary-waypoints'))
-  clonedWaypoints.value = [...storedWaypoints]
+  clonedWaypoints.value = storedWaypoints
 }
 function haveWaypointOrigin() {
   showDepartureSection.value = false
