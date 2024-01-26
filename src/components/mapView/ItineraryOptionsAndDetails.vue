@@ -251,7 +251,9 @@ function formatDuration(durationInSeconds) {
     <div class="absolute z-10 mt-[45vh] left-0 overflow-hidden lg:mt-[5vh] lg:w-4/12">
       <button
         class="justify-center bg-red-custom text-beige-custom rounded-r-full pl-3 pr-3 h-[5vh] text-sm font-semibold shadow-sm hover:bg-red-custom focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-red-custom"
-        @click="handleOpenComponent" type="button">
+        @click="handleOpenComponent"
+        type="button"
+      >
         <div class="flex">
           <MapPinIcon class="w-6 h-6" />
           <ArrowTrendingUpIcon class="w-5 h-5" />
@@ -262,7 +264,8 @@ function formatDuration(durationInSeconds) {
   </div>
   <div :class="{ hidden: !showComponent }">
     <div
-      class="absolute mt-[45vh] h-[5vh] w-full bg-red-custom text-beige-custom px-1 lg:max-w-lg lg:w-4/12 lg:mt-[6vh] lg:h-[5vh] lg:ml-5 lg:drop-shadow-lg lg:rounded-t-lg">
+      class="absolute mt-[45vh] h-[5vh] w-full bg-red-custom text-beige-custom px-1 lg:max-w-lg lg:w-4/12 lg:mt-[6vh] lg:h-[5vh] lg:ml-5 lg:drop-shadow-lg lg:rounded-t-lg"
+    >
       <div class="flex items-center justify-between h-full overflow-hidden">
         <div v-if="showDepartureSection">
           <RoundedButton @click="goToStarterSection">
@@ -276,7 +279,10 @@ function formatDuration(durationInSeconds) {
         </div>
         <div v-if="showStarterOptionSection" class="h-8 w-8"></div>
         <div class="w-3/4">
-          <h1 v-if="showStarterOptionSection" class="text-center text-xl font-bold flex justify-center w-full truncate">
+          <h1
+            v-if="showStarterOptionSection"
+            class="text-center text-xl font-bold flex justify-center w-full truncate"
+          >
             Options du road trip
           </h1>
           <h1 v-else-if="showDepartureSection" class="text-center text-xl font-bold truncate">
@@ -294,26 +300,40 @@ function formatDuration(durationInSeconds) {
       </div>
     </div>
     <div
-      class="absolute z-10 mt-[50vh] h-[50vh] w-screen overflow-y-auto bg-beige-custom text-red-custom px-5 lg:max-w-lg lg:w-4/12 lg:mt-[11vh] lg:h-[85vh] lg:ml-5 lg:drop-shadow-lg lg:rounded-b-lg">
+      class="absolute z-10 mt-[50vh] h-[50vh] w-screen overflow-y-auto bg-beige-custom text-red-custom px-5 lg:max-w-lg lg:w-4/12 lg:mt-[11vh] lg:h-[85vh] lg:ml-5 lg:drop-shadow-lg lg:rounded-b-lg"
+    >
       <div class="sm:max-w-lg sm:mx-auto">
         <section v-if="showStarterOptionSection">
           <VanRadioGroup @vehicle-consumption="UpdatedVehicleConsumption" class="mt-5" />
 
           <div class="my-6">
-            <label for="tripName" class="text-red-custom text-base font-semibold">Nom du voyage</label>
+            <label for="tripName" class="text-red-custom text-base font-semibold"
+              >Nom du voyage</label
+            >
             <div class="mt-4 mx-6">
-              <input id="tripName" v-model="tripName" @input="saveToLocalStorage"
+              <input
+                id="tripName"
+                v-model="tripName"
+                @input="saveToLocalStorage"
                 class="block w-full rounded-md py-3 text-red-custom shadow-sm border-none placeholder:text-gray-400 focus:outline-none focus:border-red-custom focus:ring-2 focus:ring-red-custom"
-                placeholder="Nom, ex : Voyage en Slovenie" maxlength="40" />
+                placeholder="Nom, ex : Voyage en Slovenie"
+                maxlength="40"
+              />
             </div>
           </div>
-          <ToggleButton :label="'Retourner au point de départ'" @update-enabled="enableReturnStart" />
+          <ToggleButton
+            :label="'Retourner au point de départ'"
+            @update-enabled="enableReturnStart"
+          />
           <div class="flex justify-center mt-10 mb-32 lg:mt-16">
             <MainButton @click="goToNextSection">Suivant</MainButton>
           </div>
         </section>
-        <ContinueItinerayModal :show="showContinueItinerayModal" :continued="handleContinueRoadTrip"
-          :reset="handleResetRoadTrip">
+        <ContinueItinerayModal
+          :show="showContinueItinerayModal"
+          :continued="handleContinueRoadTrip"
+          :reset="handleResetRoadTrip"
+        >
           Souhaites-tu reprendre le road trip que tu as commencé ?
         </ContinueItinerayModal>
 
@@ -334,7 +354,10 @@ function formatDuration(durationInSeconds) {
           <div>
             <ErrorAlert v-if="noWaypoint" text="Aucune destination n'a été ajoutée !" />
             <ErrorAlert v-if="waypointExist" text="Cette destination a déjà été ajoutée" />
-            <ErrorAlert v-if="noRoadwaypoint" text="Oups... Aucun itinéraire n'a été trouvé pour ce lieu" />
+            <ErrorAlert
+              v-if="noRoadwaypoint"
+              text="Oups... Aucun itinéraire n'a été trouvé pour ce lieu"
+            />
           </div>
           <div class="text-center mt-2">
             <DividerWithMainButton @click="addNewWaypoint" :disabled="isLoading">
@@ -347,37 +370,69 @@ function formatDuration(durationInSeconds) {
 
           <div class="flex items-center mt-3">
             <div class="w-5/6">
-              <VueDraggable v-model="clonedWaypoints" handle=".drag-handle" item-key="index"
-                @change="handleDraggableChange">
+              <VueDraggable
+                v-model="clonedWaypoints"
+                handle=".drag-handle"
+                item-key="index"
+                @change="handleDraggableChange"
+              >
                 <template v-slot:item="{ element, index }">
                   <div>
                     <div class="flex items-center h-12">
-                      <EllipsisVerticalIcon v-if="(!returnToStartingWaypoint && index > 0) ||
-                        (returnToStartingWaypoint &&
-                          index > 0 &&
-                          index < clonedWaypoints.length - 1)
-                        " class="w-5 h-5 ml-[-20px]" />
+                      <EllipsisVerticalIcon
+                        v-if="
+                          (!returnToStartingWaypoint && index > 0) ||
+                          (returnToStartingWaypoint &&
+                            index > 0 &&
+                            index < clonedWaypoints.length - 1)
+                        "
+                        class="w-5 h-5 ml-[-20px]"
+                      />
 
-                      <LocationCard v-if="index === 0 ||
-                        (index === clonedWaypoints.length - 1 && returnToStartingWaypoint)
-                        " :city="element.city" :country="element.country" :countryCode="element.countryCode" />
+                      <LocationCard
+                        v-if="
+                          index === 0 ||
+                          (index === clonedWaypoints.length - 1 && returnToStartingWaypoint)
+                        "
+                        :city="element.city"
+                        :country="element.country"
+                        :countryCode="element.countryCode"
+                      />
 
-                      <LocationCard v-else :city="element.city" :country="element.country"
-                        :countryCode="element.countryCode" :class="{ 'drag-handle': index > 0 }" />
+                      <LocationCard
+                        v-else
+                        :city="element.city"
+                        :country="element.country"
+                        :countryCode="element.countryCode"
+                        :class="{ 'drag-handle': index > 0 }"
+                      />
 
-                      <RoundedButton v-if="(!returnToStartingWaypoint && index > 0) ||
-                        (returnToStartingWaypoint &&
-                          index > 0 &&
-                          index < clonedWaypoints.length - 1)
-                        " @click="openDeleteModal(element)" :disabled="isLoading" class="ml-5">
+                      <RoundedButton
+                        v-if="
+                          (!returnToStartingWaypoint && index > 0) ||
+                          (returnToStartingWaypoint &&
+                            index > 0 &&
+                            index < clonedWaypoints.length - 1)
+                        "
+                        @click="openDeleteModal(element)"
+                        :disabled="isLoading"
+                        class="ml-5"
+                      >
                         <XMarkIcon class="w-4 h-4" />
                       </RoundedButton>
                     </div>
 
-                    <template v-if="element.duration !== '' && index !== clonedWaypoints.length - 1">
-                      <RoadInformation :class="'text-xs'" :duration="formatDuration(element.duration)"
-                        :distance="element.distance" :price="Math.ceil((element.distance / 100) * vehicleConsumption * PRICE_GASOLINE)
-                          " />
+                    <template
+                      v-if="element.duration !== '' && index !== clonedWaypoints.length - 1"
+                    >
+                      <RoadInformation
+                        :class="'text-xs'"
+                        :duration="formatDuration(element.duration)"
+                        :distance="element.distance"
+                        :price="
+                          Math.ceil((element.distance / 100) * vehicleConsumption * PRICE_GASOLINE)
+                        "
+                      />
                     </template>
                   </div>
                 </template>
@@ -385,15 +440,21 @@ function formatDuration(durationInSeconds) {
             </div>
             <div class="w-1/6 flex items-center flex-col space-between h-full sm:ml-4 md:ml-12">
               <template v-for="(waypoint, index) in clonedWaypoints">
-                <div class="rounded-full bg-red-custom h-4 w-4 text-red-custom shadow-lg ring-[1px] ring-red-custom"
-                  v-if="index === 0 || index === clonedWaypoints.length - 1"></div>
-                <div class="rounded-full bg-beige-custom p-0.5 text-red-custom shadow-lg ring-[1px] ring-red-custom"
-                  v-else>
+                <div
+                  class="rounded-full bg-red-custom h-4 w-4 text-red-custom shadow-lg ring-[1px] ring-red-custom"
+                  v-if="index === 0 || index === clonedWaypoints.length - 1"
+                ></div>
+                <div
+                  class="rounded-full bg-beige-custom p-0.5 text-red-custom shadow-lg ring-[1px] ring-red-custom"
+                  v-else
+                >
                   <p class="h-3 flex items-center justify-center text-sm">{{ index + 1 }}</p>
                 </div>
-                <div v-if="index !== clonedWaypoints.length - 1"
+                <div
+                  v-if="index !== clonedWaypoints.length - 1"
                   class="border-l-2 border-dashed h-[60px] border-red-custom animate-opacity"
-                  :style="`animation-delay: ${index * 0.5}s`"></div>
+                  :style="`animation-delay: ${index * 0.5}s`"
+                ></div>
               </template>
             </div>
           </div>
@@ -404,17 +465,26 @@ function formatDuration(durationInSeconds) {
                 <div class="w-full border-t border-red-custom" />
               </div>
               <div class="relative flex justify-center">
-                <span class="bg-beige-custom rounded-full px-3 font-semibold text-red-custom">Total</span>
+                <span class="bg-beige-custom rounded-full px-3 font-semibold text-red-custom"
+                  >Total</span
+                >
               </div>
             </div>
             <div class="flex justify-center">
-              <RoadInformation :class="'text-sm'" :duration="formatDuration(totalDuration)" :distance="totalDistance"
-                :price="totalPrice">
+              <RoadInformation
+                :class="'text-sm'"
+                :duration="formatDuration(totalDuration)"
+                :distance="totalDistance"
+                :price="totalPrice"
+              >
               </RoadInformation>
             </div>
           </div>
           <div class="mb-32 mt-6 flex px-3 justify-center">
-            <MainButton v-if="clonedWaypoints.length > 2 && returnToStartingWaypoint" @click="handleSortWaypoints">
+            <MainButton
+              v-if="clonedWaypoints.length > 2 && returnToStartingWaypoint"
+              @click="handleSortWaypoints"
+            >
               Réorganiser
             </MainButton>
           </div>
@@ -433,7 +503,6 @@ function formatDuration(durationInSeconds) {
 
 <style scoped>
 @keyframes moveOpacity {
-
   0%,
   100% {
     opacity: 0.5;

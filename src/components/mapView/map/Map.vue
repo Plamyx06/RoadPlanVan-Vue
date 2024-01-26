@@ -474,12 +474,17 @@ function updateLoadingValue(isLoadingValue) {
 </script>
 
 <template>
-  <div id="map" :class="['map-container', { 'map-full': !isFullSize, 'map-container-full': isFullSize }]"></div>
-  <div v-if="isLoading"
-    class="absolute top-0 w-full h-[45vh] bg-gray-400 bg-opacity-40 flex justify-center items-center lg:h-full">
+  <div
+    id="map"
+    :class="['map-container', { 'map-full': !isFullSize, 'map-container-full': isFullSize }]"
+  ></div>
+  <div
+    v-if="isLoading"
+    class="absolute top-0 w-full h-[45vh] bg-gray-400 bg-opacity-40 flex justify-center items-center lg:h-full"
+  >
     <div class="flex flex-col items-center lg:ml-96 2xl:ml-2">
       <Spinner class="w-20 h-20 lg:w-40 lg:h-40" />
-      <p class="mt-4 text-xl font-bold text-gray-500 lg:text-4xl ">
+      <p class="mt-4 text-xl font-bold text-gray-500 lg:text-4xl">
         Calcul de l'itinéraire en cours...
       </p>
     </div>
